@@ -1,0 +1,19 @@
+{
+  "name": "orbit-design-studio",
+  "version": "0.13.0-alpha",
+  "description": "Constructor visual de sitios enfocado en Astro con arquitectura modular y soporte IA.",
+  "type": "module",
+  "scripts": {
+    "build": "node scripts/build-standalone.js && zip -9 Orbit-Netlify.zip index.html",
+    "test": "node qa-contextual-toolbar.mjs"
+  },
+  "keywords": [
+    "astro",
+    "orbit",
+    "design-studio",
+    "visual-editor",
+    "web-builder"
+  ],
+  "author": "johntapias-design",
+  "license": "MIT"
+}
