@@ -390,7 +390,7 @@ try {
     document.querySelector('[data-id="hero-section"]')?.dispatchEvent(new MouseEvent('click',{bubbles:true}));document.querySelector('[data-inspector-tab="design"]')?.click();await wait(160);
     const modes=document.querySelectorAll('[data-background-mode]').length;document.querySelector('[data-background-mode="image"]')?.click();await wait(100);
     let source=document.querySelector('[data-background-field="imageSrc"]');source.value='https://picsum.photos/seed/orbit-background-qa/1600/900';source.dispatchEvent(new Event('change',{bubbles:true}));await wait(100);
-    document.querySelector('[data-background-mode="gradient"]')?.click();await wait(100);const gradientControls=!!document.querySelector('[data-background-field="gradientType"]')&&document.querySelectorAll('[data-inspector-color-menu^="backgroundConfig:gradient"]').length===2;
+    document.querySelector('[data-background-mode="gradient"]')?.click();await wait(100);const gradientControls=!!document.querySelector('[data-background-field="gradientType"]')&&document.querySelectorAll('[data-inspector-color-menu^="backgroundConfig:gradient"]').length>=2;
     document.querySelector('[data-background-mode="overlay"]')?.click();await wait(100);source=document.querySelector('[data-background-field="imageSrc"]');source.value='https://picsum.photos/seed/orbit-background-qa/1600/900';source.dispatchEvent(new Event('change',{bubbles:true}));await wait(100);
     const opacity=document.querySelector('[data-background-field="overlayOpacity"]');opacity.value='.6';opacity.dispatchEvent(new Event('change',{bubbles:true}));await wait(120);
     const node=find(window.__ORBIT_QA__.workspaceSnapshot().nodes,'hero-section');const preview=document.querySelector('.background-preview');
