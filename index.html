@@ -8937,10 +8937,14 @@ const starter = [{
   }]
 }];
 const sectionTemplates = [
-  {id:'navbar',name:'Navbar minimal',desc:'Logo, navegación y CTA',create:makeNavbar},
-  {id:'hero',name:'Hero editorial',desc:'Split layout con tarjeta',create:makeHero},
-  {id:'features',name:'Features grid',desc:'Tres beneficios en cards',create:makeFeatures},
-  {id:'cta',name:'CTA contrast',desc:'Cierre visual de conversión',create:makeCta}
+  {id:'navbar',name:'Navbar Pro',desc:'Logo, menú de navegación y botón CTA',category:'Header',create:makeNavbar},
+  {id:'hero',name:'Hero Split Editorial',desc:'Titular, subtítulo, 2 CTAs y tarjeta visual',category:'Hero',create:makeHero},
+  {id:'features',name:'Features Grid (3 Cols)',desc:'Cuadrícula de 3 tarjetas de beneficios',category:'Features',create:makeFeatures},
+  {id:'pricing',name:'Tabla de Precios (3 Planes)',desc:'Starter, Pro (destacado) y Enterprise',category:'Pricing',create:makePricing},
+  {id:'testimonials',name:'Testimonios & Reseñas',desc:'3 tarjetas con citas, clientes y cargos',category:'Social Proof',create:makeTestimonials},
+  {id:'faq',name:'Preguntas Frecuentes (FAQ)',desc:'4 acordeones con preguntas y respuestas',category:'Content',create:makeFaq},
+  {id:'cta',name:'CTA de Conversión',desc:'Bloque de cierre con botón destacado',category:'Conversion',create:makeCta},
+  {id:'footer',name:'Footer Completo (4 Cols)',desc:'Logotipo, enlaces, recursos y copyright',category:'Footer',create:makeFooter}
 ];
 const state = createOrbitState({ clone, hydrateNodes, starter, defaultTokens });
 let viewportEngine = null;
@@ -10015,6 +10019,91 @@ function makeCta(){
   const b=makeNode('button'); b.content='Exportar proyecto'; b.styles.base={background:'var(--color-accent)',color:'#ffffff',fontSize:'15px',fontWeight:700,paddingTop:'16px',paddingRight:'24px',paddingBottom:'16px',paddingLeft:'24px',borderRadius:'var(--radius-pill)'};
   inner.children=[h,p,b]; section.children=[inner]; return section;
 }
+function makePricing(){
+  const section=makeNode('section'); section.name='Pricing Section'; section.styles.base={width:'100%',paddingTop:'96px',paddingRight:'40px',paddingBottom:'96px',paddingLeft:'40px',display:'flex',direction:'column',align:'center',gap:'48px',background:'var(--color-surface)',color:'var(--color-text)'};
+  const head=makeNode('container'); head.name='Pricing Head'; head.styles.base={width:'100%',maxWidth:'800px',display:'flex',direction:'column',align:'center',gap:'16px'};
+  const badge=makeNode('badge'); badge.content='PRECIOS TRANSPARENTES'; badge.styles.base={background:'rgba(239,90,36,0.12)',color:'var(--color-accent)',fontSize:'12px',fontWeight:700,letterSpacing:'1.5px',paddingTop:'6px',paddingRight:'14px',paddingBottom:'6px',paddingLeft:'14px',borderRadius:'var(--radius-pill)'};
+  const h=makeNode('heading'); h.tag='h2'; h.content='Planes diseñados para cada etapa.'; h.styles.base={fontSize:'var(--font-h2)',fontWeight:700,textAlign:'center',color:'var(--color-text)'};
+  const p=makeNode('text'); p.content='Elige el plan ideal. Cancela o cambia en cualquier momento sin compromisos.'; p.styles.base={fontSize:'var(--font-bodyLarge)',textAlign:'center',color:'var(--color-muted)'};
+  head.children=[badge,h,p];
+  const grid=makeNode('container'); grid.name='Pricing Grid'; grid.styles.base={width:'100%',maxWidth:'1120px',display:'grid',gridColumns:3,gap:'24px'}; grid.styles.tablet={gridColumns:1};
+  const c1=makeNode('card'); c1.name='Plan Starter'; c1.styles.base={paddingTop:'32px',paddingRight:'28px',paddingBottom:'32px',paddingLeft:'28px',display:'flex',direction:'column',gap:'24px',background:'var(--color-background)',borderRadius:'var(--radius-lg)',border:'1px solid var(--color-soft)'};
+  const c1Title=makeNode('heading'); c1Title.tag='h3'; c1Title.content='Starter'; c1Title.styles.base={fontSize:'24px',fontWeight:700};
+  const c1Price=makeNode('heading'); c1Price.tag='h2'; c1Price.content='$0 / mes'; c1Price.styles.base={fontSize:'40px',fontWeight:800,color:'var(--color-text)'};
+  const c1Desc=makeNode('text'); c1Desc.content='Ideal para proyectos personales y sitios sencillos.'; c1Desc.styles.base={fontSize:'14px',color:'var(--color-muted)'};
+  const c1Btn=makeNode('button'); c1Btn.content='Empieza gratis'; c1Btn.styles.base={width:'100%',background:'var(--color-soft)',color:'var(--color-text)',fontSize:'14px',fontWeight:700,paddingTop:'14px',paddingBottom:'14px',borderRadius:'var(--radius-pill)'};
+  c1.children=[c1Title,c1Price,c1Desc,c1Btn];
+  const c2=makeNode('card'); c2.name='Plan Pro (Popular)'; c2.styles.base={paddingTop:'32px',paddingRight:'28px',paddingBottom:'32px',paddingLeft:'28px',display:'flex',direction:'column',gap:'24px',background:'var(--color-primary)',color:'#ffffff',borderRadius:'var(--radius-lg)',boxShadow:'0 24px 60px rgba(0,0,0,0.25)'};
+  const c2Badge=makeNode('badge'); c2Badge.content='MÁS POPULAR'; c2Badge.styles.base={background:'var(--color-accent)',color:'#ffffff',fontSize:'10px',fontWeight:800,letterSpacing:'1.2px',paddingTop:'4px',paddingRight:'12px',paddingBottom:'4px',paddingLeft:'12px',borderRadius:'var(--radius-pill)'};
+  const c2Title=makeNode('heading'); c2Title.tag='h3'; c2Title.content='Pro Studio'; c2Title.styles.base={fontSize:'24px',fontWeight:700,color:'#ffffff'};
+  const c2Price=makeNode('heading'); c2Price.tag='h2'; c2Price.content='$29 / mes'; c2Price.styles.base={fontSize:'40px',fontWeight:800,color:'#ffffff'};
+  const c2Desc=makeNode('text'); c2Desc.content='Para diseñadores y agencias que necesitan exportación Astro/React ilimitada.'; c2Desc.styles.base={fontSize:'14px',color:'rgba(255,255,255,0.8)'};
+  const c2Btn=makeNode('button'); c2Btn.content='Obtener Pro'; c2Btn.styles.base={width:'100%',background:'var(--color-accent)',color:'#ffffff',fontSize:'14px',fontWeight:700,paddingTop:'14px',paddingBottom:'14px',borderRadius:'var(--radius-pill)'};
+  c2.children=[c2Badge,c2Title,c2Price,c2Desc,c2Btn];
+  const c3=makeNode('card'); c3.name='Plan Enterprise'; c3.styles.base={paddingTop:'32px',paddingRight:'28px',paddingBottom:'32px',paddingLeft:'28px',display:'flex',direction:'column',gap:'24px',background:'var(--color-background)',borderRadius:'var(--radius-lg)',border:'1px solid var(--color-soft)'};
+  const c3Title=makeNode('heading'); c3Title.tag='h3'; c3Title.content='Enterprise'; c3Title.styles.base={fontSize:'24px',fontWeight:700};
+  const c3Price=makeNode('heading'); c3Price.tag='h2'; c3Price.content='Personalizado'; c3Price.styles.base={fontSize:'40px',fontWeight:800,color:'var(--color-text)'};
+  const c3Desc=makeNode('text'); c3Desc.content='Soporte dedicado, componentes a medida y seguridad avanzada.'; c3Desc.styles.base={fontSize:'14px',color:'var(--color-muted)'};
+  const c3Btn=makeNode('button'); c3Btn.content='Contactar ventas'; c3Btn.styles.base={width:'100%',background:'var(--color-soft)',color:'var(--color-text)',fontSize:'14px',fontWeight:700,paddingTop:'14px',paddingBottom:'14px',borderRadius:'var(--radius-pill)'};
+  c3.children=[c3Title,c3Price,c3Desc,c3Btn];
+  grid.children=[c1,c2,c3]; section.children=[head,grid]; return section;
+}
+function makeTestimonials(){
+  const section=makeNode('section'); section.name='Testimonials Section'; section.styles.base={width:'100%',paddingTop:'96px',paddingRight:'40px',paddingBottom:'96px',paddingLeft:'40px',display:'flex',direction:'column',align:'center',gap:'48px',background:'var(--color-background)',color:'var(--color-text)'};
+  const head=makeNode('container'); head.name='Testimonials Head'; head.styles.base={width:'100%',maxWidth:'800px',display:'flex',direction:'column',align:'center',gap:'16px'};
+  const badge=makeNode('badge'); badge.content='TESTIMONIOS DE DISEÑADORES'; badge.styles.base={background:'rgba(239,90,36,0.12)',color:'var(--color-accent)',fontSize:'12px',fontWeight:700,letterSpacing:'1.5px',paddingTop:'6px',paddingRight:'14px',paddingBottom:'6px',paddingLeft:'14px',borderRadius:'var(--radius-pill)'};
+  const h=makeNode('heading'); h.tag='h2'; h.content='Amado por creadores y equipos.'; h.styles.base={fontSize:'var(--font-h2)',fontWeight:700,textAlign:'center'};
+  head.children=[badge,h];
+  const grid=makeNode('container'); grid.name='Testimonials Grid'; grid.styles.base={width:'100%',maxWidth:'1120px',display:'grid',gridColumns:3,gap:'24px'}; grid.styles.tablet={gridColumns:1};
+  [{quote:'"Orbit cambió mi flujo de trabajo por completo. Diseñar visualmente y exportar directamente a Astro es una maravilla."',author:'Sofía Martínez',role:'Lead Product Designer'},{quote:'"La velocidad de prototipado y la calidad del código limpio son simplemente incomparables. Un 10/10."',author:'Carlos Mendoza',role:'Frontend Architect'},{quote:'"Los componentes reactivos y la gestión de tokens globales hacen que los proyectos queden impecables."',author:'Laura Gómez',role:'UX/UI Director'}].forEach((t,i)=>{
+    const card=makeNode('card'); card.name=`Testimonial ${i+1}`; card.styles.base={paddingTop:'32px',paddingRight:'28px',paddingBottom:'32px',paddingLeft:'28px',display:'flex',direction:'column',justify:'space-between',gap:'24px',background:'var(--color-surface)',borderRadius:'var(--radius-lg)',boxShadow:'0 10px 30px rgba(0,0,0,0.06)'};
+    const quoteTxt=makeNode('text'); quoteTxt.content=t.quote; quoteTxt.styles.base={fontSize:'16px',lineHeight:1.55,color:'var(--color-text)',fontStyle:'italic'};
+    const authorWrap=makeNode('container'); authorWrap.styles.base={display:'flex',direction:'column',gap:'4px'};
+    const nameTxt=makeNode('text'); nameTxt.content=t.author; nameTxt.styles.base={fontSize:'15px',fontWeight:700,color:'var(--color-text)'};
+    const roleTxt=makeNode('text'); roleTxt.content=t.role; roleTxt.styles.base={fontSize:'13px',color:'var(--color-muted)'};
+    authorWrap.children=[nameTxt,roleTxt]; card.children=[quoteTxt,authorWrap]; grid.children.push(card);
+  });
+  section.children=[head,grid]; return section;
+}
+function makeFaq(){
+  const section=makeNode('section'); section.name='FAQ Section'; section.styles.base={width:'100%',paddingTop:'96px',paddingRight:'40px',paddingBottom:'96px',paddingLeft:'40px',display:'flex',direction:'column',align:'center',gap:'48px',background:'var(--color-surface)',color:'var(--color-text)'};
+  const head=makeNode('container'); head.name='FAQ Head'; head.styles.base={width:'100%',maxWidth:'800px',display:'flex',direction:'column',align:'center',gap:'16px'};
+  const h=makeNode('heading'); h.tag='h2'; h.content='Preguntas Frecuentes'; h.styles.base={fontSize:'var(--font-h2)',fontWeight:700,textAlign:'center'};
+  const p=makeNode('text'); p.content='Resolvemos todas tus dudas sobre Orbit Design Studio y su exportación de código.'; p.styles.base={fontSize:'var(--font-bodyLarge)',textAlign:'center',color:'var(--color-muted)'};
+  head.children=[h,p];
+  const list=makeNode('container'); list.name='FAQ List'; list.styles.base={width:'100%',maxWidth:'840px',display:'flex',direction:'column',gap:'16px'};
+  [{q:'¿Qué frameworks de código puedo exportar?',a:'Orbit permite exportar HTML/CSS autónomo, Astro Framework puro y React JSX optimizado con Tailwind CSS.'},{q:'¿Mis diseños son responsive por defecto?',a:'Sí, Orbit soporta 5 puntos de interrupción responsive (XL, Escritorio, Tablet, Mobile L y Mobile) con vistas previas en tiempo real.'},{q:'¿Puedo reutilizar componentes y variantes?',a:'Absolutamente. Orbit incluye un motor completo de componentes reutilizables con props tipadas y variantes por instancia.'},{q:'¿El código exportado cumple con la accesibilidad WCAG?',a:'Sí, Orbit incluye un auditor WCAG en tiempo real que verifica contrastes de color (AA / AAA) y semántica HTML5.'}].forEach((item,i)=>{
+    const card=makeNode('card'); card.name=`FAQ Item ${i+1}`; card.styles.base={paddingTop:'24px',paddingRight:'28px',paddingBottom:'24px',paddingLeft:'28px',display:'flex',direction:'column',gap:'12px',background:'var(--color-background)',borderRadius:'var(--radius-md)',border:'1px solid var(--color-soft)'};
+    const qTxt=makeNode('heading'); qTxt.tag='h3'; qTxt.content=item.q; qTxt.styles.base={fontSize:'18px',fontWeight:700,color:'var(--color-text)'};
+    const aTxt=makeNode('text'); aTxt.content=item.a; aTxt.styles.base={fontSize:'15px',lineHeight:1.5,color:'var(--color-muted)'};
+    card.children=[qTxt,aTxt]; list.children.push(card);
+  });
+  section.children=[head,list]; return section;
+}
+function makeFooter(){
+  const section=makeNode('section'); section.name='Footer Section'; section.htmlTag='footer'; section.styles.base={width:'100%',paddingTop:'72px',paddingRight:'40px',paddingBottom:'40px',paddingLeft:'40px',display:'flex',direction:'column',align:'center',gap:'48px',background:'var(--color-primary)',color:'#ffffff'};
+  const inner=makeNode('container'); inner.name='Footer Content'; inner.styles.base={width:'100%',maxWidth:'1120px',display:'grid',gridColumns:4,gap:'40px'}; inner.styles.tablet={gridColumns:2}; inner.styles.mobile={gridColumns:1};
+  const col1=makeNode('container'); col1.name='Brand Col'; col1.styles.base={display:'flex',direction:'column',gap:'16px'};
+  const logo=makeNode('heading'); logo.tag='h3'; logo.content='Orbit Studio'; logo.styles.base={fontSize:'22px',fontWeight:800,color:'#ffffff'};
+  const desc=makeNode('text'); desc.content='El constructor visual de código moderno para diseñadores y desarrolladores creadores.'; desc.styles.base={fontSize:'14px',color:'rgba(255,255,255,0.7)',lineHeight:1.5};
+  col1.children=[logo,desc];
+  const col2=makeNode('container'); col2.name='Product Col'; col2.styles.base={display:'flex',direction:'column',gap:'12px'};
+  const h2=makeNode('text'); h2.content='PRODUCTO'; h2.styles.base={fontSize:'11px',fontWeight:800,letterSpacing:'1.5px',color:'var(--color-accent)'};
+  col2.children.push(h2);
+  ['Editor Visual','Componentes','Tokens CSS','Exportador Astro'].forEach(t=>{ const link=makeNode('text'); link.content=t; link.styles.base={fontSize:'14px',color:'rgba(255,255,255,0.8)'}; col2.children.push(link); });
+  const col3=makeNode('container'); col3.name='Resources Col'; col3.styles.base={display:'flex',direction:'column',gap:'12px'};
+  const h3=makeNode('text'); h3.content='RECURSOS'; h3.styles.base={fontSize:'11px',fontWeight:800,letterSpacing:'1.5px',color:'var(--color-accent)'};
+  col3.children.push(h3);
+  ['Documentación','Guía de inicio','Auditoría WCAG','Changelog'].forEach(t=>{ const link=makeNode('text'); link.content=t; link.styles.base={fontSize:'14px',color:'rgba(255,255,255,0.8)'}; col3.children.push(link); });
+  const col4=makeNode('container'); col4.name='Company Col'; col4.styles.base={display:'flex',direction:'column',gap:'12px'};
+  const h4=makeNode('text'); h4.content='EMPRESA'; h4.styles.base={fontSize:'11px',fontWeight:800,letterSpacing:'1.5px',color:'var(--color-accent)'};
+  col4.children.push(h4);
+  ['Acerca de','Contacto','Privacidad','Términos'].forEach(t=>{ const link=makeNode('text'); link.content=t; link.styles.base={fontSize:'14px',color:'rgba(255,255,255,0.8)'}; col4.children.push(link); });
+  inner.children=[col1,col2,col3,col4];
+  const bottom=makeNode('container'); bottom.name='Footer Bottom'; bottom.styles.base={width:'100%',maxWidth:'1120px',paddingTop:'24px',display:'flex',justify:'space-between',align:'center',borderTop:'1px solid rgba(255,255,255,0.1)'};
+  const copy=makeNode('text'); copy.content='© 2026 Orbit Design Studio. Todos los derechos reservados.'; copy.styles.base={fontSize:'13px',color:'rgba(255,255,255,0.5)'};
+  bottom.children=[copy]; section.children=[inner,bottom]; return section;
+}
 function styleString(s){
   const map={
     width:cssValue(s.width),maxWidth:cssValue(s.maxWidth),minWidth:cssValue(s.minWidth),height:cssValue(s.height),maxHeight:cssValue(s.maxHeight),minHeight:cssValue(s.minHeight),aspectRatio:s.aspectRatio,boxSizing:s.boxSizing,
@@ -10586,7 +10675,15 @@ function renderLeft(){
     return;
   }
   if(state.tab==='sections'){
-    els.left.innerHTML=`<div class="panel-intro"><span class="panel-kicker">PATTERNS</span><h2>Secciones</h2><p>Composiciones responsive listas para personalizar.</p></div><div class="section-library">${sectionTemplates.map((item,i)=>`<button class="section-card" draggable="true" data-template="${item.id}"><span class="section-card-preview"></span><span>BLOCK / 0${i+1}</span><strong>${escapeHtml(item.name)}</strong><small>${escapeHtml(item.desc)}</small></button>`).join('')}</div>`;
+    const categories=['Todos','Header','Hero','Features','Pricing','Social Proof','Content','Conversion','Footer'];
+    const activeCategory=state.sectionCategory||'Todos';
+    const query=String(state.sectionSearch||'').trim().toLowerCase();
+    const filtered=sectionTemplates.filter(item=>{
+      const matchesCat=activeCategory==='Todos'||item.category===activeCategory;
+      const matchesQuery=!query||item.name.toLowerCase().includes(query)||item.desc.toLowerCase().includes(query)||item.category.toLowerCase().includes(query);
+      return matchesCat&&matchesQuery;
+    });
+    els.left.innerHTML=`<div class="panel-intro panel-intro-premium"><span class="panel-kicker">PATTERNS & SECTIONS</span><h2>Secciones</h2><p>Composiciones responsive pre-diseñadas listas para insertar con 1-clic y exportar a Astro o React.</p></div><div class="element-toolbar-pro" style="padding: 0 16px 10px;"><label class="element-search element-search-pro element-search-ux"><span>${uiIcon('search')}</span><input type="search" placeholder="Buscar secciones..." value="${escapeHtml(state.sectionSearch||'')}" data-section-search></label></div><div class="element-filter-row element-filter-row-ux" style="padding: 0 16px 12px;">${categories.map(cat=>`<button type="button" class="element-filter-chip ${activeCategory===cat?'is-active':''}" data-section-category="${cat}">${cat}</button>`).join('')}</div><div class="section-library-grid" style="padding: 0 16px 24px; display: flex; flex-direction: column; gap: 12px;">${filtered.map((item,i)=>`<article class="section-template-card" style="border: 1px solid var(--border-subtle); border-radius: 12px; background: var(--surface-control); padding: 14px; display: flex; flex-direction: column; gap: 8px;"><div style="display: flex; align-items: center; justify-content: space-between;"><span style="font: 700 8.5px/1 var(--font-family-mono); color: var(--ui-accent); letter-spacing: 0.1em; text-transform: uppercase;">${escapeHtml(item.category)}</span><span style="font-size: 9.5px; color: var(--text-tertiary);">0${i+1}</span></div><div><strong style="display: block; font-size: 13.5px; color: var(--text-primary); margin-bottom: 2px;">${escapeHtml(item.name)}</strong><small style="display: block; font-size: 10.5px; color: var(--text-tertiary); line-height: 1.35;">${escapeHtml(item.desc)}</small></div><div style="display: flex; gap: 8px; margin-top: 4px;"><button type="button" class="primary-action" data-template="${item.id}" style="flex: 1; height: 34px; border-radius: 8px; font-size: 11px; font-weight: 700; display: flex; align-items: center; justify-content: center; gap: 6px; cursor: pointer;">${uiIcon('plus')} Insertar sección</button></div></article>`).join('')}${!filtered.length?'<div class="asset-empty">No encontramos secciones que coincidan con tu búsqueda.</div>':''}</div>`;
     return;
   }
   if(state.tab==='layers'){
@@ -13255,6 +13352,7 @@ document.addEventListener('click',event=>{
   const favoriteType=event.target.closest('[data-favorite-type]'); if(favoriteType){event.preventDefault();event.stopPropagation();toggleElementFavorite(favoriteType.dataset.favoriteType);return;}
   const elementView=event.target.closest('[data-element-view]'); if(elementView){state.elementView=elementView.dataset.elementView;renderLeft();return;}
   const elementCategory=event.target.closest('[data-element-category]'); if(elementCategory){state.elementCategory=elementCategory.dataset.elementCategory;renderLeft();return;}
+  const sectionCategory=event.target.closest('[data-section-category]'); if(sectionCategory){state.sectionCategory=sectionCategory.dataset.sectionCategory;renderLeft();return;}
   const add=event.target.closest('[data-type]'); if(add){addElement(add.dataset.type);return;}
   const template=event.target.closest('[data-template]'); if(template){addTemplate(template.dataset.template);return;}
   const layer=event.target.closest('[data-layer]'); if(layer&&!event.target.closest('.layer-drag,.layer-collapse,.layer-visibility,.layer-lock')){setSelection(layer.dataset.layer,event.shiftKey||event.metaKey||event.ctrlKey);render();return;}
@@ -13374,6 +13472,7 @@ document.addEventListener('input',event=>{
   if(t===els.projectName){ if(!state.transaction)beginTransaction('project-name'); state.projectName=t.value||'Untitled project'; state.pageMeta.title=state.pageMeta.title==='Untitled landing page'?state.projectName:state.pageMeta.title; markUnsaved(); return; }
   if(t.dataset.layerSearch!==undefined){state.layerSearch=t.value;renderLeft();const input=els.left.querySelector('[data-layer-search]');if(input){input.focus();input.setSelectionRange(input.value.length,input.value.length);}return;}
   if(t.dataset.elementSearch!==undefined){state.elementSearch=t.value;renderLeft();const input=els.left.querySelector('[data-element-search]');if(input){input.focus();input.setSelectionRange(input.value.length,input.value.length);}return;}
+  if(t.dataset.sectionSearch!==undefined){state.sectionSearch=t.value;renderLeft();const input=els.left.querySelector('[data-section-search]');if(input){input.focus();input.setSelectionRange(input.value.length,input.value.length);}return;}
   if(t.dataset.assetSearch!==undefined){state.assetSearch=t.value;renderLeft();const input=els.left.querySelector('[data-asset-search]');if(input){input.focus();input.setSelectionRange(input.value.length,input.value.length);}return;}
   if(t.dataset.componentSearch!==undefined){state.componentSearch=t.value;renderLeft();const input=els.left.querySelector('[data-component-search]');if(input){input.focus();input.setSelectionRange(input.value.length,input.value.length);}return;}
   if(t.dataset.componentPropInput!==undefined){setComponentPropertyValue(t.dataset.componentId,t.dataset.componentRootId,t.dataset.componentPropInput,t.value);return;}
