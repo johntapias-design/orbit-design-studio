@@ -2,6 +2,8 @@
 
 Versión standalone profesional de Orbit Design Studio v0.24.
 
+[![Netlify Deploy Status](https://api.netlify.com/api/v1/badges/orbit-design-studio/deploy-status)](https://app.netlify.com)
+
 ## Abrir Orbit
 
 Abre `index.html` con doble clic. No requiere instalación, npm ni compilación.
