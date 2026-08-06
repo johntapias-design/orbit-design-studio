@@ -1458,15 +1458,16 @@ function multiCommand(command){
   const ids=selectedIds();if(ids.length<2&&command!=='ungroup')return;
   if(command==='group'){groupSelection();return;}if(command==='ungroup'){ungroupSelection();return;}
   const before=snapshot();
-  if(command==='left'){multiStyle('justifySelf','start');multiStyle('alignSelf','flex-start');multiStyle('marginLeft','0');multiStyle('marginRight','auto');}
-  if(command==='center'){multiStyle('justifySelf','center');multiStyle('alignSelf','center');multiStyle('marginLeft','auto');multiStyle('marginRight','auto');}
-  if(command==='right'){multiStyle('justifySelf','end');multiStyle('alignSelf','flex-end');multiStyle('marginLeft','auto');multiStyle('marginRight','0');}
-  if(command==='top')multiStyle('alignSelf','flex-start');
-  if(command==='middle')multiStyle('alignSelf','center');
-  if(command==='bottom')multiStyle('alignSelf','flex-end');
+  if(command==='left'){multiStyle('justifySelf','start');multiStyle('alignSelf','flex-start');multiStyle('marginLeft','0');multiStyle('marginRight','auto');toast('Alineado a la izquierda');}
+  if(command==='center'){multiStyle('justifySelf','center');multiStyle('alignSelf','center');multiStyle('marginLeft','auto');multiStyle('marginRight','auto');toast('Centrado horizontalmente');}
+  if(command==='right'){multiStyle('justifySelf','end');multiStyle('alignSelf','flex-end');multiStyle('marginLeft','auto');multiStyle('marginRight','0');toast('Alineado a la derecha');}
+  if(command==='top'){multiStyle('alignSelf','flex-start');multiStyle('marginTop','0');multiStyle('marginBottom','auto');toast('Alineado arriba');}
+  if(command==='middle'){multiStyle('alignSelf','center');multiStyle('marginTop','auto');multiStyle('marginBottom','auto');toast('Centrado verticalmente');}
+  if(command==='bottom'){multiStyle('alignSelf','flex-end');multiStyle('marginTop','auto');multiStyle('marginBottom','0');toast('Alineado abajo');}
   if(command==='distribute-x'||command==='distribute-y'){
     const infos=ids.map(id=>findInfo(state.nodes,id));const same=infos.every(info=>info&&info.parentId===infos[0].parentId);
     if(same){const parentId=infos[0].parentId;if(parentId)state.nodes=update(state.nodes,parentId,parent=>({...parent,styles:{...parent.styles,[bpKey()]:{...(parent.styles?.[bpKey()]||{}),display:'flex',direction:command==='distribute-x'?'row':'column',justifyContent:'space-between',alignItems:'center'}}}));}
+    toast(command==='distribute-x'?'Distribuido horizontalmente':'Distribuido verticalmente');
   }
   pushHistory(before);markUnsaved();render();
 }
@@ -3026,6 +3027,13 @@ function componentInspectorPanel(component,root){
 
 function renderInspector(){
   state.inspectorMode='advanced';
+  const ids=selectedIds();
+  if(ids.length>=2){
+    const count=ids.length;
+    els.actions.innerHTML=`<button data-multi="group" title="Agrupar">${uiIcon('component')}</button><button data-action="delete" class="danger" title="Eliminar">${uiIcon('trash')}</button>`;
+    els.inspector.innerHTML=`<div class="inspector-edit-workspace"><header class="multi-selection-inspector-head"><span>MULTISELECCIÓN</span><h2>${count} Elementos Seleccionados</h2><p>Alinea, distribuye espacios o agrupa los elementos seleccionados.</p></header><div class="multi-selection-inspector-body"><section class="inspector-section"><header><span>ALIGNMENT</span><h3>Alineación de bordes y centros</h3></header><div class="alignment-tools-grid"><button type="button" class="alignment-tool-btn" data-multi="left" title="Alinear a la izquierda"><span class="align-icon">⇤</span><span>Izquierda</span></button><button type="button" class="alignment-tool-btn" data-multi="center" title="Centrar horizontalmente"><span class="align-icon">↔</span><span>Centro X</span></button><button type="button" class="alignment-tool-btn" data-multi="right" title="Alinear a la derecha"><span class="align-icon">⇥</span><span>Derecha</span></button><button type="button" class="alignment-tool-btn" data-multi="top" title="Alinear arriba"><span class="align-icon">↥</span><span>Arriba</span></button><button type="button" class="alignment-tool-btn" data-multi="middle" title="Centrar verticalmente"><span class="align-icon">↕</span><span>Centro Y</span></button><button type="button" class="alignment-tool-btn" data-multi="bottom" title="Alinear abajo"><span class="align-icon">↧</span><span>Abajo</span></button></div></section><section class="inspector-section"><header><span>DISTRIBUTION</span><h3>Distribución de espacio</h3></header><div class="distribution-tools-grid"><button type="button" class="alignment-tool-btn" data-multi="distribute-x" title="Distribuir horizontalmente"><span class="align-icon">⋯</span><span>Equidistante X</span></button><button type="button" class="alignment-tool-btn" data-multi="distribute-y" title="Distribuir verticalmente"><span class="align-icon">⋮</span><span>Equidistante Y</span></button></div></section><section class="inspector-section"><header><span>STRUCTURE</span><h3>Agrupamiento</h3></header><button type="button" class="primary-action multi-group-btn" data-multi="group">${uiIcon('component')} <span>Agrupar elementos (${count})</span></button></section></div></div>`;
+    return;
+  }
   const node=selected();
   if(!node){
     els.actions.innerHTML='';
