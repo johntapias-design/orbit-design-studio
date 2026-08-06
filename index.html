@@ -10660,13 +10660,59 @@ function colorInput(prop,value){
   const resolved=resolveToken(value); const valid=/^#[0-9a-f]{6}$/i.test(resolved||'')?resolved:'#ffffff';
   return `<div class="color-input"><input data-color-prop="${prop}" type="color" value="${valid}"><input class="color-text" data-style-prop="${prop}" value="${escapeHtml(value||'')}"></div>`;
 }
+function colorLuminance(hex){
+  const clean=String(hex||'').replace('#','');
+  const full=clean.length===3?clean.split('').map(c=>c+c).join(''):clean;
+  const rgb=(full.match(/.{2}/g)||['00','00','00']).map(x=>parseInt(x,16)/255);
+  const [r,g,b]=rgb.map(c=>c<=0.03928?c/12.92:Math.pow((c+0.055)/1.055,2.4));
+  return 0.2126*(r||0) + 0.7152*(g||0) + 0.0722*(b||0);
+}
+function contrastRatio(fgHex, bgHex){
+  const l1=colorLuminance(fgHex);
+  const l2=colorLuminance(bgHex);
+  const lighter=Math.max(l1,l2);
+  const darker=Math.min(l1,l2);
+  return (lighter + 0.05) / (darker + 0.05);
+}
+function wcagContrastRating(fgHex, bgHex){
+  const ratio=contrastRatio(fgHex, bgHex);
+  if(ratio>=7) return { level: 'AAA', ratio: ratio.toFixed(1), pass: true };
+  if(ratio>=4.5) return { level: 'AA', ratio: ratio.toFixed(1), pass: true };
+  if(ratio>=3) return { level: 'AA Large', ratio: ratio.toFixed(1), pass: true };
+  return { level: 'FAIL', ratio: ratio.toFixed(1), pass: false };
+}
+function wcagPageAudit(nodes=state.nodes||[]){
+  let h1Count=0, missingAlt=0, iconMissingAria=0;
+  function walk(list){
+    (list||[]).forEach(node=>{
+      if(node.type==='heading'&&node.htmlTag==='h1')h1Count++;
+      if(node.type==='image'&&(!node.alt||!node.alt.trim()))missingAlt++;
+      if((node.type==='button'||node.type==='link')&&!node.content&&!node.ariaLabel)iconMissingAria++;
+      walk(node.children||[]);
+    });
+  }
+  walk(nodes);
+  const issues=[];
+  if(h1Count===0)issues.push('No hay ningún encabezado H1 en la página.');
+  else if(h1Count>1)issues.push(`Hay ${h1Count} encabezados H1 (se recomienda solo 1 por página).`);
+  if(missingAlt>0)issues.push(`${missingAlt} imagen${missingAlt===1?'':'es'} sin texto alternativo (alt).`);
+  if(iconMissingAria>0)issues.push(`${iconMissingAria} botón${iconMissingAria===1?'':'es'} solo con icono sin atributo aria-label.`);
+  return { h1Count, missingAlt, iconMissingAria, issues, score: Math.max(0, 100 - issues.length * 20) };
+}
 function inspectorColorControl(prop,current,label='Color'){
   const raw=String(current||'');
   const color=normalizeColorValue(raw,'#151513');
   const activeToken=Object.entries(state.tokens.colors||{}).find(([key])=>tokenRef('colors',key)===raw);
   const currentLabel=activeToken?.[1]?.name||'Personalizado';
   const tokens=Object.entries(state.tokens.colors||{}).map(([key,item])=>{const ref=tokenRef('colors',key);const swatch=normalizeColorValue(item.value,'#151513');return `<button type="button" class="inspector-color-token ${raw===ref?'is-active':''}" data-inspector-color-token="${prop}" data-inspector-color-value="${escapeHtml(ref)}" aria-pressed="${raw===ref}" title="Usar ${escapeHtml(item.name)}"><i style="--token-swatch:${escapeHtml(swatch)}" aria-hidden="true"></i><span>${escapeHtml(item.name)}</span></button>`;}).join('');
-  return `<div class="inspector-color-control"><button type="button" class="inspector-color-trigger" data-inspector-color-menu="${prop}" aria-label="Abrir selector de ${escapeHtml(label.toLowerCase())}" aria-expanded="false"><i style="--inspector-color:${escapeHtml(color)}" aria-hidden="true"></i><span>${escapeHtml(currentLabel)}</span>${uiIcon('arrowDown')}</button><span class="inspector-color-popover" data-inspector-color-popover role="dialog" aria-label="${escapeHtml(label)}" hidden><span class="inspector-color-head"><span><small>Color</small><strong>${escapeHtml(label)}</strong></span><button type="button" data-inspector-color-close aria-label="Cerrar selector de color">${uiIcon('close')}</button></span><span class="inspector-color-section"><small>Variables del proyecto</small><span class="inspector-color-token-grid">${tokens||'<span class="google-font-project-empty">No hay variables de color.</span>'}</span></span><span class="inspector-color-section"><label class="inspector-color-custom ${activeToken?'':'is-active'}">Personalizado<input type="color" value="${escapeHtml(color)}" data-inspector-color-custom="${prop}" aria-label="Color personalizado"></label></span></span></div>`;
+  const node=selected();
+  let wcagBadge='';
+  if(node&&prop==='color'){
+    const bg=normalizeColorValue(effective(node).background||'#ffffff','#ffffff');
+    const wcag=wcagContrastRating(color,bg);
+    wcagBadge=`<span class="wcag-badge ${wcag.pass?'wcag-pass':'wcag-fail'}" title="Relación de contraste WCAG 2.1 AA: ${wcag.ratio}:1">WCAG ${wcag.level} · ${wcag.ratio}:1</span>`;
+  }
+  return `<div class="inspector-color-control"><button type="button" class="inspector-color-trigger" data-inspector-color-menu="${prop}" aria-label="Abrir selector de ${escapeHtml(label.toLowerCase())}" aria-expanded="false"><i style="--inspector-color:${escapeHtml(color)}" aria-hidden="true"></i><span>${escapeHtml(currentLabel)}</span>${wcagBadge}${uiIcon('arrowDown')}</button><span class="inspector-color-popover" data-inspector-color-popover role="dialog" aria-label="${escapeHtml(label)}" hidden><span class="inspector-color-head"><span><small>Color</small><strong>${escapeHtml(label)}</strong></span><button type="button" data-inspector-color-close aria-label="Cerrar selector de color">${uiIcon('close')}</button></span><span class="inspector-color-section"><small>Variables del proyecto</small><span class="inspector-color-token-grid">${tokens||'<span class="google-font-project-empty">No hay variables de color.</span>'}</span></span><span class="inspector-color-section"><label class="inspector-color-custom ${activeToken?'':'is-active'}">Personalizado<input type="color" value="${escapeHtml(color)}" data-inspector-color-custom="${prop}" aria-label="Color personalizado"></label></span></span></div>`;
 }
 function segmented(prop,values,current,cols='two'){ return `<div class="segmented ${cols}">${values.map(([v,l])=>`<button data-style-button="${prop}" data-value="${v}" class="${current===v?'active':''}">${l}</button>`).join('')}</div>`; }
 function iconSvg(name){
@@ -11559,7 +11605,9 @@ function importTabs(active){
 function showPageSettings(){
   const meta=state.pageMeta||{};const page=currentPage();const issues=pageSeoIssueCount(meta);const score=pageSeoScore(meta);
   const title=String(meta.title||state.projectName||'').trim();const description=String(meta.description||'').trim();
-  openModal('SEO y ajustes de página','ORBIT SEO',`<div class="seo-settings-pro"><section class="seo-overview-card"><div><span>SEO SCORE</span><strong>${score}</strong><small>/100</small></div><p>${issues?'Completa los campos pendientes para mejorar la preparación de esta página.':'La información SEO básica de esta página está completa.'}</p></section><section class="seo-settings-section"><header><span>PAGE</span><h3>Identidad y ruta</h3></header><div class="page-settings-grid">${field('Nombre interno',`<input data-page-record="name" value="${escapeHtml(page.name||'Page')}">`)}${field('Ruta',`<input data-page-record="slug" value="${escapeHtml(pageRouteLabel(page))}" placeholder="/about">`)}</div>${field('Idioma del documento',`<input data-page-meta="language" value="${escapeHtml(meta.language||'es')}" placeholder="es">`)}</section><section class="seo-settings-section"><header><span>SEARCH</span><h3>Vista en buscadores</h3></header>${field('Título SEO',`<input data-page-meta="title" value="${escapeHtml(title)}" maxlength="70">`)}${field('Meta description',`<textarea data-page-meta="description" rows="5" maxlength="180">${escapeHtml(description)}</textarea>`)}<div class="serp-preview"><span>Vista previa</span><strong>${escapeHtml(title||page.name||state.projectName)}</strong><small>${escapeHtml(pageRouteLabel(page))}</small><p>${escapeHtml(description||'Añade una descripción para mostrar cómo aparecerá esta página en los resultados de búsqueda.')}</p></div><div class="seo-lengths"><span>Title: <strong>${title.length}</strong>/70</span><span>Description: <strong>${description.length}</strong>/180</span></div></section><section class="seo-settings-section"><header><span>SOCIAL & CANONICAL</span><h3>Open Graph e indexación</h3></header>${field('Imagen Open Graph',`<input data-page-meta="ogImage" value="${escapeHtml(meta.ogImage||'')}" placeholder="/assets/og-cover.jpg">`)}${field('URL Canónica',`<input data-page-meta="canonicalUrl" value="${escapeHtml(meta.canonicalUrl||'')}" placeholder="https://mi-dominio.com/pagina">`)}<label class="page-index-toggle"><input type="checkbox" data-page-meta-check="noIndex" ${meta.noIndex?'checked':''}><span>Evitar indexación de esta página</span></label></section><button class="primary-action page-settings-save" type="button" data-save-page-meta>Guardar SEO y página</button></div>`,'page-settings-modal seo-settings-modal');
+  const wcag=wcagPageAudit(state.nodes);
+  const wcagIssuesHtml=wcag.issues.length?wcag.issues.map(item=>`<div class="wcag-issue-item">⚠️ ${escapeHtml(item)}</div>`).join(''):'<div class="wcag-issue-clean">✅ Jerarquía H1, imágenes alt y atributos aria impecables.</div>';
+  openModal('SEO y accesibilidad WCAG','ORBIT SEO & WCAG',`<div class="seo-settings-pro"><section class="seo-overview-card"><div><span>SEO SCORE</span><strong>${score}</strong><small>/100</small></div><p>${issues?'Completa los campos pendientes para mejorar la preparación de esta página.':'La información SEO básica de esta página está completa.'}</p></section><section class="seo-overview-card wcag-overview-card"><div><span>WCAG SCORE</span><strong>${wcag.score}</strong><small>/100</small></div><div class="wcag-issues-list">${wcagIssuesHtml}</div></section><section class="seo-settings-section"><header><span>PAGE</span><h3>Identidad y ruta</h3></header><div class="page-settings-grid">${field('Nombre interno',`<input data-page-record="name" value="${escapeHtml(page.name||'Page')}">`)}${field('Ruta',`<input data-page-record="slug" value="${escapeHtml(pageRouteLabel(page))}" placeholder="/about">`)}</div>${field('Idioma del documento',`<input data-page-meta="language" value="${escapeHtml(meta.language||'es')}" placeholder="es">`)}</section><section class="seo-settings-section"><header><span>SEARCH</span><h3>Vista en buscadores</h3></header>${field('Título SEO',`<input data-page-meta="title" value="${escapeHtml(title)}" maxlength="70">`)}${field('Meta description',`<textarea data-page-meta="description" rows="5" maxlength="180">${escapeHtml(description)}</textarea>`)}<div class="serp-preview"><span>Vista previa</span><strong>${escapeHtml(title||page.name||state.projectName)}</strong><small>${escapeHtml(pageRouteLabel(page))}</small><p>${escapeHtml(description||'Añade una descripción para mostrar cómo aparecerá esta página en los resultados de búsqueda.')}</p></div><div class="seo-lengths"><span>Title: <strong>${title.length}</strong>/70</span><span>Description: <strong>${description.length}</strong>/180</span></div></section><section class="seo-settings-section"><header><span>SOCIAL & CANONICAL</span><h3>Open Graph e indexación</h3></header>${field('Imagen Open Graph',`<input data-page-meta="ogImage" value="${escapeHtml(meta.ogImage||'')}" placeholder="/assets/og-cover.jpg">`)}${field('URL Canónica',`<input data-page-meta="canonicalUrl" value="${escapeHtml(meta.canonicalUrl||'')}" placeholder="https://mi-dominio.com/pagina">`)}<label class="page-index-toggle"><input type="checkbox" data-page-meta-check="noIndex" ${meta.noIndex?'checked':''}><span>Evitar indexación de esta página</span></label></section><button class="primary-action page-settings-save" type="button" data-save-page-meta>Guardar SEO y página</button></div>`,'page-settings-modal seo-settings-modal');
 }
 
 function showBreakpointManager(){
