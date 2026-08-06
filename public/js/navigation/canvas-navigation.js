@@ -3480,11 +3480,39 @@ function normalizeOrbitImport(data){
     group.forEach(node=>{node.globalClassIds=[...(node.globalClassIds||[]),id];node.styleClassId=id;node.styleEditMode='shared';node.styles={base:{}};node.states={};});
   });
   if(autoClasses)warnings.push(`${autoClasses} clases compartidas creadas automáticamente a partir de estilos repetidos.`);
+  let autoComponents=0;const importedComponents=Array.isArray(source.components)?source.components:[];
+  const treeSignatures=new Map();
+  function getTreeTopologySignature(n){const childSigs=(n.children||[]).map(getTreeTopologySignature).join('|');return `${n.type}[${n.styleClassId||''}](${childSigs})`;}
+  nodes.forEach(node=>{
+    if(node.type==='container'||node.type==='card'||node.type==='section'){
+      (node.children||[]).forEach(child=>{
+        if((child.type==='container'||child.type==='card')&&(child.children||[]).length>0){
+          const sig=getTreeTopologySignature(child);
+          if(!treeSignatures.has(sig))treeSignatures.set(sig,[]);
+          treeSignatures.get(sig).push(child);
+        }
+      });
+    }
+  });
+  treeSignatures.forEach((group,sig)=>{
+    if(group.length<2||sig.length<12)return;
+    const masterNode=group[0];
+    if(masterNode.componentRef||importedComponents.some(c=>c.masterId===masterNode.id))return;
+    const compId=uid('comp');
+    const compName=masterNode.name||`${masterNode.type.charAt(0).toUpperCase()+masterNode.type.slice(1)} Component`;
+    masterNode.componentRef=compId;
+    masterNode.componentSource='master';
+    const props=(typeof detectComponentPropsFromTree==='function')?detectComponentPropsFromTree(masterNode):[];
+    importedComponents.push({id:compId,name:compName,masterId:masterNode.id,instances:group.length-1,variants:[],props,createdAt:Date.now()});
+    for(let i=1;i<group.length;i++){group[i].componentRef=compId;group[i].componentSource='instance';}
+    autoComponents++;
+  });
+  if(autoComponents)warnings.push(`${autoComponents} componentes maestros promovidos automáticamente desde estructuras repetidas.`);
   const emptyImages=flat.filter(node=>node.type==='image'&&!String(node.src||'').trim()).length;if(emptyImages)warnings.push(`${emptyImages} imágenes no tienen una fuente definida.`);
   const missingAlt=flat.filter(node=>node.type==='image'&&!String(node.alt||'').trim()).length;if(missingAlt)warnings.push(`${missingAlt} imágenes requieren texto alternativo.`);
   const pages=Array.isArray(source.pages)?source.pages:[];
   const classAssignments=flat.reduce((sum,node)=>sum+(node.globalClassIds||[]).length,0);
-  return {document:{...source,nodes:hydrateNodes(nodes),tokens:source.tokens||null,assets:Array.isArray(source.assets)?source.assets:[],components:Array.isArray(source.components)?source.components:[],globalClasses,pages},report:{nodes:flat.length,sections:flat.filter(node=>node.type==='section').length,images:flat.filter(node=>node.type==='image').length,components:(source.components||[]).length,classes:globalClasses.length,classAssignments,autoClasses,tokens:source.tokens?Object.values(source.tokens).reduce((sum,group)=>sum+Object.keys(group||{}).length,0):0,repairedIds,unsupported,warnings}};
+  return {document:{...source,version:13,nodes:hydrateNodes(nodes),tokens:source.tokens||null,assets:Array.isArray(source.assets)?source.assets:[],components:importedComponents,globalClasses,pages},report:{nodes:flat.length,sections:flat.filter(node=>node.type==='section').length,images:flat.filter(node=>node.type==='image').length,components:importedComponents.length,classes:globalClasses.length,classAssignments,autoClasses,autoComponents,tokens:source.tokens?Object.values(source.tokens).reduce((sum,group)=>sum+Object.keys(group||{}).length,0):0,repairedIds,unsupported,warnings}};
 }
 const supportedOrbitStyleProps=new Set(['width','maxWidth','minWidth','height','maxHeight','minHeight','aspectRatio','boxSizing','paddingTop','paddingRight','paddingBottom','paddingLeft','marginTop','marginRight','marginBottom','marginLeft','gap','columnGap','rowGap','display','direction','flexWrap','justifyContent','justify','alignItems','align','justifyItems','alignContent','gridColumns','gridRows','gridTemplateColumns','gridTemplateRows','gridTemplateAreas','gridArea','gridColumn','gridRow','gridAutoColumns','gridAutoRows','gridAutoFlow','gridUseMinMax','gridColumnTracks','gridRowTracks','order','verticalAlign','alignSelf','justifySelf','flexGrow','flexShrink','flexBasis','position','zIndex','left','top','right','bottom','transform','transition','cursor','pointerEvents','background','color','fontFamily','fontSize','fontWeight','lineHeight','letterSpacing','textAlign','fontStyle','textTransform','textDecoration','textShadow','fontVariationSettings','whiteSpace','textWrap','borderRadius','borderWidth','borderColor','opacity','boxShadow','objectFit','overflow']);
 function clearOrbitImportReport(){

@@ -1,7 +1,7 @@
 # Orbit JSON Authoring Guide
 
-Versión del contrato: **Orbit JSON v12**  
-Objetivo: convertir capturas de Figma, referencias visuales o briefs en documentos que Orbit Design Studio pueda analizar e importar.
+Versión del contrato: **Orbit JSON v13**  
+Objetivo: convertir capturas de Figma, referencias visuales o briefs en documentos que Orbit Design Studio pueda analizar e importar con auto-promoción de componentes.
 
 ## 1. Archivos que debe recibir la IA
 
@@ -9,7 +9,7 @@ Para una generación consistente, entrega siempre:
 
 1. La captura del diseño.
 2. Este archivo: `docs/orbit-json-authoring-guide.md`.
-3. El esquema: `schemas/orbit-json-v12.schema.json`.
+3. El esquema: `schemas/orbit-json-v13.schema.json`.
 4. Un ejemplo válido: `examples/landing-page-ai.orbit.json`.
 5. El prompt de producción: `prompts/screenshot-to-orbit-json.md`.
 

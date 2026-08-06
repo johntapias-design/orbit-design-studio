@@ -1,0 +1,241 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://orbit.local/schemas/orbit-json-v13.schema.json",
+  "title": "Orbit JSON v13 — AI authoring contract & Component Auto-Promotion",
+  "description": "Contrato estricto versión 13 para la generación e importación de diseño visual, clases globales compartidas y auto-promoción de componentes.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "version",
+    "projectName",
+    "pageMeta",
+    "tokens",
+    "assets",
+    "components",
+    "globalClasses",
+    "nodes"
+  ],
+  "properties": {
+    "version": {
+      "const": 13
+    },
+    "projectName": {
+      "type": "string",
+      "minLength": 1,
+      "maxLength": 120
+    },
+    "pageMeta": {
+      "$ref": "#/$defs/pageMeta"
+    },
+    "tokens": {
+      "$ref": "#/$defs/tokens"
+    },
+    "assets": {
+      "type": "array",
+      "items": {
+        "$ref": "#/$defs/asset"
+      }
+    },
+    "components": {
+      "type": "array",
+      "items": {
+        "$ref": "#/$defs/component"
+      }
+    },
+    "globalClasses": {
+      "type": "array",
+      "items": {
+        "$ref": "#/$defs/globalClass"
+      }
+    },
+    "nodes": {
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "$ref": "#/$defs/node"
+      }
+    }
+  },
+  "$defs": {
+    "pageMeta": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["language", "title", "description"],
+      "properties": {
+        "language": {
+          "type": "string",
+          "minLength": 2,
+          "maxLength": 12
+        },
+        "title": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 70
+        },
+        "description": {
+          "type": "string",
+          "maxLength": 180
+        },
+        "ogImage": {
+          "type": "string"
+        },
+        "noIndex": {
+          "type": "boolean"
+        }
+      }
+    },
+    "token": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["name", "value"],
+      "properties": {
+        "name": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 80
+        },
+        "value": {
+          "type": "string",
+          "minLength": 1
+        },
+        "cssVar": {
+          "type": "string"
+        }
+      }
+    },
+    "tokenGroup": {
+      "type": "object",
+      "additionalProperties": {
+        "$ref": "#/$defs/token"
+      }
+    },
+    "tokens": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "colors": { "$ref": "#/$defs/tokenGroup" },
+        "typography": { "$ref": "#/$defs/tokenGroup" },
+        "spacing": { "$ref": "#/$defs/tokenGroup" },
+        "radius": { "$ref": "#/$defs/tokenGroup" },
+        "shadows": { "$ref": "#/$defs/tokenGroup" }
+      }
+    },
+    "asset": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["id", "name", "type", "src"],
+      "properties": {
+        "id": { "type": "string" },
+        "name": { "type": "string" },
+        "type": { "type": "string", "enum": ["image", "svg", "icon"] },
+        "src": { "type": "string" },
+        "alt": { "type": "string" }
+      }
+    },
+    "component": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["id", "name", "masterId"],
+      "properties": {
+        "id": { "type": "string" },
+        "name": { "type": "string" },
+        "masterId": { "type": "string" },
+        "instances": { "type": "integer", "minimum": 0 },
+        "variants": {
+          "type": "array",
+          "items": { "type": "object" }
+        },
+        "props": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "required": ["id", "name", "type"],
+            "properties": {
+              "id": { "type": "string" },
+              "name": { "type": "string" },
+              "type": { "type": "string", "enum": ["text", "image", "url", "boolean"] },
+              "defaultValue": { "type": "string" }
+            }
+          }
+        },
+        "overrides": { "type": "integer", "minimum": 0 }
+      }
+    },
+    "globalClass": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["id", "name", "styles"],
+      "properties": {
+        "id": { "type": "string" },
+        "name": { "type": "string" },
+        "styles": { "type": "object" },
+        "states": { "type": "object" },
+        "backgroundConfig": { "type": "object" }
+      }
+    },
+    "backgroundConfig": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["mode"],
+      "properties": {
+        "mode": { "type": "string", "enum": ["none", "color", "image", "gradient"] },
+        "color": { "type": "string" },
+        "image": { "type": "string" },
+        "size": { "type": "string" },
+        "position": { "type": "string" },
+        "gradientType": { "type": "string", "enum": ["linear", "radial"] },
+        "angle": { "type": "integer" },
+        "gradientStops": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "required": ["color", "position"],
+            "properties": {
+              "color": { "type": "string" },
+              "position": { "type": "integer" }
+            }
+          }
+        },
+        "overlayColor": { "type": "string" },
+        "overlayOpacity": { "type": "number", "minimum": 0, "maximum": 1 }
+      }
+    },
+    "node": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["id", "type"],
+      "properties": {
+        "id": { "type": "string" },
+        "type": {
+          "type": "string",
+          "enum": ["section", "container", "heading", "text", "button", "image", "svg", "card", "divider", "spacer"]
+        },
+        "name": { "type": "string" },
+        "content": { "type": "string" },
+        "src": { "type": "string" },
+        "alt": { "type": "string" },
+        "href": { "type": "string" },
+        "svgCode": { "type": "string" },
+        "ariaLabel": { "type": "string" },
+        "level": { "type": "integer", "minimum": 1, "maximum": 6 },
+        "globalClassIds": {
+          "type": "array",
+          "items": { "type": "string" }
+        },
+        "styleClassId": { "type": "string" },
+        "styleEditMode": { "type": "string", "enum": ["shared", "local"] },
+        "componentRef": { "type": "string" },
+        "componentSource": { "type": "string", "enum": ["master", "instance"] },
+        "styles": { "type": "object" },
+        "states": { "type": "object" },
+        "backgroundConfig": { "$ref": "#/$defs/backgroundConfig" },
+        "children": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/node"
+          }
+        }
+      }
+    }
+  }
+}
