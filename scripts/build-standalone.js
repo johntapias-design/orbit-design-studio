@@ -50,8 +50,16 @@ let currentHtml = fs.readFileSync(indexPath, 'utf8');
 // Replace CSS
 currentHtml = currentHtml.replace(/<style>[\s\S]*?<\/style>/, `<style>\n${cssContent}\n</style>`);
 
-// Replace main JS block
-currentHtml = currentHtml.replace(/<script>\s*\/\* Orbit bundled standalone[\s\S]*?<\/script>/, `<script>\n${compiledJs.trim()}\n</script>`);
+// Replace main JS block safely between marker comments
+const scriptMarkerRegex = /<!-- Orbit bundled standalone script -->[\s\S]*?<!-- \/Orbit bundled standalone script -->/;
+if (scriptMarkerRegex.test(currentHtml)) {
+  currentHtml = currentHtml.replace(
+    scriptMarkerRegex,
+    `<!-- Orbit bundled standalone script -->\n    <script>\n${compiledJs.trim()}\n</script>\n    <!-- /Orbit bundled standalone script -->`
+  );
+} else {
+  currentHtml = currentHtml.replace(/<script>\s*\/\* Orbit bundled standalone[\s\S]*?<\/script>/, `<script>\n${compiledJs.trim()}\n</script>`);
+}
 
 fs.writeFileSync(indexPath, currentHtml, 'utf8');
 console.log('Successfully updated index.html from modular sources!');
