@@ -1,0 +1,921 @@
+{
+  "version": 12,
+  "projectName": "Nova Analytics",
+  "pageMeta": {
+    "language": "es",
+    "title": "Nova Analytics — decisiones con claridad",
+    "description": "Landing page de ejemplo generada para probar el flujo Screenshot to Orbit JSON."
+  },
+  "tokens": {
+    "colors": {
+      "background": {
+        "name": "Background",
+        "value": "#0b0d12",
+        "cssVar": "--color-background"
+      },
+      "surface": {
+        "name": "Surface",
+        "value": "#151922",
+        "cssVar": "--color-surface"
+      },
+      "surfaceSoft": {
+        "name": "Surface soft",
+        "value": "#1d2330",
+        "cssVar": "--color-surface-soft"
+      },
+      "text": {
+        "name": "Text",
+        "value": "#f7f5f1",
+        "cssVar": "--color-text"
+      },
+      "muted": {
+        "name": "Muted",
+        "value": "#a3a8b5",
+        "cssVar": "--color-muted"
+      },
+      "accent": {
+        "name": "Accent",
+        "value": "#ff5a36",
+        "cssVar": "--color-accent"
+      },
+      "accentSoft": {
+        "name": "Accent soft",
+        "value": "#ffb5a3",
+        "cssVar": "--color-accent-soft"
+      },
+      "line": {
+        "name": "Line",
+        "value": "#2b3240",
+        "cssVar": "--color-line"
+      }
+    },
+    "typography": {
+      "familySans": {
+        "name": "Sans principal",
+        "value": "\"Inter\", sans-serif",
+        "cssVar": "--font-family-sans"
+      },
+      "display": {
+        "name": "Display",
+        "value": "68px",
+        "cssVar": "--font-display"
+      },
+      "heading": {
+        "name": "Heading",
+        "value": "42px",
+        "cssVar": "--font-heading"
+      },
+      "bodyLarge": {
+        "name": "Body large",
+        "value": "19px",
+        "cssVar": "--font-body-large"
+      },
+      "body": {
+        "name": "Body",
+        "value": "16px",
+        "cssVar": "--font-body"
+      },
+      "small": {
+        "name": "Small",
+        "value": "13px",
+        "cssVar": "--font-small"
+      }
+    },
+    "spacing": {
+      "xs": {
+        "name": "XS",
+        "value": "8px",
+        "cssVar": "--space-xs"
+      },
+      "sm": {
+        "name": "S",
+        "value": "12px",
+        "cssVar": "--space-sm"
+      },
+      "md": {
+        "name": "M",
+        "value": "20px",
+        "cssVar": "--space-md"
+      },
+      "lg": {
+        "name": "L",
+        "value": "32px",
+        "cssVar": "--space-lg"
+      },
+      "xl": {
+        "name": "XL",
+        "value": "56px",
+        "cssVar": "--space-xl"
+      },
+      "xxl": {
+        "name": "XXL",
+        "value": "88px",
+        "cssVar": "--space-xxl"
+      }
+    },
+    "radius": {
+      "sm": {
+        "name": "Small",
+        "value": "10px",
+        "cssVar": "--radius-sm"
+      },
+      "md": {
+        "name": "Medium",
+        "value": "18px",
+        "cssVar": "--radius-md"
+      },
+      "lg": {
+        "name": "Large",
+        "value": "30px",
+        "cssVar": "--radius-lg"
+      },
+      "pill": {
+        "name": "Pill",
+        "value": "999px",
+        "cssVar": "--radius-pill"
+      }
+    },
+    "shadows": {
+      "elevated": {
+        "name": "Elevated",
+        "value": "0 30px 90px rgba(0,0,0,.38)",
+        "cssVar": "--shadow-elevated"
+      },
+      "soft": {
+        "name": "Soft",
+        "value": "0 18px 55px rgba(0,0,0,.22)",
+        "cssVar": "--shadow-soft"
+      }
+    }
+  },
+  "assets": [
+    {
+      "id": "asset-hero-dashboard",
+      "name": "Hero dashboard placeholder",
+      "src": "https://picsum.photos/seed/nova-home-dashboard/1400/1050",
+      "type": "image/jpeg",
+      "alt": "Vista previa temporal del dashboard de analítica",
+      "width": 1400,
+      "height": 1050,
+      "size": 0
+    },
+    {
+      "id": "asset-story-team",
+      "name": "Team story placeholder",
+      "src": "https://picsum.photos/seed/nova-home-team/1200/900",
+      "type": "image/jpeg",
+      "alt": "Imagen temporal de un equipo revisando información",
+      "width": 1200,
+      "height": 900,
+      "size": 0
+    }
+  ],
+  "components": [],
+  "globalClasses": [
+    {
+      "id": "class-content-stack",
+      "name": "content-stack",
+      "description": "Columna editorial compartida",
+      "styles": {
+        "base": {
+          "display": "flex",
+          "direction": "column",
+          "alignItems": "flex-start",
+          "gap": "var(--space-md)"
+        }
+      },
+      "states": {}
+    },
+    {
+      "id": "class-feature-card",
+      "name": "feature-card",
+      "description": "Superficie y espaciado de beneficios",
+      "styles": {
+        "base": {
+          "minHeight": "260px",
+          "display": "flex",
+          "direction": "column",
+          "justifyContent": "space-between",
+          "gap": "var(--space-lg)",
+          "paddingTop": "var(--space-lg)",
+          "paddingRight": "var(--space-lg)",
+          "paddingBottom": "var(--space-lg)",
+          "paddingLeft": "var(--space-lg)",
+          "background": "var(--color-surface-soft)",
+          "borderRadius": "var(--radius-md)",
+          "borderWidth": "1px",
+          "borderColor": "var(--color-line)"
+        }
+      },
+      "states": {}
+    },
+    {
+      "id": "class-feature-label",
+      "name": "feature-label",
+      "description": "Numeración de beneficios",
+      "styles": {
+        "base": {
+          "color": "var(--color-accent)",
+          "fontFamily": "var(--font-family-sans)",
+          "fontSize": "var(--font-small)",
+          "fontWeight": 700,
+          "letterSpacing": "1.4px"
+        }
+      },
+      "states": {}
+    },
+    {
+      "id": "class-feature-title",
+      "name": "feature-title",
+      "description": "Título de beneficios",
+      "styles": {
+        "base": {
+          "color": "var(--color-text)",
+          "fontFamily": "var(--font-family-sans)",
+          "fontSize": "28px",
+          "fontWeight": 700,
+          "lineHeight": 1.15
+        }
+      },
+      "states": {}
+    }
+  ],
+  "nodes": [
+    {
+      "id": "hero-section",
+      "type": "section",
+      "name": "Hero",
+      "htmlTag": "main",
+      "ariaLabel": "Presentación principal",
+      "styles": {
+        "base": {
+          "width": "100%",
+          "minHeight": "760px",
+          "display": "flex",
+          "direction": "column",
+          "justifyContent": "center",
+          "alignItems": "center",
+          "paddingTop": "var(--space-xxl)",
+          "paddingRight": "var(--space-xl)",
+          "paddingBottom": "var(--space-xxl)",
+          "paddingLeft": "var(--space-xl)",
+          "background": "var(--color-background)",
+          "color": "var(--color-text)"
+        },
+        "tablet": {
+          "minHeight": "680px",
+          "paddingRight": "32px",
+          "paddingLeft": "32px"
+        },
+        "mobile": {
+          "minHeight": "auto",
+          "paddingTop": "64px",
+          "paddingRight": "20px",
+          "paddingBottom": "64px",
+          "paddingLeft": "20px"
+        }
+      },
+      "children": [
+        {
+          "id": "hero-container",
+          "type": "container",
+          "name": "Hero content",
+          "htmlTag": "div",
+          "styles": {
+            "base": {
+              "width": "100%",
+              "maxWidth": "1240px",
+              "display": "grid",
+              "gridColumns": 2,
+              "gap": "var(--space-xl)",
+              "alignItems": "center"
+            },
+            "tablet": {
+              "gridColumns": 1,
+              "gap": "48px"
+            },
+            "mobile": {
+              "gridColumns": 1,
+              "gap": "36px"
+            }
+          },
+          "children": [
+            {
+              "id": "hero-copy",
+              "type": "container",
+              "name": "Hero copy",
+              "htmlTag": "div",
+              "styles": {
+                "base": {}
+              },
+              "children": [
+                {
+                  "id": "hero-eyebrow",
+                  "type": "text",
+                  "name": "Hero eyebrow",
+                  "htmlTag": "p",
+                  "content": "INTELLIGENCE / WITHOUT THE NOISE",
+                  "styles": {
+                    "base": {
+                      "color": "var(--color-accent)",
+                      "fontFamily": "var(--font-family-sans)",
+                      "fontSize": "var(--font-small)",
+                      "fontWeight": 700,
+                      "lineHeight": 1.2,
+                      "letterSpacing": "1.8px"
+                    }
+                  }
+                },
+                {
+                  "id": "hero-title",
+                  "type": "heading",
+                  "name": "Hero title",
+                  "tag": "h1",
+                  "htmlTag": "h1",
+                  "content": "Tus datos, finalmente claros.",
+                  "styles": {
+                    "base": {
+                      "maxWidth": "720px",
+                      "color": "var(--color-text)",
+                      "fontFamily": "var(--font-family-sans)",
+                      "fontSize": "var(--font-display)",
+                      "fontWeight": 700,
+                      "lineHeight": 1.02,
+                      "letterSpacing": "-3px",
+                      "textWrap": "balance"
+                    },
+                    "tablet": {
+                      "fontSize": "56px",
+                      "letterSpacing": "-2px"
+                    },
+                    "mobile": {
+                      "fontSize": "42px",
+                      "letterSpacing": "-1.5px"
+                    }
+                  }
+                },
+                {
+                  "id": "hero-description",
+                  "type": "text",
+                  "name": "Hero description",
+                  "htmlTag": "p",
+                  "content": "Convierte información dispersa en decisiones rápidas con un espacio de trabajo diseñado para equipos modernos.",
+                  "styles": {
+                    "base": {
+                      "maxWidth": "620px",
+                      "color": "var(--color-muted)",
+                      "fontFamily": "var(--font-family-sans)",
+                      "fontSize": "var(--font-body-large)",
+                      "fontWeight": 400,
+                      "lineHeight": 1.6
+                    },
+                    "mobile": {
+                      "fontSize": "17px"
+                    }
+                  }
+                },
+                {
+                  "id": "hero-actions",
+                  "type": "container",
+                  "name": "Hero actions",
+                  "htmlTag": "div",
+                  "styles": {
+                    "base": {
+                      "display": "flex",
+                      "direction": "row",
+                      "alignItems": "center",
+                      "gap": "var(--space-sm)"
+                    },
+                    "mobile": {
+                      "width": "100%",
+                      "direction": "column",
+                      "alignItems": "stretch"
+                    }
+                  },
+                  "children": [
+                    {
+                      "id": "hero-primary-action",
+                      "type": "button",
+                      "name": "Start free",
+                      "htmlTag": "a",
+                      "content": "Empezar gratis",
+                      "href": "#features",
+                      "styles": {
+                        "base": {
+                          "background": "var(--color-accent)",
+                          "color": "#ffffff",
+                          "fontFamily": "var(--font-family-sans)",
+                          "fontSize": "15px",
+                          "fontWeight": 700,
+                          "paddingTop": "15px",
+                          "paddingRight": "22px",
+                          "paddingBottom": "15px",
+                          "paddingLeft": "22px",
+                          "borderRadius": "var(--radius-pill)",
+                          "transition": "transform 180ms ease"
+                        },
+                        "mobile": {
+                          "width": "100%"
+                        }
+                      },
+                      "states": {
+                        "hover": {
+                          "transform": "translateY(-2px)"
+                        }
+                      }
+                    },
+                    {
+                      "id": "hero-secondary-action",
+                      "type": "button",
+                      "name": "View demo",
+                      "htmlTag": "a",
+                      "content": "Ver demostración",
+                      "href": "#story",
+                      "styles": {
+                        "base": {
+                          "background": "var(--color-surface)",
+                          "color": "var(--color-text)",
+                          "fontFamily": "var(--font-family-sans)",
+                          "fontSize": "15px",
+                          "fontWeight": 700,
+                          "paddingTop": "15px",
+                          "paddingRight": "22px",
+                          "paddingBottom": "15px",
+                          "paddingLeft": "22px",
+                          "borderRadius": "var(--radius-pill)",
+                          "borderWidth": "1px",
+                          "borderColor": "var(--color-line)"
+                        },
+                        "mobile": {
+                          "width": "100%"
+                        }
+                      }
+                    }
+                  ]
+                }
+              ],
+              "globalClassIds": [
+                "class-content-stack"
+              ],
+              "styleClassId": "class-content-stack",
+              "styleEditMode": "shared",
+              "states": {}
+            },
+            {
+              "id": "hero-visual-card",
+              "type": "card",
+              "name": "Hero visual",
+              "htmlTag": "article",
+              "styles": {
+                "base": {
+                  "minHeight": "540px",
+                  "paddingTop": "18px",
+                  "paddingRight": "18px",
+                  "paddingBottom": "18px",
+                  "paddingLeft": "18px",
+                  "background": "var(--color-surface)",
+                  "borderRadius": "var(--radius-lg)",
+                  "borderWidth": "1px",
+                  "borderColor": "var(--color-line)",
+                  "boxShadow": "var(--shadow-elevated)",
+                  "overflow": "hidden"
+                },
+                "mobile": {
+                  "minHeight": "380px",
+                  "borderRadius": "var(--radius-md)"
+                }
+              },
+              "children": [
+                {
+                  "id": "hero-dashboard-image",
+                  "type": "image",
+                  "name": "Dashboard placeholder",
+                  "htmlTag": "img",
+                  "src": "https://picsum.photos/seed/nova-home-dashboard/1400/1050",
+                  "alt": "Vista previa temporal del dashboard de analítica",
+                  "styles": {
+                    "base": {
+                      "width": "100%",
+                      "height": "100%",
+                      "minHeight": "504px",
+                      "aspectRatio": "4 / 3",
+                      "objectFit": "cover",
+                      "borderRadius": "var(--radius-md)"
+                    },
+                    "mobile": {
+                      "minHeight": "344px"
+                    }
+                  }
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "features-section",
+      "type": "section",
+      "name": "Features",
+      "htmlTag": "section",
+      "ariaLabel": "Beneficios principales",
+      "styles": {
+        "base": {
+          "width": "100%",
+          "display": "flex",
+          "direction": "column",
+          "alignItems": "center",
+          "paddingTop": "var(--space-xxl)",
+          "paddingRight": "var(--space-xl)",
+          "paddingBottom": "var(--space-xxl)",
+          "paddingLeft": "var(--space-xl)",
+          "background": "var(--color-surface)",
+          "color": "var(--color-text)"
+        },
+        "tablet": {
+          "paddingRight": "32px",
+          "paddingLeft": "32px"
+        },
+        "mobile": {
+          "paddingTop": "64px",
+          "paddingRight": "20px",
+          "paddingBottom": "64px",
+          "paddingLeft": "20px"
+        }
+      },
+      "children": [
+        {
+          "id": "features-container",
+          "type": "container",
+          "name": "Features content",
+          "htmlTag": "div",
+          "styles": {
+            "base": {
+              "width": "100%",
+              "maxWidth": "1240px",
+              "display": "flex",
+              "direction": "column",
+              "gap": "var(--space-xl)"
+            }
+          },
+          "children": [
+            {
+              "id": "features-heading",
+              "type": "heading",
+              "name": "Features heading",
+              "tag": "h2",
+              "htmlTag": "h2",
+              "content": "Menos ruido. Más dirección.",
+              "styles": {
+                "base": {
+                  "maxWidth": "720px",
+                  "color": "var(--color-text)",
+                  "fontFamily": "var(--font-family-sans)",
+                  "fontSize": "var(--font-heading)",
+                  "fontWeight": 700,
+                  "lineHeight": 1.08,
+                  "letterSpacing": "-1.8px",
+                  "textWrap": "balance"
+                },
+                "mobile": {
+                  "fontSize": "34px"
+                }
+              }
+            },
+            {
+              "id": "features-grid",
+              "type": "container",
+              "name": "Features grid",
+              "htmlTag": "div",
+              "styles": {
+                "base": {
+                  "width": "100%",
+                  "display": "grid",
+                  "gridColumns": 3,
+                  "gap": "var(--space-md)"
+                },
+                "tablet": {
+                  "gridColumns": 2
+                },
+                "mobile": {
+                  "gridColumns": 1
+                }
+              },
+              "children": [
+                {
+                  "id": "feature-card-clarity",
+                  "type": "card",
+                  "name": "Clarity feature",
+                  "htmlTag": "article",
+                  "styles": {
+                    "base": {}
+                  },
+                  "children": [
+                    {
+                      "id": "feature-label-clarity",
+                      "type": "text",
+                      "name": "Clarity number",
+                      "htmlTag": "p",
+                      "content": "01 / CLARIDAD",
+                      "styles": {
+                        "base": {}
+                      },
+                      "globalClassIds": [
+                        "class-feature-label"
+                      ],
+                      "styleClassId": "class-feature-label",
+                      "styleEditMode": "shared",
+                      "states": {}
+                    },
+                    {
+                      "id": "feature-title-clarity",
+                      "type": "heading",
+                      "name": "Clarity title",
+                      "tag": "h3",
+                      "htmlTag": "h3",
+                      "content": "Una vista que todos entienden.",
+                      "styles": {
+                        "base": {}
+                      },
+                      "globalClassIds": [
+                        "class-feature-title"
+                      ],
+                      "styleClassId": "class-feature-title",
+                      "styleEditMode": "shared",
+                      "states": {}
+                    }
+                  ],
+                  "globalClassIds": [
+                    "class-feature-card"
+                  ],
+                  "styleClassId": "class-feature-card",
+                  "styleEditMode": "shared",
+                  "states": {}
+                },
+                {
+                  "id": "feature-card-speed",
+                  "type": "card",
+                  "name": "Speed feature",
+                  "htmlTag": "article",
+                  "styles": {
+                    "base": {}
+                  },
+                  "children": [
+                    {
+                      "id": "feature-label-speed",
+                      "type": "text",
+                      "name": "Speed number",
+                      "htmlTag": "p",
+                      "content": "02 / VELOCIDAD",
+                      "styles": {
+                        "base": {}
+                      },
+                      "globalClassIds": [
+                        "class-feature-label"
+                      ],
+                      "styleClassId": "class-feature-label",
+                      "styleEditMode": "shared",
+                      "states": {}
+                    },
+                    {
+                      "id": "feature-title-speed",
+                      "type": "heading",
+                      "name": "Speed title",
+                      "tag": "h3",
+                      "htmlTag": "h3",
+                      "content": "Respuestas antes de la próxima reunión.",
+                      "styles": {
+                        "base": {}
+                      },
+                      "globalClassIds": [
+                        "class-feature-title"
+                      ],
+                      "styleClassId": "class-feature-title",
+                      "styleEditMode": "shared",
+                      "states": {}
+                    }
+                  ],
+                  "globalClassIds": [
+                    "class-feature-card"
+                  ],
+                  "styleClassId": "class-feature-card",
+                  "styleEditMode": "shared",
+                  "states": {}
+                },
+                {
+                  "id": "feature-card-focus",
+                  "type": "card",
+                  "name": "Focus feature",
+                  "htmlTag": "article",
+                  "styles": {
+                    "base": {
+                      "background": "var(--color-accent)",
+                      "borderWidth": "0px"
+                    },
+                    "tablet": {
+                      "gridColumn": "1 / -1"
+                    },
+                    "mobile": {
+                      "gridColumn": "auto"
+                    }
+                  },
+                  "children": [
+                    {
+                      "id": "feature-label-focus",
+                      "type": "text",
+                      "name": "Focus number",
+                      "htmlTag": "p",
+                      "content": "03 / FOCO",
+                      "styles": {
+                        "base": {
+                          "color": "#ffffff"
+                        }
+                      },
+                      "globalClassIds": [
+                        "class-feature-label"
+                      ],
+                      "styleClassId": "class-feature-label",
+                      "styleEditMode": "shared",
+                      "states": {}
+                    },
+                    {
+                      "id": "feature-title-focus",
+                      "type": "heading",
+                      "name": "Focus title",
+                      "tag": "h3",
+                      "htmlTag": "h3",
+                      "content": "Solo las métricas que mueven el negocio.",
+                      "styles": {
+                        "base": {
+                          "color": "#ffffff"
+                        }
+                      },
+                      "globalClassIds": [
+                        "class-feature-title"
+                      ],
+                      "styleClassId": "class-feature-title",
+                      "styleEditMode": "shared",
+                      "states": {}
+                    }
+                  ],
+                  "globalClassIds": [
+                    "class-feature-card"
+                  ],
+                  "styleClassId": "class-feature-card",
+                  "styleEditMode": "shared",
+                  "states": {}
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "story-section",
+      "type": "section",
+      "name": "Story",
+      "htmlTag": "section",
+      "ariaLabel": "Historia del producto",
+      "styles": {
+        "base": {
+          "width": "100%",
+          "display": "flex",
+          "direction": "column",
+          "alignItems": "center",
+          "paddingTop": "var(--space-xxl)",
+          "paddingRight": "var(--space-xl)",
+          "paddingBottom": "var(--space-xxl)",
+          "paddingLeft": "var(--space-xl)",
+          "background": "var(--color-background)",
+          "color": "var(--color-text)"
+        },
+        "tablet": {
+          "paddingRight": "32px",
+          "paddingLeft": "32px"
+        },
+        "mobile": {
+          "paddingTop": "64px",
+          "paddingRight": "20px",
+          "paddingBottom": "64px",
+          "paddingLeft": "20px"
+        }
+      },
+      "children": [
+        {
+          "id": "story-container",
+          "type": "container",
+          "name": "Story content",
+          "htmlTag": "div",
+          "styles": {
+            "base": {
+              "width": "100%",
+              "maxWidth": "1240px",
+              "display": "grid",
+              "gridColumns": 2,
+              "gap": "var(--space-xl)",
+              "alignItems": "center"
+            },
+            "tablet": {
+              "gridColumns": 1
+            },
+            "mobile": {
+              "gridColumns": 1,
+              "gap": "36px"
+            }
+          },
+          "children": [
+            {
+              "id": "story-image",
+              "type": "image",
+              "name": "Team placeholder",
+              "htmlTag": "img",
+              "src": "https://picsum.photos/seed/nova-home-team/1200/900",
+              "alt": "Imagen temporal de un equipo revisando información",
+              "styles": {
+                "base": {
+                  "width": "100%",
+                  "aspectRatio": "4 / 3",
+                  "objectFit": "cover",
+                  "borderRadius": "var(--radius-lg)",
+                  "boxShadow": "var(--shadow-soft)"
+                }
+              }
+            },
+            {
+              "id": "story-copy",
+              "type": "container",
+              "name": "Story copy",
+              "htmlTag": "div",
+              "styles": {
+                "base": {}
+              },
+              "children": [
+                {
+                  "id": "story-eyebrow",
+                  "type": "text",
+                  "name": "Story eyebrow",
+                  "htmlTag": "p",
+                  "content": "BUILT FOR REAL TEAMS",
+                  "styles": {
+                    "base": {
+                      "color": "var(--color-accent)",
+                      "fontFamily": "var(--font-family-sans)",
+                      "fontSize": "var(--font-small)",
+                      "fontWeight": 700,
+                      "letterSpacing": "1.5px"
+                    }
+                  }
+                },
+                {
+                  "id": "story-heading",
+                  "type": "heading",
+                  "name": "Story heading",
+                  "tag": "h2",
+                  "htmlTag": "h2",
+                  "content": "Diseñado para decidir, no para descifrar.",
+                  "styles": {
+                    "base": {
+                      "color": "var(--color-text)",
+                      "fontFamily": "var(--font-family-sans)",
+                      "fontSize": "var(--font-heading)",
+                      "fontWeight": 700,
+                      "lineHeight": 1.08,
+                      "letterSpacing": "-1.8px",
+                      "textWrap": "balance"
+                    },
+                    "mobile": {
+                      "fontSize": "34px"
+                    }
+                  }
+                },
+                {
+                  "id": "story-description",
+                  "type": "text",
+                  "name": "Story description",
+                  "htmlTag": "p",
+                  "content": "Nova reúne señales, contexto y seguimiento en una interfaz serena que ayuda a todo el equipo a avanzar en la misma dirección.",
+                  "styles": {
+                    "base": {
+                      "color": "var(--color-muted)",
+                      "fontFamily": "var(--font-family-sans)",
+                      "fontSize": "var(--font-body-large)",
+                      "fontWeight": 400,
+                      "lineHeight": 1.6
+                    }
+                  }
+                }
+              ],
+              "globalClassIds": [
+                "class-content-stack"
+              ],
+              "styleClassId": "class-content-stack",
+              "styleEditMode": "shared",
+              "states": {}
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

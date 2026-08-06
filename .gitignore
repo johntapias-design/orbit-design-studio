@@ -1,0 +1,17 @@
+# macOS
+.DS_Store
+.AppleDouble
+.LSOverride
+._*
+
+# Logs
+*.log
+npm-debug.log*
+yarn-debug.log*
+
+# Dependencies
+node_modules/
+
+# QA evidence / temporary output if generated dynamically
+# (Keeping qa-evidence/ tracked if it contains baseline screenshots, but ignoring temp test outputs)
+*.tmp
