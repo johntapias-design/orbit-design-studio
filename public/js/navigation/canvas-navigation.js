@@ -4210,6 +4210,7 @@ function useAsset(id){
 }
 function renameAsset(id){const asset=state.assets.find(item=>item.id===id);if(!asset)return;const value=prompt('Nuevo nombre del asset',asset.name);if(value===null||!value.trim())return;commit(()=>{asset.name=value.trim();});state.tab='assets';renderLeft();}
 function deleteAsset(id){const asset=state.assets.find(item=>item.id===id);if(!asset)return;const usage=assetUsageCount(asset);if(!confirm(usage?`Este asset tiene ${usage} uso${usage===1?'':'s'}. ¿Eliminarlo de la biblioteca? Los elementos conservarán la imagen actual.`:'¿Eliminar este asset sin uso?'))return;commit(()=>{state.assets=state.assets.filter(item=>item.id!==id);});state.tab='assets';renderLeft();}
+function cleanUnusedAssets(){const unused=(state.assets||[]).filter(asset=>assetUsageCount(asset)===0);if(!unused.length){toast('No hay assets sin uso');return;}if(!confirm(`¿Eliminar los ${unused.length} assets sin uso del proyecto?`))return;const unusedIds=new Set(unused.map(a=>a.id));commit(()=>{state.assets=state.assets.filter(a=>!unusedIds.has(a.id));});state.tab='assets';renderLeft();toast(`${unused.length} assets sin uso eliminados`);}
 async function replaceAsset(id,file){const current=state.assets.find(item=>item.id===id);if(!current||!file)return;const [next]=await readFiles([file]);if(!next)return;const oldSrc=current.src;commit(()=>{state.assets=state.assets.map(item=>item.id===id?{...next,id,name:current.name,alt:current.alt}:item);const replaceNodes=nodes=>(nodes||[]).map(node=>({...node,src:node.src===oldSrc?next.src:node.src,children:node.children?replaceNodes(node.children):undefined}));state.nodes=replaceNodes(state.nodes);state.pages=state.pages.map(page=>page.id===state.currentPageId?page:{...page,nodes:replaceNodes(page.nodes||[])});});state.tab='assets';renderLeft();toast('Asset reemplazado en todo el proyecto');}
 function setBreakpoint(bp){ viewportEngine?.setBreakpoint(bp); }
 function setZoom(next){ viewportEngine?.setZoom(next); }
@@ -4798,6 +4799,7 @@ document.addEventListener('click',event=>{
   const renameAssetButton=event.target.closest('[data-rename-asset]');if(renameAssetButton){renameAsset(renameAssetButton.dataset.renameAsset);return;}
   const replaceAssetButton=event.target.closest('[data-replace-asset]');if(replaceAssetButton){state.assetReplaceId=replaceAssetButton.dataset.replaceAsset;els.assetReplaceUpload?.click();return;}
   const deleteAssetButton=event.target.closest('[data-delete-asset]');if(deleteAssetButton){deleteAsset(deleteAssetButton.dataset.deleteAsset);return;}
+  if(event.target.closest('[data-clean-unused-assets]')){cleanUnusedAssets();return;}
   const asset=event.target.closest('[data-asset]'); if(asset&&!event.target.closest('.asset-card-actions')){useAsset(asset.dataset.asset);return;}
   if(event.target.closest('[data-upload-assets]')){els.assetUpload.click();return;}
   if(event.target.closest('[data-upload-svg]')){svgUploadInput.click();return;}
