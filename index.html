@@ -5916,7 +5916,26 @@ html[data-theme="light"] .canvas-info-dock{box-shadow:0 18px 48px rgba(54,66,82,
 .carousel-autoplay-card{overflow:hidden;border:1px solid var(--border-subtle);border-radius:11px;background:var(--surface-control)}.carousel-autoplay-card>.carousel-toggle{border-bottom:1px solid var(--border-subtle)}.carousel-autoplay-options{display:grid;gap:8px;padding:9px;transition:opacity .16s}.carousel-autoplay-options.is-disabled{opacity:.42}.carousel-autoplay-options .carousel-toggle{margin:0 -9px -9px;padding-inline:10px}
 .carousel-slide-actions{display:grid;gap:7px}.carousel-slide-actions button{display:flex;align-items:center;justify-content:center;gap:7px;height:36px;border:1px solid rgba(239,90,36,.45);border-radius:9px;background:rgba(239,90,36,.1);color:var(--orbit-orange);font-size:10px;font-weight:700;cursor:pointer}.carousel-slide-actions button svg{width:14px;height:14px}.carousel-slide-actions small{color:var(--text-tertiary);font-size:8px;line-height:1.45}
 .carousel-slide-context{display:grid;grid-template-columns:34px minmax(0,1fr) auto 30px;align-items:center;gap:8px;margin-bottom:12px;padding:9px;border:1px solid var(--border-subtle);border-radius:11px;background:var(--surface-control)}.carousel-slide-context>span{display:grid;place-items:center;width:34px;height:34px;border-radius:9px;background:rgba(141,92,255,.13);color:#a986ff}.carousel-slide-context>span svg{width:16px;height:16px}.carousel-slide-context>div{display:grid;gap:2px;min-width:0}.carousel-slide-context small{color:#a986ff;font:700 7px var(--font-family-mono);letter-spacing:.08em}.carousel-slide-context strong{overflow:hidden;color:var(--text-secondary);font-size:10px;text-overflow:ellipsis;white-space:nowrap}.carousel-slide-context button{height:30px;padding:0 8px;border:1px solid var(--border-default);border-radius:8px;background:transparent;color:var(--text-secondary);font-size:8px;cursor:pointer}.carousel-slide-context button:last-child{display:grid;place-items:center;width:30px;padding:0}.carousel-slide-context button svg{width:13px;height:13px}.carousel-slide-context button:disabled{opacity:.35;cursor:not-allowed}
+.carousel-preset-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:8px;margin-bottom:12px}
+.carousel-preset-card{display:flex;flex-direction:column;gap:4px;padding:10px;border:1px solid var(--border-subtle);border-radius:10px;background:var(--surface-control);cursor:pointer;transition:all .18s ease;text-align:left}
+.carousel-preset-card:hover{border-color:var(--orbit-orange);background:color-mix(in srgb,var(--orbit-orange) 8%,var(--surface-control))}
+.carousel-preset-card.is-selected{border-color:var(--orbit-orange);background:color-mix(in srgb,var(--orbit-orange) 16%,var(--surface-control));box-shadow:0 0 0 1px var(--orbit-orange)}
+.carousel-preset-card header{display:flex;align-items:center;gap:6px;font-size:11px;font-weight:700;color:var(--text-primary)}
+.carousel-preset-card header svg{width:14px;height:14px;color:var(--orbit-orange)}
+.carousel-preset-card small{font-size:9px;color:var(--text-tertiary);line-height:1.3}
+
+/* Swiper Web Component Parts & Styles */
+swiper-container::part(button-prev), swiper-container::part(button-next) { width: 44px; height: 44px; border-radius: 999px; background: rgba(255, 255, 255, 0.85); backdrop-filter: blur(12px); border: 1px solid rgba(255, 255, 255, 0.4); color: #151513; box-shadow: 0 12px 32px rgba(0,0,0,0.18); transition: transform 0.2s cubic-bezier(0.16, 1, 0.3, 1), background 0.2s ease; }
+swiper-container::part(button-prev):hover, swiper-container::part(button-next):hover { transform: scale(1.08); background: #ffffff; color: var(--orbit-orange); }
+swiper-container::part(bullet) { width: 8px; height: 8px; border-radius: 999px; background: rgba(255, 255, 255, 0.45); opacity: 0.7; transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1); }
+swiper-container::part(bullet-active) { width: 28px; border-radius: 999px; background: var(--orbit-orange); opacity: 1; }
+swiper-container[data-arrow-style="circle"]::part(button-prev), swiper-container[data-arrow-style="circle"]::part(button-next) { background: #151513; color: #ffffff; border: 0; }
+swiper-container[data-arrow-style="outline"]::part(button-prev), swiper-container[data-arrow-style="outline"]::part(button-next) { background: transparent; border: 2px solid currentColor; box-shadow: none; }
+swiper-container[data-arrow-style="hidden"]::part(button-prev), swiper-container[data-arrow-style="hidden"]::part(button-next) { display: none !important; }
+swiper-container[data-pagination-style="hidden"]::part(pagination) { display: none !important; }
+
 @media(max-width:900px){.orbit-carousel-design-meta small{display:none}.carousel-slide-context{grid-template-columns:34px minmax(0,1fr) 30px}.carousel-slide-context button:nth-of-type(1){display:none}}
+
 
 </style>
   </head>
@@ -9068,9 +9087,127 @@ const starter = [{
     ]
   }]
 }];
+
+function makeSwiperHeroSection(){
+  const section = makeNode('section');
+  section.name = 'Swiper Hero Editorial';
+  section.styles.base = {
+    width: '100%', minHeight: '680px', padding: '0', background: '#0b0e13', color: '#ffffff', position: 'relative'
+  };
+  const carousel = makeNode('carousel');
+  carousel.name = 'Hero Slider';
+  carousel.swiper = {
+    ...defaultSwiperConfig(),
+    preset: 'hero-editorial', effect: 'fade',
+    slidesPerView: { desktopXL: 1, desktop: 1, tablet: 1, mobileL: 1, mobile: 1 },
+    spaceBetween: { desktopXL: 0, desktop: 0, tablet: 0, mobileL: 0, mobile: 0 },
+    speed: 800, autoplay: true, autoplayDelay: 4500, loop: true, arrowStyle: 'frosted', paginationStyle: 'pill-dots'
+  };
+  carousel.styles.base = { width: '100%', minHeight: '680px' };
+  
+  const slide1 = makeNode('slide'); slide1.name = 'Hero Slide 1';
+  slide1.styles.base = { width: '100%', minHeight: '680px', padding: '120px 48px 80px', display: 'flex', direction: 'column', justify: 'center', align: 'flex-start', gap: '24px', background: 'linear-gradient(135deg, #161b26 0%, #0b0e13 100%)' };
+  const tag1 = makeNode('badge'); tag1.content = 'ASTRO 5.0 BUILDER'; tag1.styles.base = { color: '#ef5a24', background: 'rgba(239,90,36,0.15)', paddingTop: '6px', paddingRight: '14px', paddingBottom: '6px', paddingLeft: '14px', borderRadius: '99px', fontSize: '12px', fontWeight: 700 };
+  const h1 = makeNode('heading'); h1.tag = 'h1'; h1.content = 'Diseño visual sin límites para sitios Astro.'; h1.styles.base = { fontSize: '56px', fontWeight: 800, lineHeight: 1.05, maxWidth: '780px', color: '#ffffff' };
+  const p1 = makeNode('text'); p1.content = 'Crea componentes interactivos, carruseles fluidos y diseños responsive exportables directamente a tu proyecto.'; p1.styles.base = { fontSize: '18px', color: '#9da8b8', maxWidth: '580px', lineHeight: 1.6 };
+  const btnGroup1 = makeNode('container'); btnGroup1.styles.base = { display: 'flex', gap: '16px', marginTop: '12px' };
+  const btn1 = makeNode('button'); btn1.content = 'Explorar componentes'; btn1.styles.base = { background: '#ef5a24', color: '#ffffff', paddingTop: '14px', paddingRight: '28px', paddingBottom: '14px', paddingLeft: '28px', borderRadius: '99px', fontWeight: 700 };
+  const btn2 = makeNode('button'); btn2.content = 'Ver demo'; btn2.styles.base = { background: 'rgba(255,255,255,0.1)', color: '#ffffff', paddingTop: '14px', paddingRight: '28px', paddingBottom: '14px', paddingLeft: '28px', borderRadius: '99px', fontWeight: 700 };
+  btnGroup1.children = [btn1, btn2];
+  slide1.children = [tag1, h1, p1, btnGroup1];
+
+  const slide2 = makeNode('slide'); slide2.name = 'Hero Slide 2';
+  slide2.styles.base = { width: '100%', minHeight: '680px', padding: '120px 48px 80px', display: 'flex', direction: 'column', justify: 'center', align: 'flex-start', gap: '24px', background: 'linear-gradient(135deg, #1b1626 0%, #0b0e13 100%)' };
+  const tag2 = makeNode('badge'); tag2.content = 'PERFORMANCE PURA'; tag2.styles.base = { color: '#a986ff', background: 'rgba(169,134,255,0.15)', paddingTop: '6px', paddingRight: '14px', paddingBottom: '6px', paddingLeft: '14px', borderRadius: '99px', fontSize: '12px', fontWeight: 700 };
+  const h2 = makeNode('heading'); h2.tag = 'h1'; h2.content = 'Velocidad de carga de 100 en Lighthouse.'; h2.styles.base = { fontSize: '56px', fontWeight: 800, lineHeight: 1.05, maxWidth: '780px', color: '#ffffff' };
+  const p2 = makeNode('text'); p2.content = 'Web Components ligeros sin código sobrante. Todo el poder de SwiperJS con carga progresiva UMD.'; p2.styles.base = { fontSize: '18px', color: '#9da8b8', maxWidth: '580px', lineHeight: 1.6 };
+  const btnGroup2 = makeNode('container'); btnGroup2.styles.base = { display: 'flex', gap: '16px', marginTop: '12px' };
+  const btn3 = makeNode('button'); btn3.content = 'Probar componentes'; btn3.styles.base = { background: '#a986ff', color: '#ffffff', paddingTop: '14px', paddingRight: '28px', paddingBottom: '14px', paddingLeft: '28px', borderRadius: '99px', fontWeight: 700 };
+  btnGroup2.children = [btn3];
+  slide2.children = [tag2, h2, p2, btnGroup2];
+
+  carousel.children = [slide1, slide2];
+  section.children = [carousel];
+  return section;
+}
+
+function makeSwiperTestimonialsSection(){
+  const section = makeNode('section');
+  section.name = 'Testimonios Carrusel';
+  section.styles.base = { width: '100%', padding: '96px 32px', background: '#0b0e13', color: '#ffffff' };
+  const header = makeNode('container'); header.styles.base = { width: '100%', maxWidth: '1200px', marginTop: '0', marginRight: 'auto', marginBottom: '48px', marginLeft: 'auto', textAlign: 'center', display: 'flex', direction: 'column', align: 'center', gap: '12px' };
+  const badge = makeNode('badge'); badge.content = 'LO QUE DICEN NUESTROS CLIENTES'; badge.styles.base = { color: '#ef5a24', fontSize: '11px', fontWeight: 700, letterSpacing: '1.5px' };
+  const title = makeNode('heading'); title.tag = 'h2'; title.content = 'Diseñado para equipos exigentes'; title.styles.base = { fontSize: '38px', fontWeight: 800, color: '#ffffff' };
+  header.children = [badge, title];
+
+  const carousel = makeNode('carousel');
+  carousel.name = 'Carrusel Testimonios';
+  carousel.swiper = {
+    ...defaultSwiperConfig(),
+    preset: 'testimonial-cards',
+    slidesPerView: { desktopXL: 3, desktop: 3, tablet: 2, mobileL: 1, mobile: 1 },
+    spaceBetween: { desktopXL: 24, desktop: 24, tablet: 20, mobileL: 16, mobile: 16 },
+    speed: 600, loop: true, autoplay: true, autoplayDelay: 5000, arrowStyle: 'frosted', paginationStyle: 'pill-dots'
+  };
+
+  const makeTestimonialSlide = (num, name, role, text) => {
+    const slide = makeNode('slide'); slide.name = `Testimonio ${num}`;
+    const card = makeNode('card'); card.styles.base = { padding: '32px', borderRadius: '20px', background: 'rgba(255,255,255,0.04)', border: '1px solid rgba(255,255,255,0.08)', display: 'flex', direction: 'column', gap: '20px', minHeight: '260px' };
+    const stars = makeNode('text'); stars.content = '★★★★★'; stars.styles.base = { color: '#f59e0b', fontSize: '16px' };
+    const quote = makeNode('text'); quote.content = `“${text}”`; quote.styles.base = { fontSize: '15px', color: '#d1d5db', lineHeight: 1.6 };
+    const author = makeNode('container'); author.styles.base = { marginTop: 'auto', display: 'flex', direction: 'column', gap: '2px' };
+    const nameEl = makeNode('text'); nameEl.content = name; nameEl.styles.base = { fontSize: '14px', fontWeight: 700, color: '#ffffff' };
+    const roleEl = makeNode('text'); roleEl.content = role; roleEl.styles.base = { fontSize: '12px', color: '#9ca3af' };
+    author.children = [nameEl, roleEl];
+    card.children = [stars, quote, author];
+    slide.children = [card];
+    return slide;
+  };
+
+  carousel.children = [
+    makeTestimonialSlide(1, 'Sofía Ramírez', 'Directora de Arte @ Studio Design', 'Orbit revolucionó la velocidad con la que creamos prototipos en Astro. Los carruseles quedan impecables.'),
+    makeTestimonialSlide(2, 'Carlos Mendoza', 'Lead Frontend @ TechFlow', 'La exportación limpia de código y los componentes de Swiper integrados nos ahorran días de trabajo.'),
+    makeTestimonialSlide(3, 'Elena Gómez', 'Fundadora @ Agencia Pixel', 'La experiencia visual del editor y la fidelidad responsive son sencillamente de otro nivel.')
+  ];
+
+  section.children = [header, carousel];
+  return section;
+}
+
+function makeSwiperLogoTickerSection(){
+  const section = makeNode('section');
+  section.name = 'Banner Marquee de Logotipos';
+  section.styles.base = { width: '100%', padding: '40px 0', background: '#11151c', borderTop: '1px solid rgba(255,255,255,0.06)', borderBottom: '1px solid rgba(255,255,255,0.06)' };
+  
+  const carousel = makeNode('carousel');
+  carousel.name = 'Logo Marquee';
+  carousel.swiper = {
+    ...defaultSwiperConfig(),
+    preset: 'logo-ticker',
+    slidesPerView: { desktopXL: 6, desktop: 5, tablet: 4, mobileL: 3, mobile: 2 },
+    spaceBetween: { desktopXL: 32, desktop: 32, tablet: 24, mobileL: 16, mobile: 16 },
+    speed: 3500, loop: true, autoplay: true, autoplayDelay: 0, arrowStyle: 'hidden', paginationStyle: 'hidden'
+  };
+
+  const logos = ['Astro', 'Tailwind', 'React', 'Vite', 'TypeScript', 'SwiperJS'];
+  carousel.children = logos.map((brand, i) => {
+    const slide = makeNode('slide'); slide.name = `Logo ${brand}`;
+    const text = makeNode('text'); text.content = brand.toUpperCase();
+    text.styles.base = { fontSize: '18px', fontWeight: 800, color: 'rgba(255,255,255,0.4)', letterSpacing: '2px', textAlign: 'center', width: '100%' };
+    slide.children = [text];
+    return slide;
+  });
+
+  section.children = [carousel];
+  return section;
+}
+
 const sectionTemplates = [
   {id:'navbar',name:'Navbar Pro',desc:'Logo, menú de navegación y botón CTA',category:'Header',create:makeNavbar},
   {id:'hero',name:'Hero Split Editorial',desc:'Titular, subtítulo, 2 CTAs y tarjeta visual',category:'Hero',create:makeHero},
+  {id:'swiperHero',name:'Hero Slider Swiper',desc:'Slider Hero editorial con animaciones fade',category:'Carruseles & Sliders',create:makeSwiperHeroSection},
+  {id:'swiperTestimonials',name:'Carrusel de Testimonios',desc:'Tarjetas de reseñas responsive con paginación',category:'Carruseles & Sliders',create:makeSwiperTestimonialsSection},
+  {id:'swiperLogoTicker',name:'Marquee Infinito de Marcas',desc:'Ticker continuo sin pausas para logotipos',category:'Carruseles & Sliders',create:makeSwiperLogoTickerSection},
   {id:'features',name:'Features Grid (3 Cols)',desc:'Cuadrícula de 3 tarjetas de beneficios',category:'Features',create:makeFeatures},
   {id:'pricing',name:'Tabla de Precios (3 Planes)',desc:'Starter, Pro (destacado) y Enterprise',category:'Pricing',create:makePricing},
   {id:'testimonials',name:'Testimonios & Reseñas',desc:'3 tarjetas con citas, clientes y cargos',category:'Social Proof',create:makeTestimonials},
@@ -9489,32 +9626,45 @@ function moveQuickInsertIndex(delta){
 function executeActiveQuickInsert(){const item=quickInsertItems()[state.quickInsertIndex];if(item)insertQuickElement(item.type);}
 function defaultSwiperConfig(){
   return {
-    slidesPerView:{desktopXL:4,desktop:3,tablet:2,mobileL:1.25,mobile:1},
+    preset:'hero-editorial',
+    slidesPerView:{desktopXL:3,desktop:3,tablet:2,mobileL:1,mobile:1},
     spaceBetween:{desktopXL:24,desktop:20,tablet:16,mobileL:14,mobile:12},
     speed:520,effect:'slide',direction:'horizontal',loop:true,centered:false,
-    navigation:true,pagination:true,keyboard:true,autoplay:false,autoplayDelay:3600,pauseOnMouseEnter:true
+    navigation:true,pagination:true,keyboard:true,autoplay:false,autoplayDelay:3600,pauseOnMouseEnter:true,
+    arrowStyle:'frosted',paginationStyle:'pill-dots',freeMode:false
   };
 }
 function normalizeSwiperConfig(value={}){
   const defaults=defaultSwiperConfig(),source=value&&typeof value==='object'?value:{};
   const responsive=(key,min,max)=>Object.fromEntries(BREAKPOINTS.map(bp=>{const raw=Number(source[key]?.[bp]);return [bp,Number.isFinite(raw)?clamp(raw,min,max):defaults[key][bp]];}));
+  const validEffects=['slide','fade','cards','coverflow','flip'];
+  const validArrows=['frosted','circle','outline','solid','hidden'];
+  const validPaginations=['pill-dots','fraction','progressbar','hidden'];
   return {
     ...defaults,...source,
+    preset:source.preset||'hero-editorial',
     slidesPerView:responsive('slidesPerView',1,8),spaceBetween:responsive('spaceBetween',0,120),
-    speed:clamp(Number(source.speed)||defaults.speed,100,3000),autoplayDelay:clamp(Number(source.autoplayDelay)||defaults.autoplayDelay,800,20000),
-    effect:['slide','fade'].includes(source.effect)?source.effect:'slide',direction:['horizontal','vertical'].includes(source.direction)?source.direction:'horizontal',
-    loop:source.loop!==false,centered:source.centered===true,navigation:source.navigation!==false,pagination:source.pagination!==false,keyboard:source.keyboard!==false,autoplay:source.autoplay===true,pauseOnMouseEnter:source.pauseOnMouseEnter!==false
+    speed:clamp(Number(source.speed)||defaults.speed,100,5000),autoplayDelay:clamp(Number(source.autoplayDelay)||defaults.autoplayDelay,0,20000),
+    effect:validEffects.includes(source.effect)?source.effect:'slide',
+    arrowStyle:validArrows.includes(source.arrowStyle)?source.arrowStyle:'frosted',
+    paginationStyle:validPaginations.includes(source.paginationStyle)?source.paginationStyle:'pill-dots',
+    direction:['horizontal','vertical'].includes(source.direction)?source.direction:'horizontal',
+    loop:source.loop!==false,centered:source.centered===true,navigation:source.arrowStyle!=='hidden'&&source.navigation!==false,
+    pagination:source.paginationStyle!=='hidden'&&source.pagination!==false,keyboard:source.keyboard!==false,
+    autoplay:source.autoplay===true,pauseOnMouseEnter:source.pauseOnMouseEnter!==false,freeMode:source.freeMode===true
   };
 }
 function swiperRuntimeConfig(node){
-  const config=normalizeSwiperConfig(node.swiper),fade=config.effect==='fade';
-  const point=bp=>({slidesPerView:fade?1:config.slidesPerView[bp],spaceBetween:config.spaceBetween[bp]});
+  const config=normalizeSwiperConfig(node.swiper),single=config.effect==='fade'||config.effect==='cards'||config.effect==='flip';
+  const point=bp=>({slidesPerView:single?1:config.slidesPerView[bp],spaceBetween:config.spaceBetween[bp]});
   return {
-    slidesPerView:fade?1:config.slidesPerView.mobile,spaceBetween:config.spaceBetween.mobile,
+    slidesPerView:single?1:config.slidesPerView.mobile,spaceBetween:config.spaceBetween.mobile,
     speed:config.speed,effect:config.effect,direction:config.direction,loop:config.loop,centeredSlides:config.centered,
-    navigation:config.navigation,pagination:config.pagination?{clickable:true}:false,keyboard:config.keyboard?{enabled:true,onlyInViewport:true}:false,
+    navigation:config.arrowStyle!=='hidden'&&config.navigation,
+    pagination:config.paginationStyle!=='hidden'&&config.pagination?{clickable:true,type:config.paginationStyle==='fraction'?'fraction':config.paginationStyle==='progressbar'?'progressbar':'bullets'}:false,
+    keyboard:config.keyboard?{enabled:true,onlyInViewport:true}:false,
     autoplay:config.autoplay?{delay:config.autoplayDelay,pauseOnMouseEnter:config.pauseOnMouseEnter,disableOnInteraction:false}:false,
-    a11y:{enabled:true},breakpoints:{
+    freeMode:config.freeMode,a11y:{enabled:true},breakpoints:{
       [Math.max(0,(state.breakpoints.mobile||480)+1)]:point('mobileL'),
       [Math.max(0,(state.breakpoints.mobileL||768)+1)]:point('tablet'),
       [Math.max(0,(state.breakpoints.tablet||1024)+1)]:point('desktop'),
@@ -11692,15 +11842,29 @@ function carouselToggle(fieldName,label,checked,help=''){
 }
 function carouselInspector(node){
   const config=normalizeSwiperConfig(node.swiper),bp=BREAKPOINTS.includes(state.breakpoint)?state.breakpoint:'desktop';
-  const slides=(node.children||[]).filter(child=>child.type==='slide').length;
+  const slides=(node.children||[]).filter(child=>child.type==='slide');
+  const presets=[
+    {id:'hero-editorial',title:'Hero Editorial',icon:'sparkles',desc:'Fade, 1 slide por vista, flechas frosted glass'},
+    {id:'testimonial-cards',title:'Testimonios',icon:'star',desc:'3 por vista, tarjetas con paginación píldora'},
+    {id:'showcase-coverflow',title:'Coverflow 3D',icon:'gallery',desc:'Efecto 3D de profundidad y slide central'},
+    {id:'logo-ticker',title:'Logo Marquee',icon:'zap',desc:'Ticker continuo sin pausas (FreeMode)'},
+    {id:'cards-carousel',title:'Cards Stack',icon:'grid',desc:'Efecto apilado 3D de tarjetas'}
+  ];
+
+  const presetsHtml=`<div class="carousel-preset-grid">${presets.map(p=>`<button type="button" class="carousel-preset-card ${config.preset===p.id?'is-selected':''}" data-carousel-preset="${p.id}"><header>${uiIcon(p.icon)} <span>${p.title}</span></header><small>${p.desc}</small></button>`).join('')}</div>`;
+
+  const slideListHtml=slides.map((s,idx)=>`<div class="carousel-slide-context" style="margin-bottom:6px"><span>${uiIcon('gallery')}</span><div><small>SLIDE ${idx+1}</small><strong>${escapeHtml(s.name||`Slide ${idx+1}`)}</strong></div><button type="button" data-carousel-select-parent="${s.id}">Editar</button><button type="button" data-carousel-remove-slide="${s.id}" ${slides.length<=1?'disabled':''} title="Eliminar slide">${uiIcon('trash')}</button></div>`).join('');
+
   return `<div class="carousel-inspector">
-    <header class="carousel-inspector-hero"><span>${uiIcon('gallery')}</span><div><small>SWIPER CAROUSEL</small><strong>${slides} ${slides===1?'slide':'slides'}</strong><em>${breakpointLabels[bp]} · ${state.canvasWidths[bp]} px</em></div><button type="button" data-carousel-preview title="Abrir Preview">${uiIcon('eye')}</button></header>
-    <div class="carousel-responsive-grid">${field('Slides visibles',`<input type="number" min="1" max="8" step="0.25" value="${config.slidesPerView[bp]}" data-carousel-responsive="slidesPerView" data-carousel-breakpoint="${bp}">`)}${field('Espacio',`<div class="carousel-number-unit"><input type="number" min="0" max="120" step="1" value="${config.spaceBetween[bp]}" data-carousel-responsive="spaceBetween" data-carousel-breakpoint="${bp}"><span>px</span></div>`)}</div>
-    <div class="field-grid">${field('Efecto',`<select data-carousel-field="effect"><option value="slide" ${config.effect==='slide'?'selected':''}>Slide</option><option value="fade" ${config.effect==='fade'?'selected':''}>Fade</option></select>`)}${field('Velocidad',`<div class="carousel-number-unit"><input type="number" min="100" max="3000" step="20" value="${config.speed}" data-carousel-field="speed"><span>ms</span></div>`)}</div>
-    ${field('Dirección',`<div class="segmented two"><button type="button" data-carousel-value="horizontal" data-carousel-field-button="direction" class="${config.direction==='horizontal'?'active':''}">Horizontal</button><button type="button" data-carousel-value="vertical" data-carousel-field-button="direction" class="${config.direction==='vertical'?'active':''}">Vertical</button></div>`)}
-    <div class="carousel-toggle-list">${carouselToggle('navigation','Flechas',config.navigation,'Anterior y siguiente')}${carouselToggle('pagination','Paginación',config.pagination,'Indicadores clicables')}${carouselToggle('loop','Loop infinito',config.loop,'Repite los slides')}${carouselToggle('centered','Centrar slide',config.centered,'Mantiene el activo al centro')}${carouselToggle('keyboard','Teclado',config.keyboard,'Navegación accesible')}</div>
-    <div class="carousel-autoplay-card">${carouselToggle('autoplay','Autoplay',config.autoplay,'Desactivado por defecto por accesibilidad')}<div class="carousel-autoplay-options ${config.autoplay?'':'is-disabled'}">${field('Intervalo',`<div class="carousel-number-unit"><input type="number" min="800" max="20000" step="100" value="${config.autoplayDelay}" data-carousel-field="autoplayDelay" ${config.autoplay?'':'disabled'}><span>ms</span></div>`)}${carouselToggle('pauseOnMouseEnter','Pausar al hover',config.pauseOnMouseEnter)}</div></div>
-    <div class="carousel-slide-actions"><button type="button" data-carousel-add-slide>${uiIcon('plus')} Añadir slide</button><small>Selecciona cada slide desde Capas para editar su contenido.</small></div>
+    <header class="carousel-inspector-hero"><span>${uiIcon('gallery')}</span><div><small>SWIPER CAROUSEL PRO</small><strong>${slides.length} ${slides.length===1?'slide':'slides'}</strong><em>${breakpointLabels[bp]} · ${state.canvasWidths[bp]} px</em></div><button type="button" data-carousel-preview title="Abrir Preview">${uiIcon('eye')}</button></header>
+    ${field('Presets de 1 Clic',presetsHtml)}
+    <div class="carousel-responsive-grid">${field('Slides por vista',`<input type="number" min="1" max="8" step="0.25" value="${config.slidesPerView[bp]}" data-carousel-responsive="slidesPerView" data-carousel-breakpoint="${bp}">`)}${field('Espacio entre slides',`<div class="carousel-number-unit"><input type="number" min="0" max="120" step="1" value="${config.spaceBetween[bp]}" data-carousel-responsive="spaceBetween" data-carousel-breakpoint="${bp}"><span>px</span></div>`)}</div>
+    <div class="field-grid">${field('Efecto 3D / Transición',`<select data-carousel-field="effect"><option value="slide" ${config.effect==='slide'?'selected':''}>Slide Clásico</option><option value="fade" ${config.effect==='fade'?'selected':''}>Fade Suave</option><option value="cards" ${config.effect==='cards'?'selected':''}>Cards 3D Stack</option><option value="coverflow" ${config.effect==='coverflow'?'selected':''}>Coverflow 3D</option><option value="flip" ${config.effect==='flip'?'selected':''}>Flip 3D</option></select>`)}${field('Velocidad',`<div class="carousel-number-unit"><input type="number" min="100" max="5000" step="50" value="${config.speed}" data-carousel-field="speed"><span>ms</span></div>`)}</div>
+    <div class="field-grid">${field('Estilo de Flechas',`<select data-carousel-field="arrowStyle"><option value="frosted" ${config.arrowStyle==='frosted'?'selected':''}>Frosted Glass</option><option value="circle" ${config.arrowStyle==='circle'?'selected':''}>Círculo Oscuro</option><option value="outline" ${config.arrowStyle==='outline'?'selected':''}>Contorno Lineal</option><option value="hidden" ${config.arrowStyle==='hidden'?'selected':''}>Ocultar Flechas</option></select>`)}${field('Estilo Paginación',`<select data-carousel-field="paginationStyle"><option value="pill-dots" ${config.paginationStyle==='pill-dots'?'selected':''}>Píldora Activa</option><option value="fraction" ${config.paginationStyle==='fraction'?'selected':''}>Fracción (1 / 4)</option><option value="progressbar" ${config.paginationStyle==='progressbar'?'selected':''}>Barra Progreso</option><option value="hidden" ${config.paginationStyle==='hidden'?'selected':''}>Ocultar Paginación</option></select>`)}</div>
+    <div class="carousel-toggle-list">${carouselToggle('loop','Loop Infinito',config.loop,'Repite diapositivas en bucle continuo')}${carouselToggle('freeMode','Modo Marquee (FreeMode)',config.freeMode,'Desplazamiento fluido continuo sin frenar')}${carouselToggle('centered','Centrar Slide Activo',config.centered,'Mantiene el slide principal en el centro')}${carouselToggle('keyboard','Navegación Teclado',config.keyboard,'Permite usar flechas del teclado')}</div>
+    <div class="carousel-autoplay-card">${carouselToggle('autoplay','Autoplay Automático',config.autoplay,'Avanza slides automáticamente')}<div class="carousel-autoplay-options ${config.autoplay?'':'is-disabled'}">${field('Tiempo de Pausa (0 = Ticker continuo)',`<div class="carousel-number-unit"><input type="number" min="0" max="20000" step="200" value="${config.autoplayDelay}" data-carousel-field="autoplayDelay" ${config.autoplay?'':'disabled'}><span>ms</span></div>`)}${carouselToggle('pauseOnMouseEnter','Pausar al pasar el mouse',config.pauseOnMouseEnter)}</div></div>
+    <div class="carousel-slide-actions"><button type="button" data-carousel-add-slide>${uiIcon('plus')} Añadir nuevo slide</button></div>
+    ${field('Gestión de Slides',slideListHtml)}
   </div>`;
 }
 function slideInspector(node){
@@ -13470,7 +13634,55 @@ function applyInspectorColor(prop,value){
 document.addEventListener('click',event=>{if(!event.target.closest('.responsive-suite'))setResponsiveSuiteOpen(false);if(!event.target.closest('.zoom-pro-shell'))setZoomMenuOpen(false);if(!event.target.closest('.guides-pro-shell'))setGuidesMenuOpen(false);if(!event.target.closest('.context-color-menu'))closeContextColorMenu();if(!event.target.closest('.inspector-color-control'))closeInspectorColorMenus();});
 document.addEventListener('keydown',event=>{if(event.key==='Escape'){setGuidesMenuOpen(false);closeContextColorMenu();closeInspectorColorMenus();}});
 
+function applySwiperPreset(node, presetId) {
+  let swiperPatch = { preset: presetId };
+  if (presetId === 'hero-editorial') {
+    swiperPatch = {
+      preset: 'hero-editorial', effect: 'fade',
+      slidesPerView: { desktopXL: 1, desktop: 1, tablet: 1, mobileL: 1, mobile: 1 },
+      spaceBetween: { desktopXL: 0, desktop: 0, tablet: 0, mobileL: 0, mobile: 0 },
+      speed: 800, autoplay: true, autoplayDelay: 4500, loop: true, arrowStyle: 'frosted', paginationStyle: 'pill-dots'
+    };
+  } else if (presetId === 'testimonial-cards') {
+    swiperPatch = {
+      preset: 'testimonial-cards', effect: 'slide',
+      slidesPerView: { desktopXL: 3, desktop: 3, tablet: 2, mobileL: 1, mobile: 1 },
+      spaceBetween: { desktopXL: 24, desktop: 24, tablet: 20, mobileL: 16, mobile: 16 },
+      speed: 600, autoplay: true, autoplayDelay: 5000, loop: true, arrowStyle: 'frosted', paginationStyle: 'pill-dots'
+    };
+  } else if (presetId === 'showcase-coverflow') {
+    swiperPatch = {
+      preset: 'showcase-coverflow', effect: 'coverflow',
+      slidesPerView: { desktopXL: 3, desktop: 3, tablet: 2, mobileL: 1, mobile: 1 },
+      spaceBetween: { desktopXL: 32, desktop: 32, tablet: 24, mobileL: 16, mobile: 16 },
+      speed: 700, centered: true, loop: true, arrowStyle: 'circle', paginationStyle: 'pill-dots'
+    };
+  } else if (presetId === 'logo-ticker') {
+    swiperPatch = {
+      preset: 'logo-ticker', effect: 'slide',
+      slidesPerView: { desktopXL: 6, desktop: 5, tablet: 4, mobileL: 3, mobile: 2 },
+      spaceBetween: { desktopXL: 32, desktop: 32, tablet: 24, mobileL: 16, mobile: 16 },
+      speed: 3500, autoplay: true, autoplayDelay: 0, loop: true, freeMode: true, arrowStyle: 'hidden', paginationStyle: 'hidden'
+    };
+  } else if (presetId === 'cards-carousel') {
+    swiperPatch = {
+      preset: 'cards-carousel', effect: 'cards',
+      slidesPerView: { desktopXL: 1, desktop: 1, tablet: 1, mobileL: 1, mobile: 1 },
+      spaceBetween: { desktopXL: 0, desktop: 0, tablet: 0, mobileL: 0, mobile: 0 },
+      speed: 500, loop: true, arrowStyle: 'frosted', paginationStyle: 'pill-dots'
+    };
+  }
+  commit(() => {
+    state.nodes = update(state.nodes, node.id, item => ({
+      ...item, swiper: normalizeSwiperConfig({ ...item.swiper, ...swiperPatch })
+    }));
+  }, node.id);
+  toast(`Preset aplicado`);
+}
+
 document.addEventListener('click',event=>{
+  const carouselPresetButton=event.target.closest('[data-carousel-preset]');
+  if(carouselPresetButton){const node=selected();if(node?.type==='carousel'){applySwiperPreset(node,carouselPresetButton.dataset.carouselPreset);}return;}
   const carouselFieldButton=event.target.closest('[data-carousel-field-button]');if(carouselFieldButton){const node=selected();if(node?.type==='carousel'){const fieldName=carouselFieldButton.dataset.carouselFieldButton,value=carouselFieldButton.dataset.carouselValue;commit(()=>{state.nodes=update(state.nodes,node.id,item=>({...item,swiper:normalizeSwiperConfig({...item.swiper,[fieldName]:value})}));},node.id);}return;}
   if(event.target.closest('[data-carousel-preview]')){preview();return;}
   const carouselParentButton=event.target.closest('[data-carousel-select-parent]');if(carouselParentButton){setSelection(carouselParentButton.dataset.carouselSelectParent);render();return;}
