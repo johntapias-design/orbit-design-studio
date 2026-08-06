@@ -5703,6 +5703,12 @@ html[data-theme="light"] .canvas-info-dock{box-shadow:0 18px 48px rgba(54,66,82,
 .background-studio{display:grid;gap:10px}.background-mode-switch{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:4px;padding:4px;border:1px solid var(--border-subtle);border-radius:10px;background:var(--surface-control)}.background-mode-switch button{min-width:0;height:34px;padding:0 5px;border:0;border-radius:7px;background:transparent;color:var(--text-tertiary);font-size:8px;font-weight:700;cursor:pointer}.background-mode-switch button:hover{background:var(--surface-control-hover);color:var(--text-primary)}.background-mode-switch button.active{background:rgba(239,90,36,.14);color:var(--ui-accent);box-shadow:inset 0 0 0 1px rgba(239,90,36,.28)}.background-panel{display:grid;gap:9px;padding:10px;border:1px solid var(--border-subtle);border-radius:10px;background:color-mix(in srgb,var(--surface-control) 70%,transparent)}.background-source-row{display:grid;grid-template-columns:minmax(0,1fr) 94px;gap:7px}.background-source-row input,.background-source-row select{min-width:0}.background-gradient-row{display:grid;grid-template-columns:minmax(0,1fr) 82px;gap:7px}.background-overlay-row{display:grid;grid-template-columns:minmax(0,1fr) 76px;gap:7px}.background-opacity{display:grid;grid-template-columns:minmax(0,1fr) 52px;align-items:center;gap:7px}.background-opacity input[type="range"]{width:100%;accent-color:var(--ui-accent)}.background-opacity output{height:34px;display:grid;place-items:center;border:1px solid var(--border-default);border-radius:8px;background:var(--surface-control);color:var(--text-secondary);font:600 9px var(--font-family-mono)}.background-preview{height:74px;border:1px solid var(--border-default);border-radius:9px;background:var(--background-preview);background-size:cover;box-shadow:inset 0 0 0 1px rgba(255,255,255,.025)}.background-help{margin:0;color:var(--text-tertiary);font-size:8px;line-height:1.5}@media(max-width:350px){.background-mode-switch{grid-template-columns:repeat(2,minmax(0,1fr))}.background-source-row,.background-gradient-row,.background-overlay-row{grid-template-columns:1fr}}
 @media(max-width:720px){.inspector-color-popover{width:min(252px,calc(100vw - 12px))}}
 
+.multi-selection-edit-content {
+  min-width: 0;
+  min-height: 0;
+  overflow-y: auto;
+  scrollbar-gutter: stable;
+}
 /* Multi-selection Inspector Panel Pro */
 .multi-selection-inspector-head {
   padding: 14px 16px;
@@ -5753,8 +5759,8 @@ html[data-theme="light"] .canvas-info-dock{box-shadow:0 18px 48px rgba(54,66,82,
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  gap: 3px;
-  padding: 8px 4px;
+  gap: 4px;
+  padding: 10px 4px 8px;
   border: 1px solid var(--border-subtle);
   border-radius: 8px;
   background: var(--surface-control);
@@ -5770,8 +5776,15 @@ html[data-theme="light"] .canvas-info-dock{box-shadow:0 18px 48px rgba(54,66,82,
   outline: 0;
 }
 .alignment-tool-btn .align-icon {
-  font-size: 13px;
-  font-weight: 700;
+  width: 22px;
+  height: 22px;
+  display: grid;
+  place-items: center;
+}
+.alignment-tool-btn .align-icon svg {
+  width: 16px;
+  height: 16px;
+  display: block;
 }
 .multi-group-btn {
   width: 100%;
@@ -11388,7 +11401,8 @@ function renderInspector(){
   if(ids.length>=2){
     const count=ids.length;
     els.actions.innerHTML=`<button data-multi="group" title="Agrupar">${uiIcon('component')}</button><button data-action="delete" class="danger" title="Eliminar">${uiIcon('trash')}</button>`;
-    els.inspector.innerHTML=`<div class="inspector-edit-workspace"><header class="multi-selection-inspector-head"><span>MULTISELECCIÓN</span><h2>${count} Elementos Seleccionados</h2><p>Alinea, distribuye espacios o agrupa los elementos seleccionados.</p></header><div class="multi-selection-inspector-body"><section class="inspector-section"><header><span>ALIGNMENT</span><h3>Alineación de bordes y centros</h3></header><div class="alignment-tools-grid"><button type="button" class="alignment-tool-btn" data-multi="left" title="Alinear a la izquierda"><span class="align-icon">${uiIcon('alignLeft')}</span><span>Izquierda</span></button><button type="button" class="alignment-tool-btn" data-multi="center" title="Centrar horizontalmente"><span class="align-icon">${uiIcon('alignCenter')}</span><span>Centro X</span></button><button type="button" class="alignment-tool-btn" data-multi="right" title="Alinear a la derecha"><span class="align-icon">${uiIcon('alignRight')}</span><span>Derecha</span></button><button type="button" class="alignment-tool-btn" data-multi="top" title="Alinear arriba"><span class="align-icon">${uiIcon('alignTop')}</span><span>Arriba</span></button><button type="button" class="alignment-tool-btn" data-multi="middle" title="Centrar verticalmente"><span class="align-icon">${uiIcon('alignMiddle')}</span><span>Centro Y</span></button><button type="button" class="alignment-tool-btn" data-multi="bottom" title="Alinear abajo"><span class="align-icon">${uiIcon('alignBottom')}</span><span>Abajo</span></button></div></section><section class="inspector-section"><header><span>DISTRIBUTION</span><h3>Distribución de espacio</h3></header><div class="distribution-tools-grid"><button type="button" class="alignment-tool-btn" data-multi="distribute-x" title="Distribuir horizontalmente"><span class="align-icon">${uiIcon('distributeX')}</span><span>Equidistante X</span></button><button type="button" class="alignment-tool-btn" data-multi="distribute-y" title="Distribuir verticalmente"><span class="align-icon">${uiIcon('distributeY')}</span><span>Equidistante Y</span></button></div></section><section class="inspector-section"><header><span>STRUCTURE</span><h3>Agrupamiento</h3></header><button type="button" class="primary-action multi-group-btn" data-multi="group">${uiIcon('component')} <span>Agrupar elementos (${count})</span></button></section></div></div>`;
+    const tabs=createInspectorTabs({activeTab:state.inspectorTab||'content',renderIcon:uiIcon});
+    els.inspector.innerHTML=`<div class="inspector-edit-workspace">${tabs}<div class="inspector-edit-content multi-selection-edit-content"><header class="multi-selection-inspector-head"><span>MULTISELECCIÓN</span><h2>${count} Elementos Seleccionados</h2><p>Alinea, distribuye espacios o agrupa los elementos seleccionados.</p></header><div class="multi-selection-inspector-body"><section class="inspector-section"><header><span>ALIGNMENT</span><h3>Alineación de bordes y centros</h3></header><div class="alignment-tools-grid"><button type="button" class="alignment-tool-btn" data-multi="left" title="Alinear a la izquierda"><span class="align-icon">${uiIcon('alignLeft')}</span><span>Izquierda</span></button><button type="button" class="alignment-tool-btn" data-multi="center" title="Centrar horizontalmente"><span class="align-icon">${uiIcon('alignCenter')}</span><span>Centro X</span></button><button type="button" class="alignment-tool-btn" data-multi="right" title="Alinear a la derecha"><span class="align-icon">${uiIcon('alignRight')}</span><span>Derecha</span></button><button type="button" class="alignment-tool-btn" data-multi="top" title="Alinear arriba"><span class="align-icon">${uiIcon('alignTop')}</span><span>Arriba</span></button><button type="button" class="alignment-tool-btn" data-multi="middle" title="Centrar verticalmente"><span class="align-icon">${uiIcon('alignMiddle')}</span><span>Centro Y</span></button><button type="button" class="alignment-tool-btn" data-multi="bottom" title="Alinear abajo"><span class="align-icon">${uiIcon('alignBottom')}</span><span>Abajo</span></button></div></section><section class="inspector-section"><header><span>DISTRIBUTION</span><h3>Distribución de espacio</h3></header><div class="distribution-tools-grid"><button type="button" class="alignment-tool-btn" data-multi="distribute-x" title="Distribuir horizontalmente"><span class="align-icon">${uiIcon('distributeX')}</span><span>Equidistante X</span></button><button type="button" class="alignment-tool-btn" data-multi="distribute-y" title="Distribuir verticalmente"><span class="align-icon">${uiIcon('distributeY')}</span><span>Equidistante Y</span></button></div></section><section class="inspector-section"><header><span>STRUCTURE</span><h3>Agrupamiento</h3></header><button type="button" class="primary-action multi-group-btn" data-multi="group">${uiIcon('component')} <span>Agrupar elementos (${count})</span></button></section></div></div></div>`;
     return;
   }
   const node=selected();
