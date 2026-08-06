@@ -5934,6 +5934,13 @@ swiper-container[data-arrow-style="outline"]::part(button-prev), swiper-containe
 swiper-container[data-arrow-style="hidden"]::part(button-prev), swiper-container[data-arrow-style="hidden"]::part(button-next) { display: none !important; }
 swiper-container[data-pagination-style="hidden"]::part(pagination) { display: none !important; }
 
+/* Canvas Active Slide Toolbar */
+.orbit-carousel-slide-toolbar { display: flex; align-items: center; gap: 6px; margin-top: 8px; padding: 6px; border-radius: 10px; background: var(--surface-chrome); border: 1px solid var(--border-subtle); overflow-x: auto; }
+.orbit-carousel-slide-toolbar button { height: 26px; padding: 0 10px; border-radius: 6px; border: 1px solid var(--border-subtle); background: var(--surface-control); color: var(--text-secondary); font-size: 10px; font-weight: 600; cursor: pointer; white-space: nowrap; transition: all .16s ease; }
+.orbit-carousel-slide-toolbar button:hover { border-color: var(--orbit-orange); color: var(--orbit-orange); }
+.orbit-carousel-slide-toolbar button.active { background: var(--orbit-orange); color: #ffffff; border-color: var(--orbit-orange); }
+
+
 @media(max-width:900px){.orbit-carousel-design-meta small{display:none}.carousel-slide-context{grid-template-columns:34px minmax(0,1fr) 30px}.carousel-slide-context button:nth-of-type(1){display:none}}
 
 
@@ -10173,6 +10180,14 @@ function setSelection(id,add=false){
     if(current.includes(id)){const next=current.filter(item=>item!==id);state.selectedIds=next;state.selectedId=next[next.length-1]||null;}
     else{state.selectedIds=[...current,id];state.selectedId=id;}
   }else{state.selectedId=id;state.selectedIds=[id];}
+  requestAnimationFrame(()=>{
+    const targetId=state.selectedId;if(!targetId)return;
+    const selectedEl=document.querySelector(`.canvas-element[data-id="${targetId}"]`);
+    const slideEl=selectedEl?.classList.contains('canvas-slide')?selectedEl:selectedEl?.closest('.canvas-slide');
+    if(slideEl){
+      slideEl.scrollIntoView({behavior:'smooth',block:'nearest',inline:'center'});
+    }
+  });
 }
 function effective(node){
   if(!node)return {};
@@ -10495,12 +10510,19 @@ function renderNode(node){
   if(node.type==='carousel'){
     const config=normalizeSwiperConfig(node.swiper),bp=BREAKPOINTS.includes(state.breakpoint)?state.breakpoint:'desktop';
     if(state.previewMode)return `<swiper-container init="false" data-orbit-swiper="${swiperConfigAttribute(node)}" ${data}${aria} class="${cls}" style="${styles}">${children}</swiper-container>`;
-    const columns=Math.max(1,config.effect==='fade'?1:config.slidesPerView[bp]);const gap=Math.max(0,config.spaceBetween[bp]);
-    return `<div ${data}${aria} class="${cls} is-carousel-design" style="${styles};--orbit-carousel-columns:${columns};--orbit-carousel-gap:${gap}px;--orbit-carousel-basis:calc((100% - ${gap*Math.max(0,columns-1)}px) / ${columns})">${ui}<div class="orbit-carousel-design-track">${children}</div><div class="orbit-carousel-design-meta"><span>${uiIcon('gallery')} Swiper</span><strong>${columns} por vista · ${gap}px</strong><small>La navegación se activa en Preview</small></div></div>`;
+    const columns=Math.max(1,['fade','cards','flip'].includes(config.effect)?1:config.slidesPerView[bp]);const gap=Math.max(0,config.spaceBetween[bp]);
+    const slides=(node.children||[]).filter(child=>child.type==='slide');
+    const selectedPath=state.selectedId?findPath(state.nodes,state.selectedId):[];
+    const activeSlideId=selectedPath?.find(item=>item.type==='slide')?.id||slides[0]?.id;
+    const slideToolbarHtml=`<div class="orbit-carousel-slide-toolbar" contenteditable="false">${slides.map((s,idx)=>`<button type="button" class="${s.id===activeSlideId?'active':''}" data-carousel-active-slide="${s.id}">Slide ${idx+1}</button>`).join('')}<button type="button" data-carousel-add-slide title="Añadir slide">＋ Slide</button></div>`;
+    return `<div ${data}${aria} class="${cls} is-carousel-design" style="${styles};--orbit-carousel-columns:${columns};--orbit-carousel-gap:${gap}px;--orbit-carousel-basis:calc((100% - ${gap*Math.max(0,columns-1)}px) / ${columns})">${ui}<div class="orbit-carousel-design-track">${children}</div>${slideToolbarHtml}</div>`;
   }
   if(node.type==='slide'){
     if(state.previewMode)return `<swiper-slide ${data}${aria} class="${cls}" style="${styles}">${children}</swiper-slide>`;
-    return `<${semantic} ${data}${aria} class="${cls}" style="${styles}">${ui}${children}${empty}</${semantic}>`;
+    const selectedPath=state.selectedId?findPath(state.nodes,state.selectedId):[];
+    const isActive=selectedPath?.some(item=>item.id===node.id);
+    const activeSlideClass=isActive?' is-active-slide':'';
+    return `<${semantic} ${data}${aria} class="${cls}${activeSlideClass}" style="${styles}">${ui}${children}${empty}</${semantic}>`;
   }
   if(['section','container','grid','block','div','card','gallery','form','list','statCard','testimonial','pricingCard','faqItem'].includes(node.type))return `<${semantic} ${data}${aria} class="${cls}" style="${styles}">${ui}${children}${empty}</${semantic}>`;
   if(node.type==='heading')return `<${semantic} ${data}${aria} class="${cls}" style="${styles}">${ui}<span class="editable-content" data-editable="${node.id}">${escapeHtml(node.content)}</span></${semantic}>`;
@@ -13681,6 +13703,8 @@ function applySwiperPreset(node, presetId) {
 }
 
 document.addEventListener('click',event=>{
+  const activeSlideBtn=event.target.closest('[data-carousel-active-slide]');
+  if(activeSlideBtn){const slideId=activeSlideBtn.dataset.carouselActiveSlide;setSelection(slideId);render();return;}
   const carouselPresetButton=event.target.closest('[data-carousel-preset]');
   if(carouselPresetButton){const node=selected();if(node?.type==='carousel'){applySwiperPreset(node,carouselPresetButton.dataset.carouselPreset);}return;}
   const carouselFieldButton=event.target.closest('[data-carousel-field-button]');if(carouselFieldButton){const node=selected();if(node?.type==='carousel'){const fieldName=carouselFieldButton.dataset.carouselFieldButton,value=carouselFieldButton.dataset.carouselValue;commit(()=>{state.nodes=update(state.nodes,node.id,item=>({...item,swiper:normalizeSwiperConfig({...item.swiper,[fieldName]:value})}));},node.id);}return;}

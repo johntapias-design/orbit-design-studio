@@ -5914,5 +5914,12 @@ swiper-container[data-arrow-style="outline"]::part(button-prev), swiper-containe
 swiper-container[data-arrow-style="hidden"]::part(button-prev), swiper-container[data-arrow-style="hidden"]::part(button-next) { display: none !important; }
 swiper-container[data-pagination-style="hidden"]::part(pagination) { display: none !important; }
 
+/* Canvas Active Slide Toolbar */
+.orbit-carousel-slide-toolbar { display: flex; align-items: center; gap: 6px; margin-top: 8px; padding: 6px; border-radius: 10px; background: var(--surface-chrome); border: 1px solid var(--border-subtle); overflow-x: auto; }
+.orbit-carousel-slide-toolbar button { height: 26px; padding: 0 10px; border-radius: 6px; border: 1px solid var(--border-subtle); background: var(--surface-control); color: var(--text-secondary); font-size: 10px; font-weight: 600; cursor: pointer; white-space: nowrap; transition: all .16s ease; }
+.orbit-carousel-slide-toolbar button:hover { border-color: var(--orbit-orange); color: var(--orbit-orange); }
+.orbit-carousel-slide-toolbar button.active { background: var(--orbit-orange); color: #ffffff; border-color: var(--orbit-orange); }
+
+
 @media(max-width:900px){.orbit-carousel-design-meta small{display:none}.carousel-slide-context{grid-template-columns:34px minmax(0,1fr) 30px}.carousel-slide-context button:nth-of-type(1){display:none}}
 
