@@ -1,0 +1,36 @@
+name: Orbit Design Studio CI & Release Artifacts
+
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
+
+jobs:
+  build-and-test:
+    name: Build, QA Test Suite & Netlify Package
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js v26
+        uses: actions/setup-node@v4
+        with:
+          node-version: '26'
+
+      - name: Build Standalone Application & Zip Package
+        run: |
+          npm run build
+
+      - name: Run Quality Gate Suite (Headless Chrome)
+        run: |
+          npm test
+
+      - name: Upload Orbit-Netlify.zip Artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: Orbit-Netlify-v0.16
+          path: Orbit-Netlify.zip
+          retention-days: 30
