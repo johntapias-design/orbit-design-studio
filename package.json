@@ -4,6 +4,7 @@
   "description": "Constructor visual de sitios enfocado en Astro con arquitectura modular y soporte IA.",
   "type": "module",
   "scripts": {
+    "dev": "node scripts/dev-server.js",
     "build": "node scripts/build-standalone.js && zip -9 Orbit-Netlify.zip index.html",
     "test": "node qa-contextual-toolbar.mjs"
   },
