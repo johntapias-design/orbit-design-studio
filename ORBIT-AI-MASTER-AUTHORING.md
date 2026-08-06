@@ -167,10 +167,12 @@ Utiliza exclusivamente:
 | `button` | Acción o enlace visual. |
 | `image` | Imagen reemplazable. |
 | `svg` | Icono o gráfico vectorial inline reemplazable. |
+| `carousel` | Carrusel responsive con configuración Swiper y slides directos. |
+| `slide` | Diapositiva editable que agrupa contenido del carrusel. |
 | `divider` | Separador visual. |
 | `spacer` | Espacio explícito excepcional. |
 
-No uses tipos inventados ni `grid`, `richtext`, `gallery`, `video`, `form`, `input` u otros tipos fuera de esta lista.
+No uses tipos inventados ni `grid`, `richtext`, `gallery`, `video`, `form`, `input` u otros tipos fuera de esta lista. Los hijos directos de `carousel` siempre deben ser nodos `slide`; cada `slide` puede contener los elementos visuales necesarios.
 
 ---
 

@@ -61,7 +61,7 @@ function createOrbitState({ clone, hydrateNodes, starter, defaultTokens }) {
     previewMode:false,
     history:[],future:[],
     collapsed:{},
-    openSections:{content:true,responsive:true,semantic:true,classes:true,layout:true,spacing:true,type:true,appearance:true,interaction:true,accessibility:false},
+    openSections:{content:true,carousel:true,responsive:true,semantic:true,classes:true,layout:true,spacing:true,type:true,appearance:true,interaction:true,accessibility:false},
     drop:null,
     transaction:null,
     inlineEdit:null,

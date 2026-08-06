@@ -200,6 +200,45 @@
         "overlayOpacity": { "type": "number", "minimum": 0, "maximum": 1 }
       }
     },
+    "swiper": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "slidesPerView": {
+          "type": "object",
+          "additionalProperties": false,
+          "properties": {
+            "desktopXL": { "type": "number", "minimum": 1, "maximum": 8 },
+            "desktop": { "type": "number", "minimum": 1, "maximum": 8 },
+            "tablet": { "type": "number", "minimum": 1, "maximum": 8 },
+            "mobileL": { "type": "number", "minimum": 1, "maximum": 8 },
+            "mobile": { "type": "number", "minimum": 1, "maximum": 8 }
+          }
+        },
+        "spaceBetween": {
+          "type": "object",
+          "additionalProperties": false,
+          "properties": {
+            "desktopXL": { "type": "number", "minimum": 0, "maximum": 120 },
+            "desktop": { "type": "number", "minimum": 0, "maximum": 120 },
+            "tablet": { "type": "number", "minimum": 0, "maximum": 120 },
+            "mobileL": { "type": "number", "minimum": 0, "maximum": 120 },
+            "mobile": { "type": "number", "minimum": 0, "maximum": 120 }
+          }
+        },
+        "speed": { "type": "integer", "minimum": 100, "maximum": 3000 },
+        "effect": { "type": "string", "enum": ["slide", "fade"] },
+        "direction": { "type": "string", "enum": ["horizontal", "vertical"] },
+        "loop": { "type": "boolean" },
+        "centered": { "type": "boolean" },
+        "navigation": { "type": "boolean" },
+        "pagination": { "type": "boolean" },
+        "keyboard": { "type": "boolean" },
+        "autoplay": { "type": "boolean" },
+        "autoplayDelay": { "type": "integer", "minimum": 800, "maximum": 20000 },
+        "pauseOnMouseEnter": { "type": "boolean" }
+      }
+    },
     "node": {
       "type": "object",
       "additionalProperties": false,
@@ -208,7 +247,7 @@
         "id": { "type": "string" },
         "type": {
           "type": "string",
-          "enum": ["section", "container", "heading", "text", "button", "image", "svg", "card", "divider", "spacer"]
+          "enum": ["section", "container", "heading", "text", "button", "image", "svg", "card", "carousel", "slide", "divider", "spacer"]
         },
         "name": { "type": "string" },
         "content": { "type": "string" },
@@ -229,6 +268,7 @@
         "styles": { "type": "object" },
         "states": { "type": "object" },
         "backgroundConfig": { "$ref": "#/$defs/backgroundConfig" },
+        "swiper": { "$ref": "#/$defs/swiper" },
         "children": {
           "type": "array",
           "items": {

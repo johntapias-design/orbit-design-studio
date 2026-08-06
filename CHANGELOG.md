@@ -1,5 +1,27 @@
 # Changelog
 
+## v0.24.0-alpha — Swiper Carousel Pro
+
+### Componentes
+
+- Nuevo elemento `carousel` con hijos `slide` completamente editables.
+- Plantilla inicial de cuatro slides con imagen, título y descripción reemplazables.
+- Añadir y eliminar slides desde el Inspector, manteniendo al menos uno.
+- Render estático dentro del editor para conservar selección, drag & drop y edición directa.
+
+### Responsive e interacción
+
+- Slides visibles y espacio configurables por Desktop XL, Desktop, Tablet, Mobile L y Mobile.
+- Efectos slide/fade, dirección, velocidad, loop, centrado, flechas, paginación y teclado.
+- Autoplay opcional, desactivado por defecto, con intervalo y pausa al pasar el cursor.
+- Preview funcional mediante Swiper Element v14.0.6.
+
+### Exportación e IA
+
+- Exportación Astro con dependencia `swiper` e inicialización solo cuando el proyecto usa carruseles.
+- Preview standalone con carga ESM condicional desde CDN.
+- Orbit JSON v13, schema y documentación para IA ampliados con `carousel`, `slide` y `swiper`.
+
 ## v0.23.0-alpha — Interface Clarity & Canvas First
 
 ### Interfaz

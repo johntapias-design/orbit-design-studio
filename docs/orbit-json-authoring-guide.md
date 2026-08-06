@@ -81,10 +81,41 @@ La IA solo debe usar estos tipos:
 | `button` | Botón o enlace de acción. |
 | `image` | Imagen reemplazable desde Assets. |
 | `svg` | Icono o gráfico vectorial inline reemplazable. |
+| `carousel` | Carrusel responsive; debe contener exclusivamente nodos `slide` directos. |
+| `slide` | Diapositiva editable; dentro admite textos, imágenes, botones y contenedores. |
 | `divider` | Separador visual. |
 | `spacer` | Espacio explícito cuando no es suficiente `gap` o `padding`. |
 
-No usar tipos como `grid`, `richtext`, `gallery`, `video`, `form` o tipos inventados dentro de un Orbit JSON generado por IA. El importador actual los normalizará y puede alterar el resultado.
+No usar tipos como `grid`, `richtext`, `gallery`, `video`, `form` o tipos inventados dentro de un Orbit JSON generado por IA. El importador actual los normalizará y puede alterar el resultado. En un `carousel`, cada hijo directo debe ser `slide`; el contenido real se anida dentro de cada slide.
+
+Configuración mínima recomendada para un carrusel:
+
+```json
+{
+  "id": "case-studies-carousel",
+  "type": "carousel",
+  "name": "Casos de estudio",
+  "ariaLabel": "Casos de estudio destacados",
+  "swiper": {
+    "slidesPerView": { "desktopXL": 4, "desktop": 3, "tablet": 2, "mobileL": 1.25, "mobile": 1 },
+    "spaceBetween": { "desktopXL": 24, "desktop": 20, "tablet": 16, "mobileL": 14, "mobile": 12 },
+    "speed": 520,
+    "effect": "slide",
+    "direction": "horizontal",
+    "loop": true,
+    "centered": false,
+    "navigation": true,
+    "pagination": true,
+    "keyboard": true,
+    "autoplay": false,
+    "autoplayDelay": 3600,
+    "pauseOnMouseEnter": true
+  },
+  "children": [
+    { "id": "case-slide-1", "type": "slide", "name": "Caso 1", "children": [] }
+  ]
+}
+```
 
 ## 5. Anatomía de un nodo
 

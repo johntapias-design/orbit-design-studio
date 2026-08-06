@@ -1,12 +1,18 @@
-# Orbit Design Studio — v0.23 Interface Clarity & Canvas First
+# Orbit Design Studio — v0.24 Swiper Carousel Pro
 
-Versión standalone profesional de Orbit Design Studio v0.23.
+Versión standalone profesional de Orbit Design Studio v0.24.
 
 ## Abrir Orbit
 
 Abre `index.html` con doble clic. No requiere instalación, npm ni compilación.
 
 ## Cambios incluidos
+
+- Componente **Carrusel** basado en Swiper Element con slides editables dentro de Orbit.
+- Controles responsive por breakpoint para cantidad de slides visibles y separación.
+- Navegación, paginación, loop, centrado, teclado, efecto, velocidad y autoplay configurables.
+- Edición estática y segura en el canvas; interacción real disponible en Preview y en la exportación.
+- Swiper se incluye de forma condicional: los proyectos que no usan carruseles no cargan la dependencia.
 
 - Nueva jerarquía visual **Canvas First**: el lienzo recupera protagonismo y el chrome reduce su peso visual.
 - Barra superior organizada en tres zonas claras: proyecto, vista y publicación.
