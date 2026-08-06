@@ -710,6 +710,8 @@ const sectionTemplates = [
 ];
 const state = createOrbitState({ clone, hydrateNodes, starter, defaultTokens });
 let viewportEngine = null;
+let livePreviewWindow = null;
+let livePreviewUpdateTimer = 0;
 let accessibility=null;
 let preferences=null;
 let focusView=null;
@@ -1135,7 +1137,7 @@ function normalizeSwiperConfig(value={}){
   const validPaginations=['pill-dots','fraction','progressbar','hidden'];
   return {
     ...defaults,...source,
-    preset:source.preset||'hero-editorial',
+    preset:source.preset||(Object.keys(source).length?'custom':defaults.preset),
     slidesPerView:responsive('slidesPerView',1,8),spaceBetween:responsive('spaceBetween',0,120),
     speed:clamp(Number(source.speed)||defaults.speed,100,5000),autoplayDelay:clamp(Number(source.autoplayDelay)||defaults.autoplayDelay,0,20000),
     effect:validEffects.includes(source.effect)?source.effect:'slide',
@@ -1157,7 +1159,10 @@ function swiperRuntimeConfig(node){
     pagination:config.paginationStyle!=='hidden'&&config.pagination?{clickable:true,type:config.paginationStyle==='fraction'?'fraction':config.paginationStyle==='progressbar'?'progressbar':'bullets'}:false,
     keyboard:config.keyboard?{enabled:true,onlyInViewport:true}:false,
     autoplay:config.autoplay?{delay:config.autoplayDelay,pauseOnMouseEnter:config.pauseOnMouseEnter,disableOnInteraction:false}:false,
-    freeMode:config.freeMode,a11y:{enabled:true},breakpoints:{
+    freeMode:config.freeMode?{enabled:true,momentum:true,sticky:false}:false,
+    grabCursor:true,watchOverflow:true,observer:true,observeParents:true,resizeObserver:true,roundLengths:true,loopAddBlankSlides:true,
+    fadeEffect:{crossFade:true},cardsEffect:{slideShadows:true,rotate:true},coverflowEffect:{rotate:34,stretch:0,depth:110,modifier:1,slideShadows:true},
+    a11y:{enabled:true,prevSlideMessage:'Diapositiva anterior',nextSlideMessage:'Diapositiva siguiente',firstSlideMessage:'Primera diapositiva',lastSlideMessage:'Última diapositiva'},breakpoints:{
       [Math.max(0,(state.breakpoints.mobile||480)+1)]:point('mobileL'),
       [Math.max(0,(state.breakpoints.mobileL||768)+1)]:point('tablet'),
       [Math.max(0,(state.breakpoints.tablet||1024)+1)]:point('desktop'),
@@ -2287,6 +2292,7 @@ function uiIcon(name){
     trash:svg('<path d="M3 6h18"></path><path d="M8 6V4h8v2"></path><path d="m19 6-1 15H6L5 6"></path><path d="M10 11v5"></path><path d="M14 11v5"></path>'),
     detach:svg('<path d="m9 15-3 3a3 3 0 0 1-4-4l4-4a3 3 0 0 1 4 0"></path><path d="m15 9 3-3a3 3 0 1 1 4 4l-4 4a3 3 0 0 1-4 0"></path><path d="m8 16 8-8"></path>'),
     warning:svg('<path d="m21 19-9-16-9 16h18Z"></path><path d="M12 9v4"></path><path d="M12 17h.01"></path>'),
+    info:svg('<circle cx="12" cy="12" r="9"></circle><path d="M12 11v6"></path><path d="M12 7h.01"></path>'),
     keep:svg('<rect x="3" y="4" width="18" height="16" rx="2"></rect><path d="M7 8h10"></path><path d="M7 12h10"></path><path d="M7 16h6"></path>'),
     close:svg('<path d="m6 6 12 12"></path><path d="m18 6-12 12"></path>'),
     page:svg('<path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8Z"></path><path d="M14 2v6h6"></path>'),
@@ -3351,6 +3357,9 @@ function carouselToggle(fieldName,label,checked,help=''){
 function carouselInspector(node){
   const config=normalizeSwiperConfig(node.swiper),bp=BREAKPOINTS.includes(state.breakpoint)?state.breakpoint:'desktop';
   const slides=(node.children||[]).filter(child=>child.type==='slide');
+  const singleSlideEffect=['fade','cards','flip'].includes(config.effect),previewLive=isLivePreviewOpen();
+  const loopMinimum=Math.ceil(Math.max(...Object.values(config.slidesPerView)))+1;
+  const loopWarning=config.loop&&slides.length<loopMinimum?`Loop necesita al menos ${loopMinimum} slides con esta configuración. Añade slides o reduce “Slides por vista”.`:'';
   const presets=[
     {id:'hero-editorial',title:'Hero Editorial',icon:'sparkles',desc:'Fade, 1 slide por vista, flechas frosted glass'},
     {id:'testimonial-cards',title:'Testimonios',icon:'star',desc:'3 por vista, tarjetas con paginación píldora'},
@@ -3364,12 +3373,16 @@ function carouselInspector(node){
   const slideListHtml=slides.map((s,idx)=>`<div class="carousel-slide-context" style="margin-bottom:6px"><span>${uiIcon('gallery')}</span><div><small>SLIDE ${idx+1}</small><strong>${escapeHtml(s.name||`Slide ${idx+1}`)}</strong></div><button type="button" data-carousel-select-parent="${s.id}">Editar</button><button type="button" data-carousel-remove-slide="${s.id}" ${slides.length<=1?'disabled':''} title="Eliminar slide">${uiIcon('trash')}</button></div>`).join('');
 
   return `<div class="carousel-inspector">
-    <header class="carousel-inspector-hero"><span>${uiIcon('gallery')}</span><div><small>SWIPER CAROUSEL PRO</small><strong>${slides.length} ${slides.length===1?'slide':'slides'}</strong><em>${breakpointLabels[bp]} · ${state.canvasWidths[bp]} px</em></div><button type="button" data-carousel-preview title="Abrir Preview">${uiIcon('eye')}</button></header>
+    <header class="carousel-inspector-hero"><span>${uiIcon('gallery')}</span><div><small>SWIPER CAROUSEL PRO</small><strong>${slides.length} ${slides.length===1?'slide':'slides'}</strong><em>${breakpointLabels[bp]} · ${state.canvasWidths[bp]} px</em></div></header>
+    <div class="carousel-live-status ${previewLive?'is-live':''}"><i aria-hidden="true"></i><div><strong>Preview Live</strong><small>${previewLive?'Sincronizado automáticamente con cada cambio':'Abre una vista conectada del carrusel real'}</small></div><button type="button" data-carousel-preview aria-pressed="${previewLive}" title="${previewLive?'Ver Preview Live':'Activar Preview Live'}">${uiIcon('eye')}<span>${previewLive?'Ver':'Activar'}</span></button></div>
     ${field('Presets de 1 Clic',presetsHtml)}
-    <div class="carousel-responsive-grid">${field('Slides por vista',`<input type="number" min="1" max="8" step="0.25" value="${config.slidesPerView[bp]}" data-carousel-responsive="slidesPerView" data-carousel-breakpoint="${bp}">`)}${field('Espacio entre slides',`<div class="carousel-number-unit"><input type="number" min="0" max="120" step="1" value="${config.spaceBetween[bp]}" data-carousel-responsive="spaceBetween" data-carousel-breakpoint="${bp}"><span>px</span></div>`)}</div>
+    <div class="carousel-responsive-grid">${field('Slides por vista',`<input type="number" min="1" max="8" step="0.25" value="${config.slidesPerView[bp]}" data-carousel-responsive="slidesPerView" data-carousel-breakpoint="${bp}" ${singleSlideEffect?'disabled':''}>`)}${field('Espacio entre slides',`<div class="carousel-number-unit"><input type="number" min="0" max="120" step="1" value="${config.spaceBetween[bp]}" data-carousel-responsive="spaceBetween" data-carousel-breakpoint="${bp}"><span>px</span></div>`)}</div>
+    ${singleSlideEffect?`<p class="carousel-compatibility-note">${uiIcon('info')} ${config.effect} usa 1 slide por vista para evitar cortes y estados inconsistentes.</p>`:''}
     <div class="field-grid">${field('Efecto 3D / Transición',`<select data-carousel-field="effect"><option value="slide" ${config.effect==='slide'?'selected':''}>Slide Clásico</option><option value="fade" ${config.effect==='fade'?'selected':''}>Fade Suave</option><option value="cards" ${config.effect==='cards'?'selected':''}>Cards 3D Stack</option><option value="coverflow" ${config.effect==='coverflow'?'selected':''}>Coverflow 3D</option><option value="flip" ${config.effect==='flip'?'selected':''}>Flip 3D</option></select>`)}${field('Velocidad',`<div class="carousel-number-unit"><input type="number" min="100" max="5000" step="50" value="${config.speed}" data-carousel-field="speed"><span>ms</span></div>`)}</div>
+    ${field('Dirección',`<div class="carousel-direction-switch" role="group" aria-label="Dirección del carrusel"><button type="button" data-carousel-field-button="direction" data-carousel-value="horizontal" class="${config.direction==='horizontal'?'active':''}">Horizontal</button><button type="button" data-carousel-field-button="direction" data-carousel-value="vertical" class="${config.direction==='vertical'?'active':''}">Vertical</button></div>`)}
     <div class="field-grid">${field('Estilo de Flechas',`<select data-carousel-field="arrowStyle"><option value="frosted" ${config.arrowStyle==='frosted'?'selected':''}>Frosted Glass</option><option value="circle" ${config.arrowStyle==='circle'?'selected':''}>Círculo Oscuro</option><option value="outline" ${config.arrowStyle==='outline'?'selected':''}>Contorno Lineal</option><option value="hidden" ${config.arrowStyle==='hidden'?'selected':''}>Ocultar Flechas</option></select>`)}${field('Estilo Paginación',`<select data-carousel-field="paginationStyle"><option value="pill-dots" ${config.paginationStyle==='pill-dots'?'selected':''}>Píldora Activa</option><option value="fraction" ${config.paginationStyle==='fraction'?'selected':''}>Fracción (1 / 4)</option><option value="progressbar" ${config.paginationStyle==='progressbar'?'selected':''}>Barra Progreso</option><option value="hidden" ${config.paginationStyle==='hidden'?'selected':''}>Ocultar Paginación</option></select>`)}</div>
     <div class="carousel-toggle-list">${carouselToggle('loop','Loop Infinito',config.loop,'Repite diapositivas en bucle continuo')}${carouselToggle('freeMode','Modo Marquee (FreeMode)',config.freeMode,'Desplazamiento fluido continuo sin frenar')}${carouselToggle('centered','Centrar Slide Activo',config.centered,'Mantiene el slide principal en el centro')}${carouselToggle('keyboard','Navegación Teclado',config.keyboard,'Permite usar flechas del teclado')}</div>
+    ${loopWarning?`<p class="carousel-compatibility-note is-warning">${uiIcon('warning')} ${loopWarning}</p>`:''}
     <div class="carousel-autoplay-card">${carouselToggle('autoplay','Autoplay Automático',config.autoplay,'Avanza slides automáticamente')}<div class="carousel-autoplay-options ${config.autoplay?'':'is-disabled'}">${field('Tiempo de Pausa (0 = Ticker continuo)',`<div class="carousel-number-unit"><input type="number" min="0" max="20000" step="200" value="${config.autoplayDelay}" data-carousel-field="autoplayDelay" ${config.autoplay?'':'disabled'}><span>ms</span></div>`)}${carouselToggle('pauseOnMouseEnter','Pausar al pasar el mouse',config.pauseOnMouseEnter)}</div></div>
     <div class="carousel-slide-actions"><button type="button" data-carousel-add-slide>${uiIcon('plus')} Añadir nuevo slide</button></div>
     ${field('Gestión de Slides',slideListHtml)}
@@ -4360,6 +4373,7 @@ function toast(message,type='info',duration=1800){
 let saveTimer;
 function markUnsaved(){
   els.saveDot.classList.remove('saved');els.saveLabel.textContent='Guardando proyecto…';markProjectSessionDirty();clearTimeout(saveTimer);
+  scheduleLivePreviewUpdate();
   saveTimer=setTimeout(async()=>{
     try{await saveActiveProject();}
     catch{els.saveLabel.textContent='Sesión temporal';try{safeLocalSet(STORAGE_KEY,JSON.stringify(workspaceSnapshot()));}catch{}}
@@ -4820,7 +4834,7 @@ function inlineScriptMarkup(value='',attributes=''){
 }
 function nodesUseSwiper(nodes){return flattenNodes(nodes).some(node=>node.type==='carousel');}
 function swiperInitializerSource(){
-  return `const initOrbitSwipers=()=>document.querySelectorAll('swiper-container[data-orbit-swiper]').forEach((swiper)=>{if(swiper.initialized)return;try{Object.assign(swiper,JSON.parse(swiper.dataset.orbitSwiper||'{}'));swiper.initialize();}catch(error){console.error('[Orbit Swiper]',error);}});customElements.whenDefined('swiper-container').then(initOrbitSwipers);`;
+  return `const initOrbitSwipers=()=>document.querySelectorAll('swiper-container[data-orbit-swiper]').forEach((swiper)=>{if(swiper.initialized)return;try{const params=JSON.parse(swiper.dataset.orbitSwiper||'{}');swiper.dataset.orbitDirection=params.direction||'horizontal';Object.assign(swiper,params);swiper.initialize();}catch(error){console.error('[Orbit Swiper]',error);}});customElements.whenDefined('swiper-container').then(initOrbitSwipers);`;
 }
 function standaloneSwiperMarkup(nodes){
   if(!nodesUseSwiper(nodes))return '';
@@ -5058,18 +5072,44 @@ function generatedPreviewHtml(){
   const responsiveMeta=`<!-- Orbit responsive: XL ${state.breakpoints.desktopXL}px · Tablet ${state.breakpoints.tablet}px · Mobile L ${state.breakpoints.mobileL}px · Mobile ${state.breakpoints.mobile}px -->`;
   return generatedAstro({previewAssets:true}).replace('</head>',`${responsiveMeta}<style>${previewCss}</style></head>`);
 }
+function isLivePreviewOpen(){
+  if(livePreviewWindow?.closed)livePreviewWindow=null;
+  return !!livePreviewWindow;
+}
+function livePreviewPayload(){
+  return {
+    type:'orbit-preview-update',html:generatedPreviewHtml(),projectName:state.projectName,
+    widths:{desktopXL:state.canvasWidths.desktopXL||1440,desktop:state.canvasWidths.desktop||1200,tablet:state.canvasWidths.tablet||834,mobileL:state.canvasWidths.mobileL||640,mobile:state.canvasWidths.mobile||390},
+    updatedAt:Date.now()
+  };
+}
+function scheduleLivePreviewUpdate(delay=140){
+  if(!isLivePreviewOpen())return false;
+  clearTimeout(livePreviewUpdateTimer);
+  livePreviewUpdateTimer=setTimeout(()=>{
+    if(!isLivePreviewOpen())return;
+    try{syncCurrentPageRecord();livePreviewWindow.postMessage(livePreviewPayload(),'*');}
+    catch(error){console.warn('[Orbit Preview Live]',error);}
+  },delay);
+  return true;
+}
 function preview(){
   syncCurrentPageRecord();
+  if(isLivePreviewOpen()){
+    livePreviewWindow.focus();scheduleLivePreviewUpdate(0);renderInspector();toast('Preview Live sincronizado');return;
+  }
   const siteHtml=generatedPreviewHtml();
   const widths={desktopXL:state.canvasWidths.desktopXL||1440,desktop:state.canvasWidths.desktop||1200,tablet:state.canvasWidths.tablet||834,mobileL:state.canvasWidths.mobileL||640,mobile:state.canvasWidths.mobile||390};
   const labels={desktopXL:'XL',desktop:'Desktop',tablet:'Tablet',mobileL:'Mobile L',mobile:'Mobile'};
   const buttons=BREAKPOINTS.map(bp=>`<button type="button" data-preview-bp="${bp}" class="${state.breakpoint===bp?'active':''}">${labels[bp]} <small>${widths[bp]}px</small></button>`).join('');
-  const shell=`<!doctype html><html lang="es"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width"><title>Preview · ${escapeHtml(state.projectName)}</title><style>*{box-sizing:border-box}html,body{margin:0;height:100%;overflow:hidden;font-family:Inter,system-ui,sans-serif;background:#0b0e13;color:#e8edf5}.preview-app{height:100%;display:grid;grid-template-rows:56px minmax(0,1fr)}.preview-bar{display:flex;align-items:center;gap:8px;padding:0 14px;border-bottom:1px solid #242a34;background:#11151c}.preview-title{display:flex;flex-direction:column;min-width:160px;margin-right:auto}.preview-title strong{font-size:12px}.preview-title small{font-size:9px;color:#7d8796}.preview-bar button{height:34px;padding:0 10px;border:1px solid #2b3340;border-radius:8px;background:#171d26;color:#9da8b8;font-size:10px;cursor:pointer}.preview-bar button small{margin-left:4px;color:#6f7b8c}.preview-bar button.active{border-color:#ef5a24;background:rgba(239,90,36,.12);color:#fff}.preview-fit{margin-left:4px}.preview-stage{min-height:0;overflow:auto;padding:24px;background-color:#0b0e13;background-image:radial-gradient(#252b35 .7px,transparent .7px);background-size:14px 14px}.preview-frame-wrap{width:${widths[state.breakpoint]}px;max-width:100%;height:100%;min-height:640px;margin:0 auto;background:#ffffff;border-radius:8px;box-shadow:0 24px 80px rgba(0,0,0,.38);overflow:hidden;transition:width .18s ease}.preview-frame{width:100%;height:100%;min-height:640px;border:0;background:#ffffff}@media(max-width:900px){.preview-title{display:none}.preview-bar{overflow:auto}.preview-bar button{flex:0 0 auto}.preview-stage{padding:12px}}</style></head><body><main class="preview-app"><header class="preview-bar"><div class="preview-title"><strong>${escapeHtml(state.projectName)}</strong><small>Responsive preview</small></div>${buttons}<button type="button" class="preview-fit" data-preview-fit>Fit</button></header><section class="preview-stage"><div class="preview-frame-wrap" id="preview-wrap"><iframe class="preview-frame" id="preview-frame" title="Orbit preview"></iframe></div></section></main><script>const siteHtml=${safeInlineScriptJson(siteHtml)};const widths=${safeInlineScriptJson(widths)};const frame=document.getElementById('preview-frame');const wrap=document.getElementById('preview-wrap');frame.srcdoc=siteHtml;document.addEventListener('click',event=>{const button=event.target.closest('[data-preview-bp]');if(button){document.querySelectorAll('[data-preview-bp]').forEach(item=>item.classList.toggle('active',item===button));wrap.style.width=widths[button.dataset.previewBp]+'px';}if(event.target.closest('[data-preview-fit]')){document.querySelectorAll('[data-preview-bp]').forEach(item=>item.classList.remove('active'));wrap.style.width='100%';}});<\/script></body></html>`;
+  const shell=`<!doctype html><html lang="es"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width"><title>Preview Live · ${escapeHtml(state.projectName)}</title><style>*{box-sizing:border-box}html,body{margin:0;height:100%;overflow:hidden;font-family:Inter,system-ui,sans-serif;background:#0b0e13;color:#e8edf5}.preview-app{height:100%;display:grid;grid-template-rows:56px minmax(0,1fr)}.preview-bar{display:flex;align-items:center;gap:8px;padding:0 14px;border-bottom:1px solid #242a34;background:#11151c}.preview-title{display:flex;flex-direction:column;min-width:180px;margin-right:auto}.preview-title strong{font-size:12px}.preview-title small{display:flex;align-items:center;gap:6px;font-size:9px;color:#7d8796}.preview-title small:before{content:"";width:6px;height:6px;border-radius:50%;background:#52d273;box-shadow:0 0 0 4px rgba(82,210,115,.1)}.preview-bar button{height:34px;padding:0 10px;border:1px solid #2b3340;border-radius:8px;background:#171d26;color:#9da8b8;font-size:10px;cursor:pointer}.preview-bar button small{margin-left:4px;color:#6f7b8c}.preview-bar button.active{border-color:#ef5a24;background:rgba(239,90,36,.12);color:#fff}.preview-fit{margin-left:4px}.preview-stage{min-height:0;overflow:auto;padding:24px;background-color:#0b0e13;background-image:radial-gradient(#252b35 .7px,transparent .7px);background-size:14px 14px}.preview-frame-wrap{width:${widths[state.breakpoint]}px;max-width:100%;height:100%;min-height:640px;margin:0 auto;background:#ffffff;border-radius:8px;box-shadow:0 24px 80px rgba(0,0,0,.38);overflow:hidden;transition:width .18s ease}.preview-frame{width:100%;height:100%;min-height:640px;border:0;background:#ffffff}@media(max-width:900px){.preview-title{min-width:130px}.preview-bar{overflow:auto}.preview-bar button{flex:0 0 auto}.preview-stage{padding:12px}}</style></head><body><main class="preview-app"><header class="preview-bar"><div class="preview-title"><strong id="preview-project">${escapeHtml(state.projectName)}</strong><small id="preview-status">Live · conectado</small></div>${buttons}<button type="button" class="preview-fit" data-preview-fit>Fit</button></header><section class="preview-stage"><div class="preview-frame-wrap" id="preview-wrap"><iframe class="preview-frame" id="preview-frame" title="Orbit Preview Live"></iframe></div></section></main><script>let siteHtml=${safeInlineScriptJson(siteHtml)};let widths=${safeInlineScriptJson(widths)};let currentBp=${safeInlineScriptJson(state.breakpoint)};const frame=document.getElementById('preview-frame');const wrap=document.getElementById('preview-wrap');const status=document.getElementById('preview-status');const project=document.getElementById('preview-project');const refresh=(html)=>{const y=frame.contentWindow?.scrollY||0;frame.onload=()=>{try{frame.contentWindow.scrollTo(0,y)}catch{}};frame.srcdoc=html;status.textContent='Live · '+new Date().toLocaleTimeString('es',{hour:'2-digit',minute:'2-digit',second:'2-digit'});};refresh(siteHtml);window.addEventListener('message',event=>{const data=event.data;if(!data||data.type!=='orbit-preview-update')return;siteHtml=data.html; widths=data.widths||widths; project.textContent=data.projectName||project.textContent; document.title='Preview Live · '+project.textContent;refresh(siteHtml);if(currentBp&&currentBp!=='fit')wrap.style.width=widths[currentBp]+'px';});document.addEventListener('click',event=>{const button=event.target.closest('[data-preview-bp]');if(button){currentBp=button.dataset.previewBp;document.querySelectorAll('[data-preview-bp]').forEach(item=>item.classList.toggle('active',item===button));wrap.style.width=widths[currentBp]+'px';}if(event.target.closest('[data-preview-fit]')){currentBp='fit';document.querySelectorAll('[data-preview-bp]').forEach(item=>item.classList.remove('active'));wrap.style.width='100%';}});window.opener?.postMessage({type:'orbit-preview-ready'},'*');<\/script></body></html>`;
   const url=URL.createObjectURL(new Blob([shell],{type:'text/html'}));
-  const previewWindow=window.open(url,'_blank','noopener');
-  if(!previewWindow)toast('El navegador bloqueó la ventana de preview');
-  setTimeout(()=>URL.revokeObjectURL(url),120000);
+  livePreviewWindow=window.open(url,'orbit-live-preview');
+  if(!livePreviewWindow){toast('El navegador bloqueó la ventana de Preview Live');return;}
+  renderInspector();toast('Preview Live activado');
+  setTimeout(()=>{URL.revokeObjectURL(url);scheduleLivePreviewUpdate(0);},2500);
 }
+window.addEventListener('message',event=>{if(event.data?.type==='orbit-preview-ready')scheduleLivePreviewUpdate(0);});
 
 viewportEngine = createViewportEngine({
   state,
@@ -5187,13 +5227,31 @@ function applySwiperPreset(node, presetId) {
   }, node.id);
   toast(`Preset aplicado`);
 }
+function carouselControlPatch(input){
+  if(input.dataset.carouselResponsive!==undefined){
+    if(input.value==='')return null;
+    const fieldName=input.dataset.carouselResponsive,bp=input.dataset.carouselBreakpoint||state.breakpoint;
+    return config=>({preset:'custom',[fieldName]:{...(config[fieldName]||{}),[bp]:Number(input.value)}});
+  }
+  if(input.dataset.carouselField!==undefined){
+    const fieldName=input.dataset.carouselField;if(input.value===''&&input.type!=='checkbox')return null;
+    const numeric=['speed','autoplayDelay'].includes(fieldName),value=input.type==='checkbox'?input.checked:(numeric?Number(input.value):input.value);
+    return ()=>({preset:'custom',[fieldName]:value});
+  }
+  return null;
+}
+function updateCarouselFromControl(input){
+  const node=selected(),patcher=carouselControlPatch(input);if(node?.type!=='carousel'||!patcher)return false;
+  state.nodes=update(state.nodes,node.id,item=>{const current=normalizeSwiperConfig(item.swiper);return {...item,swiper:normalizeSwiperConfig({...current,...patcher(current)})};});
+  return true;
+}
 
 document.addEventListener('click',event=>{
   const activeSlideBtn=event.target.closest('[data-carousel-active-slide]');
   if(activeSlideBtn){const slideId=activeSlideBtn.dataset.carouselActiveSlide;setSelection(slideId);render();return;}
   const carouselPresetButton=event.target.closest('[data-carousel-preset]');
   if(carouselPresetButton){const node=selected();if(node?.type==='carousel'){applySwiperPreset(node,carouselPresetButton.dataset.carouselPreset);}return;}
-  const carouselFieldButton=event.target.closest('[data-carousel-field-button]');if(carouselFieldButton){const node=selected();if(node?.type==='carousel'){const fieldName=carouselFieldButton.dataset.carouselFieldButton,value=carouselFieldButton.dataset.carouselValue;commit(()=>{state.nodes=update(state.nodes,node.id,item=>({...item,swiper:normalizeSwiperConfig({...item.swiper,[fieldName]:value})}));},node.id);}return;}
+  const carouselFieldButton=event.target.closest('[data-carousel-field-button]');if(carouselFieldButton){const node=selected();if(node?.type==='carousel'){const fieldName=carouselFieldButton.dataset.carouselFieldButton,value=carouselFieldButton.dataset.carouselValue;commit(()=>{state.nodes=update(state.nodes,node.id,item=>({...item,swiper:normalizeSwiperConfig({...item.swiper,preset:'custom',[fieldName]:value})}));},node.id);}return;}
   if(event.target.closest('[data-carousel-preview]')){preview();return;}
   const carouselParentButton=event.target.closest('[data-carousel-select-parent]');if(carouselParentButton){setSelection(carouselParentButton.dataset.carouselSelectParent);render();return;}
   if(event.target.closest('[data-carousel-add-slide]')){const node=selected();if(node?.type==='carousel'){const slide=makeCarouselSlide((node.children||[]).filter(child=>child.type==='slide').length+1);commit(()=>{state.nodes=update(state.nodes,node.id,item=>({...item,children:[...(item.children||[]),slide]}));},slide.id);toast('Slide añadido');}return;}
@@ -5421,7 +5479,7 @@ els.left.addEventListener('drop',event=>{if(dragPayload?.kind!=='node')return;ev
 
 document.addEventListener('focusin',event=>{
   const t=event.target;
-  if(t.matches('[data-node-prop],[data-style-prop],[data-color-prop],[data-unit-number],[data-unit-select],[data-token-value],[data-token-color],[data-box-input],[data-shadow-part],[data-shadow-color],[data-bem-block],[data-bem-element],[data-bem-modifiers],[data-custom-classes],[data-component-prop-input]'))beginTransaction('input');
+  if(t.matches('[data-node-prop],[data-style-prop],[data-color-prop],[data-unit-number],[data-unit-select],[data-token-value],[data-token-color],[data-box-input],[data-shadow-part],[data-shadow-color],[data-bem-block],[data-bem-element],[data-bem-modifiers],[data-custom-classes],[data-component-prop-input],[data-carousel-responsive],[data-carousel-field]'))beginTransaction('input');
 });
 
 document.addEventListener('submit',event=>{
@@ -5444,6 +5502,7 @@ document.addEventListener('input',event=>{
   if(t.dataset.googleFontSearch!==undefined){googleFontQuery=t.value;refreshGoogleFontManager(true);return;}
   if(t===els.commandInput){state.commandQuery=t.value;state.commandIndex=0;renderCommandPalette();return;}
   if(t===els.quickInsertInput){state.quickInsertQuery=t.value;state.quickInsertIndex=0;renderQuickInsert();return;}
+  if(t.dataset.carouselResponsive!==undefined||t.dataset.carouselField!==undefined){if(!state.transaction)beginTransaction('carousel');if(updateCarouselFromControl(t))markUnsaved();return;}
   if(t.matches('[data-editable][contenteditable=true]')){ const id=t.dataset.editable; state.nodes=update(state.nodes,id,n=>({...n,content:t.innerText})); markUnsaved(); return; }
   if(t===els.projectName){ if(!state.transaction)beginTransaction('project-name'); state.projectName=t.value||'Untitled project'; state.pageMeta.title=state.pageMeta.title==='Untitled landing page'?state.projectName:state.pageMeta.title; markUnsaved(); return; }
   if(t.dataset.layerSearch!==undefined){state.layerSearch=t.value;renderLeft();const input=els.left.querySelector('[data-layer-search]');if(input){input.focus();input.setSelectionRange(input.value.length,input.value.length);}return;}
@@ -5462,8 +5521,11 @@ document.addEventListener('input',event=>{
 
 document.addEventListener('change',async event=>{
   const t=event.target;
-  if(t.dataset.carouselResponsive!==undefined){const node=selected();if(node?.type==='carousel'){const fieldName=t.dataset.carouselResponsive,bp=t.dataset.carouselBreakpoint||state.breakpoint,value=Number(t.value);commit(()=>{state.nodes=update(state.nodes,node.id,item=>({...item,swiper:normalizeSwiperConfig({...item.swiper,[fieldName]:{...(item.swiper?.[fieldName]||{}),[bp]:value}})}));},node.id);}return;}
-  if(t.dataset.carouselField!==undefined){const node=selected();if(node?.type==='carousel'){const fieldName=t.dataset.carouselField,numeric=['speed','autoplayDelay'].includes(fieldName),value=t.type==='checkbox'?t.checked:(numeric?Number(t.value):t.value);commit(()=>{state.nodes=update(state.nodes,node.id,item=>({...item,swiper:normalizeSwiperConfig({...item.swiper,[fieldName]:value})}));},node.id);}return;}
+  if(t.dataset.carouselResponsive!==undefined||t.dataset.carouselField!==undefined){
+    if(state.transaction){updateCarouselFromControl(t);endTransaction();}
+    else{const node=selected(),patcher=carouselControlPatch(t);if(node?.type==='carousel'&&patcher)commit(()=>{state.nodes=update(state.nodes,node.id,item=>{const current=normalizeSwiperConfig(item.swiper);return {...item,swiper:normalizeSwiperConfig({...current,...patcher(current)})};});},node.id);}
+    return;
+  }
   if(t.dataset.backgroundField!==undefined){const key=t.dataset.backgroundField;const numeric=['gradientAngle','overlayOpacity'].includes(key);updateBackgroundConfig({[key]:numeric?Number(t.value):t.value});return;}
   if(t.dataset.backgroundAsset!==undefined){if(t.value)updateBackgroundConfig({imageSrc:t.value});return;}
   if(t.dataset.primaryStyleClass!==undefined){setPrimarySharedStyleClass(t.value);return;}
@@ -5619,7 +5681,7 @@ function loadSaved(){
 window.addEventListener('error',event=>{console.error('[Orbit runtime]',event.error||event.message);toast('Orbit encontró un error inesperado. Puedes seguir trabajando o deshacer el último cambio.','error',3500);});
 window.addEventListener('unhandledrejection',event=>{console.error('[Orbit promise]',event.reason);toast('Una operación no pudo completarse. Revisa la consola si necesitas el detalle.','error',3500);});
 
-window.__ORBIT_QA__={openProjectDashboard,createWorkspaceProject,generatedElementsCss,generatedGlobalClassesCss,generatedStyles,generatedAstro,generatedPreviewHtml,safeInlineScriptJson,projectFiles,projectDbList,projectDbListRaw,projectDbPut,normalizeProjectRecord,repairWorkspaceStorage,renderProjectDashboard,workspaceSnapshot,normalizeOrbitImport,primarySharedStyleClass,setSharedStyleMode,directStyle,render,setSelection,loadOrbitDocument(data,selectedId=''){
+window.__ORBIT_QA__={openProjectDashboard,createWorkspaceProject,generatedElementsCss,generatedGlobalClassesCss,generatedStyles,generatedAstro,generatedPreviewHtml,safeInlineScriptJson,livePreviewPayload,isLivePreviewOpen,projectFiles,projectDbList,projectDbListRaw,projectDbPut,normalizeProjectRecord,repairWorkspaceStorage,renderProjectDashboard,workspaceSnapshot,normalizeOrbitImport,primarySharedStyleClass,setSharedStyleMode,directStyle,render,setSelection,loadOrbitDocument(data,selectedId=''){
   const result=normalizeOrbitImport(data);const doc=result.document;state.nodes=hydrateNodes(clone(doc.nodes));state.tokens=doc.tokens||clone(defaultTokens);ensureTokenGroups();state.assets=doc.assets||[];state.components=(doc.components||[]).map(normalizeComponentDefinition);state.globalClasses=doc.globalClasses||[];state.projectName=doc.projectName||'QA project';state.pageMeta=doc.pageMeta||state.pageMeta;state.pages=[{id:'page-qa',name:'QA',slug:'/',nodes:clone(state.nodes),meta:clone(state.pageMeta)}];state.currentPageId='page-qa';setSelection(selectedId&&find(state.nodes,selectedId)?selectedId:state.nodes[0]?.id||null);render();return result.report;
 }};
 setWorkspaceVisibility(true);
