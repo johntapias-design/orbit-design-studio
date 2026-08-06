@@ -1,12 +1,20 @@
-# Orbit Design Studio — v0.13 Baseline
+# Orbit Design Studio — v0.23 Interface Clarity & Canvas First
 
-Versión standalone funcional y estructurada de Orbit Design Studio v0.13.
+Versión standalone profesional de Orbit Design Studio v0.23.
 
 ## Abrir Orbit
 
 Abre `index.html` con doble clic. No requiere instalación, npm ni compilación.
 
 ## Cambios incluidos
+
+- Nueva jerarquía visual **Canvas First**: el lienzo recupera protagonismo y el chrome reduce su peso visual.
+- Barra superior organizada en tres zonas claras: proyecto, vista y publicación.
+- Toolbar contextual compacta, adaptable y con ancho máximo para no cubrir el diseño.
+- Inspector con buscador de propiedades, controles coherentes y densidad visual profesional.
+- Dashboard más compacto: proyectos visibles antes, buscador protagonista y almacenamiento expresado en lenguaje humano.
+- Code Studio con divisor ajustable, métricas de líneas y preview Desktop, Tablet y Mobile.
+- Sistema visual normalizado con escalas consistentes de espaciado, radios, iconos y alturas de control.
 
 - Eliminación completa de la barra inferior de estado y coordenadas.
 - Barra superior del canvas con acciones globales cuando no hay selección.

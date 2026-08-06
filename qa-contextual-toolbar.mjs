@@ -244,6 +244,7 @@ try {
           inspectorActionsHidden:inspectorActions.hidden,
           accessibleActions:actionButtons.length>0&&actionButtons.every(button=>button.getAttribute('aria-label')),
           inspectorTabs:document.querySelectorAll('[role="tab"][data-inspector-tab]').length,
+          inspectorPropertySearch:!!document.querySelector('[data-inspector-property-search]'),
           floatingDockAbsent:!document.querySelector('.canvas-navigation-dock'),
           minimapCanCollapse:!!document.querySelector('[data-minimap-collapse]'),
           completeOnly:!document.querySelector('.inspector-mode-switch'),
@@ -551,7 +552,7 @@ try {
   await screenshot('orbit-rulers-guides-hidden-1600x900.png');
   await evaluate(`(async()=>{document.getElementById('toggle-guides').click();document.getElementById('toggle-guide-visibility').click();await new Promise(resolve=>setTimeout(resolve,160));document.getElementById('guides-menu-trigger').click();})()`);
 
-  const minimapSuite = await evaluate(`(async()=>{const wait=ms=>new Promise(resolve=>setTimeout(resolve,ms));const minimap=document.querySelector('.canvas-minimap'),button=minimap?.querySelector('[data-minimap-collapse]');if(!minimap||!button)return {available:false,collapsed:false,restored:false};button.click();await wait(120);const collapsed=minimap.classList.contains('is-collapsed')&&getComputedStyle(minimap.querySelector('canvas')).display==='none'&&button.getAttribute('aria-expanded')==='false';button.click();await wait(120);return {available:true,collapsed,restored:!minimap.classList.contains('is-collapsed')&&button.getAttribute('aria-expanded')==='true'};})()`);
+  const minimapSuite = await evaluate(`(async()=>{const wait=ms=>new Promise(resolve=>setTimeout(resolve,ms));const minimap=document.querySelector('.canvas-minimap'),button=minimap?.querySelector('[data-minimap-collapse]');if(!minimap||!button)return {available:false,canCollapse:false,canExpand:false,autoBehavior:false};const initial=minimap.classList.contains('is-collapsed');button.click();await wait(120);const toggled=minimap.classList.contains('is-collapsed');button.click();await wait(120);const restored=minimap.classList.contains('is-collapsed')===initial;const canvas=document.getElementById('canvas-page').getBoundingClientRect(),workspace=document.getElementById('workspace'),workspaceRect=workspace.getBoundingClientRect(),style=getComputedStyle(workspace),visibleWidth=workspaceRect.width-(parseFloat(style.getPropertyValue('--canvas-inset-left'))||0)-(parseFloat(style.getPropertyValue('--canvas-inset-right'))||0);const pageFits=canvas.width<=visibleWidth-12&&canvas.height<=workspaceRect.height-12;return {available:true,canCollapse:initial||toggled,canExpand:!initial||!toggled,autoBehavior:initial===pageFits,restored};})()`);
 
   const codeStudio = await evaluate(`(async()=>{
     document.getElementById('code-studio-trigger').click();
@@ -562,7 +563,7 @@ try {
     js.value="document.documentElement.dataset.codeStudioQa = 'ok';";js.dispatchEvent(new Event('input',{bubbles:true}));
     studio.querySelector('[data-code-apply]').click();
     await new Promise(resolve=>setTimeout(resolve,500));
-    return {opened:!studio.hidden,tabs:studio.querySelectorAll('[data-code-tab]').length,htmlReady:html.value.includes('<!doctype html>'),cssReady:css.value.includes(':root'),jsEditable:js.value.includes('codeStudioQa'),wide:rect.width>window.innerWidth*.72&&rect.height>window.innerHeight*.72,applied:window.__ORBIT_QA__.generatedAstro().includes('codeStudioQa'),clean:document.getElementById('code-studio-status').textContent==='Sin cambios'};
+    return {opened:!studio.hidden,tabs:studio.querySelectorAll('[data-code-tab]').length,htmlReady:html.value.includes('<!doctype html>'),cssReady:css.value.includes(':root'),jsEditable:js.value.includes('codeStudioQa'),wide:rect.width>window.innerWidth*.72&&rect.height>window.innerHeight*.72,splitter:!!studio.querySelector('[data-code-splitter]'),previewDevices:studio.querySelectorAll('[data-code-preview-width]').length===3,lineMetrics:/línea/.test(document.getElementById('code-studio-metrics').textContent),applied:window.__ORBIT_QA__.generatedAstro().includes('codeStudioQa'),clean:document.getElementById('code-studio-status').textContent==='Sin cambios'};
   })()`);
   await screenshot('orbit-code-studio-1600x900.png');
   await evaluate(`document.querySelector('[data-code-close]').click()`);

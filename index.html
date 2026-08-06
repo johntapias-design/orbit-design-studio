@@ -3,8 +3,8 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width" />
-    <meta name="description" content="Orbit Design Studio v0.13 — Design System & Canvas Pro, editor visual para Astro con importación Orbit JSON mediante pegado, selector de archivos y drag-and-drop." />
-    <title>Orbit Design Studio — v0.13</title>
+    <meta name="description" content="Orbit Design Studio v0.23 — Interface Clarity & Canvas First, editor visual profesional para Astro con Design System, Code Studio y flujo responsive." />
+    <title>Orbit Design Studio — v0.23</title>
     <script>
       try {
         const stored = JSON.parse(localStorage.getItem('orbit:preferences:v1') || 'null');
@@ -5794,6 +5794,115 @@ html[data-theme="light"] .canvas-info-dock{box-shadow:0 18px 48px rgba(54,66,82,
   justify-content: center;
   gap: 8px;
 }
+
+/* =========================================================
+   ORBIT v0.23 — INTERFACE CLARITY & CANVAS FIRST
+   A quieter product shell with stronger hierarchy and density.
+   ========================================================= */
+:root{
+  --orbit-space-1:4px;
+  --orbit-space-2:8px;
+  --orbit-space-3:12px;
+  --orbit-space-4:16px;
+  --orbit-space-5:24px;
+  --orbit-space-6:32px;
+  --orbit-radius-control:9px;
+  --orbit-radius-card:12px;
+  --orbit-radius-panel:16px;
+  --orbit-control-height:36px;
+  --code-editor-width:minmax(430px,1.15fr);
+}
+
+/* Product chrome: three calm zones instead of a row of unrelated controls. */
+.topbar{
+  grid-template-columns:var(--left-header,var(--left)) minmax(320px,1fr) auto minmax(146px,auto)!important;
+  column-gap:10px;
+  padding-right:10px;
+  box-shadow:0 1px 0 var(--orbit-hairline),0 14px 44px rgba(0,0,0,.12)!important;
+}
+.brand{padding-inline:14px!important;border-right-color:transparent!important}
+.brand-mark{width:32px!important;height:32px!important;border-radius:10px!important}
+.brand-copy strong{font-size:13px}.brand-copy small{font-size:7px;letter-spacing:.13em}
+.version-badge{margin-left:auto;padding-inline:5px;font:650 8px var(--font-family-mono)}
+.document-name{height:44px;align-self:center;gap:8px;padding:4px 6px 4px 10px!important;border:1px solid transparent;border-radius:12px}
+.document-name:focus-within{border-color:var(--orbit-hairline);background:color-mix(in srgb,var(--surface-control) 58%,transparent)}
+.document-copy{display:grid;align-content:center}.document-name input{width:min(24vw,270px);font-size:11px;font-weight:650}.document-name small{font-size:8px}
+.history-actions{height:34px!important;padding:2px;border-radius:10px!important}.history-actions .icon-button-pro{width:29px!important;height:28px!important}.history-actions svg{width:16px;height:16px}
+.command-palette-trigger{height:34px!important;border-radius:10px!important;padding-inline:9px!important}.command-palette-trigger svg{width:16px;height:16px}.command-palette-trigger span{font-size:9px}.command-palette-trigger kbd{font-size:7px}
+.viewport-tools{height:44px;align-self:center;gap:5px;padding:4px;border:1px solid var(--orbit-hairline);border-radius:12px;background:color-mix(in srgb,var(--surface-control) 54%,transparent)}
+.responsive-suite-trigger,.fit-screen-button,.zoom-pro-shell .zoom-control,.guides-menu-trigger,.canvas-view-actions>.icon-button-pro{height:34px!important;border-color:transparent!important;background:transparent!important;border-radius:8px!important}
+.responsive-suite-trigger:hover,.fit-screen-button:hover,.zoom-pro-shell .zoom-control:hover,.guides-menu-trigger:hover,.canvas-view-actions>.icon-button-pro:hover{background:var(--surface-control-hover)!important}
+.responsive-suite-trigger{min-width:112px;padding-inline:9px}.responsive-suite-trigger>span:nth-child(2){font-size:9.5px}
+.zoom-pro-shell .zoom-control{overflow:hidden}.zoom-control button{width:28px}.zoom-menu-trigger{min-width:44px}
+.canvas-view-actions{gap:2px}.top-actions{padding:0!important}.top-actions .primary-action{height:36px!important;min-width:132px;border-radius:10px!important;box-shadow:0 8px 22px rgba(255,90,31,.16)!important}
+
+/* Canvas is the hero. Tooling uses one depth language and less decoration. */
+.workspace{background-image:radial-gradient(circle at 50% -10%,rgba(141,92,255,.035),transparent 30%),linear-gradient(rgba(255,255,255,.016) 1px,transparent 1px),linear-gradient(90deg,rgba(255,255,255,.016) 1px,transparent 1px)!important;background-size:auto,40px 40px,40px 40px!important}
+.left-panel,.right-panel{box-shadow:none!important}
+.left-tabs,.inspector-edit-workspace>.inspector-tabs{background:color-mix(in srgb,var(--surface-chrome) 68%,transparent)!important}
+.left-tabs button,.inspector-edit-workspace>.inspector-tabs button{min-height:56px!important;margin:2px 7px!important;border-radius:10px!important}
+.left-tabs button svg,.inspector-edit-workspace>.inspector-tabs button svg{width:18px!important;height:18px!important}
+.left-tabs button span,.inspector-edit-workspace>.inspector-tabs small{font-size:8.5px!important}
+.right-header{height:48px!important;min-height:48px}.right-header>div:first-child{font-size:11px}
+.inspector-edit-content{padding-bottom:24px;background:none!important}
+.inspector-property-search{position:sticky;top:0;z-index:8;height:42px;display:grid;grid-template-columns:18px minmax(0,1fr) auto;align-items:center;gap:7px;margin:8px;padding:0 10px;border:1px solid var(--orbit-hairline);border-radius:10px;background:color-mix(in srgb,var(--surface-panel) 94%,transparent);box-shadow:0 8px 24px rgba(0,0,0,.1);backdrop-filter:blur(16px)}
+.inspector-property-search>span,.inspector-property-search svg{width:16px;height:16px;color:var(--text-tertiary)}
+.inspector-property-search input{min-width:0;width:100%;border:0!important;outline:0!important;background:transparent!important;color:var(--text-primary);font-size:10.5px;box-shadow:none!important}
+.inspector-property-search kbd{color:var(--text-disabled);font:600 8px var(--font-family-mono)}
+.inspector-search-empty{margin:8px 12px;padding:14px;border:1px dashed var(--border-default);border-radius:10px;color:var(--text-tertiary);font-size:9px;text-align:center}
+.inspector-section{border-bottom-color:var(--orbit-hairline)}.section-title{height:40px!important;padding-inline:12px!important;font-size:11px!important}.section-body{gap:10px!important;padding:3px 12px 14px!important}
+.field-label{font-size:9.5px!important}.field input:not([type=color]):not([type=range]),.field textarea,.field select,.color-text,.unit-input{min-height:36px!important;border-radius:8px!important;font-size:10.5px!important}.unit-input{height:36px!important}
+.segmented{min-height:36px;border-radius:9px}.segmented button{height:28px;font-size:9px}.hint{font-size:8.5px;line-height:1.55}
+
+/* Context travels with the selection, but never dominates it. */
+.contextual-toolbar .multi-toolbar{height:42px!important;max-width:min(620px,calc(100vw - 24px))!important;padding:4px 6px!important;border-radius:12px!important;box-shadow:0 14px 42px rgba(0,0,0,.34)!important}
+.contextual-toolbar .multi-toolbar.is-text-context{max-width:min(720px,var(--selection-toolbar-max-width,calc(100vw - 24px)))!important}
+.contextual-toolbar .multi-toolbar .context-node{max-width:150px!important}.contextual-toolbar .context-node strong{font-size:10px}.contextual-toolbar .context-node small{font-size:7px}
+.context-action{height:32px!important;min-width:32px!important;border-radius:8px!important}.context-action svg{width:15px!important;height:15px!important}
+.context-type-select{height:32px}.context-font-select{width:105px}.context-size-select{width:96px}
+.canvas-info-dock{bottom:8px;min-height:40px;width:min(620px,calc(100vw - 24px));padding:4px 6px;border-radius:12px;box-shadow:0 12px 38px rgba(0,0,0,.26)}
+.canvas-info-dock .contextual-mode-icon{width:30px;height:30px}.canvas-info-dock .breadcrumbs button{font-size:9px}.canvas-info-dock .contextual-toolbar-meta{font-size:7.5px}
+.quick-add{right:calc(var(--right) + 14px);bottom:14px;width:40px;height:40px;border-radius:12px}
+.canvas-minimap{right:auto!important;bottom:auto!important;width:158px!important}.canvas-minimap canvas{width:142px!important}.canvas-minimap.is-collapsed{width:128px!important}
+
+/* Dashboard: projects appear earlier and controls belong to the content flow. */
+.project-dashboard::after{right:-300px;top:28px;width:580px;height:580px;opacity:.48}
+.project-dashboard-main{width:min(1540px,100%)!important;padding:30px clamp(24px,3vw,48px) 64px!important}
+.project-dashboard-heading{display:grid!important;grid-template-columns:minmax(360px,.85fr) minmax(520px,1.15fr);align-items:end!important;gap:28px!important;margin-bottom:18px!important}
+.dashboard-heading-copy{max-width:620px!important;flex-basis:auto!important}.dashboard-kicker{font-size:8px}
+.project-dashboard-heading h1{max-width:600px!important;margin:9px 0 10px!important;font-size:clamp(38px,3.5vw,56px)!important;line-height:.9!important}
+.project-dashboard-heading p{max-width:520px!important;font-size:11.5px!important}
+.project-dashboard-tools{width:100%;max-width:none!important;padding:5px!important;border-radius:12px!important;box-shadow:none!important}.project-dashboard-tools .project-search{height:38px!important}.project-search input{font-size:10.5px!important}.project-sort,.dashboard-tool-button,.project-view-switch{height:34px!important}.project-view-switch button{height:26px!important}
+.project-dashboard-summary{margin-bottom:12px!important}.project-dashboard-summary article{min-height:60px!important;grid-template-columns:24px minmax(0,1fr)!important;gap:8px!important;padding:8px 13px!important}.dashboard-stat-index{font-size:8px!important}.project-dashboard-summary strong{font-size:17px!important}.project-dashboard-summary article>div>span{font-size:9px!important}
+.workspace-pro-actions{min-height:44px!important;margin-bottom:14px!important;padding:6px 7px 6px 12px!important;border-radius:11px!important}.workspace-storage-detail strong{font-size:10px!important}.workspace-storage-detail span{font-size:8px}.workspace-pro-actions .dashboard-action{height:32px!important;font-size:8.5px}
+.project-grid{grid-template-columns:repeat(auto-fill,minmax(320px,450px))!important;gap:14px!important}.project-card{border-radius:16px!important;box-shadow:0 14px 44px rgba(0,0,0,.16)!important}.project-card:hover{transform:translateY(-3px)!important;box-shadow:0 22px 62px rgba(0,0,0,.24)!important}.project-card-preview{border-radius:15px 15px 0 0!important}.project-card-body{padding:14px!important}.project-card-title strong{font-size:14px!important}.project-card-actions{grid-template-columns:minmax(0,1fr) repeat(4,34px)!important}.project-card-actions button{height:34px!important;border-radius:9px!important}
+
+/* Code Studio: adjustable split, editor metrics and responsive preview targets. */
+.code-studio{inset:calc(var(--top) + 10px) calc(var(--orbit-edit-rail) + 10px) 10px calc(var(--orbit-rail,80px) + 10px);border-radius:16px;box-shadow:0 32px 100px rgba(0,0,0,.58)}
+.code-studio-header{min-height:56px!important;padding-block:8px!important}.code-studio-header h2{font-size:15px!important}.code-studio-tabs{min-height:40px!important;padding:4px 9px!important}.code-studio-tabs button{height:30px!important}.code-studio-tabs>span{margin-left:0!important}.code-studio-tabs #code-studio-metrics{margin-left:auto!important;padding-right:10px;border-right:1px solid var(--orbit-hairline)}
+.code-studio-workspace{position:relative;grid-template-columns:var(--code-editor-width) 7px minmax(320px,1fr)!important;background:#090d12}
+.code-studio-editors{border-right:0!important}.code-studio-editors label{grid-template-rows:34px minmax(0,1fr)!important}.code-studio-editors label>span{justify-content:space-between;padding-inline:14px!important}.code-studio-editors label>span b{color:var(--text-secondary);font-size:8px}.code-studio-editors label>span small{font:600 7px var(--font-family-mono);letter-spacing:.06em;text-transform:uppercase}
+.code-studio-editors textarea{padding:18px 20px!important;caret-color:var(--orbit-orange);font-size:12px!important;line-height:1.7!important;background:linear-gradient(90deg,#0b0f15 0 46px,#090d12 46px)!important}
+.code-studio-splitter{position:relative;width:7px;height:100%;padding:0;border:0;border-inline:1px solid var(--orbit-hairline);background:var(--surface-chrome);cursor:col-resize}.code-studio-splitter span{position:absolute;left:2px;top:50%;width:3px;height:34px;border-radius:99px;background:var(--border-default);transform:translateY(-50%);transition:background .16s}.code-studio-splitter:hover span,.is-resizing-code-studio .code-studio-splitter span{background:var(--orbit-orange)}.is-resizing-code-studio,.is-resizing-code-studio *{cursor:col-resize!important;user-select:none!important}
+.code-studio-preview{grid-template-rows:42px minmax(0,1fr)!important}.code-studio-preview>header{padding-inline:12px!important}.code-studio-preview>header>div:first-child{display:grid;gap:2px}.code-preview-devices{display:flex;gap:3px;padding:3px;border:1px solid var(--orbit-hairline);border-radius:8px;background:var(--surface-control)}.code-preview-devices button{width:26px;height:24px;border:0;border-radius:6px;background:transparent;color:var(--text-tertiary);font:700 8px var(--font-family-mono);cursor:pointer}.code-preview-devices button.active{background:var(--surface-control-hover);color:var(--orbit-orange)}
+.code-studio-frame-stage{min-width:0;min-height:0;display:flex;justify-content:center;overflow:auto;padding:14px;background:radial-gradient(circle at 50% 0,rgba(141,92,255,.07),transparent 30%),#0c1118}.code-studio-preview iframe{max-width:100%;box-shadow:0 18px 54px rgba(0,0,0,.35);transition:width .2s var(--ease-standard)}
+.code-studio-footer{min-height:50px!important}.code-studio-footer button{height:34px!important}
+
+@media(max-width:1320px){
+  .topbar{grid-template-columns:var(--left-header,var(--left)) minmax(260px,1fr) auto auto!important}.command-palette-trigger span{display:none}.command-palette-trigger{width:34px;padding:0!important}.responsive-suite-trigger{min-width:42px;width:42px}.responsive-suite-trigger>span:nth-child(2),.responsive-suite-chevron{display:none}.top-actions .primary-action{min-width:40px;width:40px;padding:0!important}.top-actions .primary-action span{display:none}
+  .project-dashboard-heading{grid-template-columns:1fr!important;align-items:start!important}.project-dashboard-tools{max-width:860px!important}.project-grid{grid-template-columns:repeat(auto-fill,minmax(300px,1fr))!important}
+}
+@media(min-width:2200px){
+  html[data-interface-profile="ultrawide"] .project-dashboard-main,html[data-interface-profile="cinema"] .project-dashboard-main{width:min(2200px,calc(100% - 96px))!important;padding-inline:0!important}
+  html[data-interface-profile="ultrawide"] .project-dashboard-heading,html[data-interface-profile="cinema"] .project-dashboard-heading{grid-template-columns:minmax(560px,.8fr) minmax(820px,1.2fr)!important}
+  html[data-interface-profile="ultrawide"] .project-grid,html[data-interface-profile="cinema"] .project-grid{grid-template-columns:repeat(auto-fill,minmax(360px,1fr))!important}
+}
+@media(max-width:900px){
+  .code-studio-workspace{grid-template-columns:1fr!important}.code-studio-splitter,.code-studio-preview{display:none!important}
+  .project-dashboard-heading h1{font-size:42px!important}
+}
+@media(prefers-reduced-motion:reduce){.code-studio-preview iframe,.code-studio-splitter span{transition:none!important}}
+
 </style>
   </head>
   <body>
@@ -5863,7 +5972,7 @@ html[data-theme="light"] .canvas-info-dock{box-shadow:0 18px 48px rgba(54,66,82,
         <div class="brand">
           <span class="brand-mark"><span></span><span></span><span></span></span>
           <div class="brand-copy"><strong>Orbit</strong><small>DESIGN STUDIO · ASTRO</small></div>
-          <span class="version-badge">v0.13</span>
+          <span class="version-badge">v0.23</span>
         </div>
 
         <div class="document-name">
@@ -5957,7 +6066,7 @@ html[data-theme="light"] .canvas-info-dock{box-shadow:0 18px 48px rgba(54,66,82,
           <div id="left-content" class="left-content"></div>
           <div class="left-footer">
             <button type="button" id="reset-demo">Restablecer</button>
-            <span>v0.13 pro</span>
+            <span>v0.23 pro</span>
           </div>
         </div>
       </aside>
@@ -6025,8 +6134,8 @@ html[data-theme="light"] .canvas-info-dock{box-shadow:0 18px 48px rgba(54,66,82,
 
       <section id="code-studio" class="code-studio" hidden role="dialog" aria-modal="true" aria-labelledby="code-studio-title" tabindex="-1">
         <header class="code-studio-header"><div><span>ORBIT CODE</span><h2 id="code-studio-title">Code Studio</h2><small id="code-studio-page">Página activa</small></div><div><button type="button" data-code-format>Formatear</button><button type="button" data-code-close aria-label="Cerrar Code Studio">×</button></div></header>
-        <div class="code-studio-tabs" role="tablist" aria-label="Lenguajes"><button type="button" role="tab" data-code-tab="html" class="active" aria-selected="true">HTML</button><button type="button" role="tab" data-code-tab="css" aria-selected="false">CSS</button><button type="button" role="tab" data-code-tab="js" aria-selected="false">JS</button><button type="button" role="tab" data-code-tab="react" aria-selected="false">React / Tailwind</button><span id="code-studio-status" role="status">Sin cambios</span></div>
-        <div class="code-studio-workspace"><div class="code-studio-editors"><label data-code-panel="html"><span>HTML de la página activa</span><textarea id="code-editor-html" spellcheck="false" aria-label="Editor HTML"></textarea></label><label data-code-panel="css" hidden><span>CSS generado y personalizado</span><textarea id="code-editor-css" spellcheck="false" aria-label="Editor CSS"></textarea></label><label data-code-panel="js" hidden><span>JavaScript personalizado y aislado</span><textarea id="code-editor-js" spellcheck="false" aria-label="Editor JavaScript"></textarea></label><label data-code-panel="react" hidden><span>Componente React (JSX) + Tailwind CSS</span><textarea id="code-editor-react" spellcheck="false" aria-label="Editor React Tailwind"></textarea></label></div><aside class="code-studio-preview"><header><strong>Vista previa</strong><small>Actualización en vivo</small></header><iframe id="code-studio-frame" title="Vista previa de Code Studio" sandbox="allow-scripts"></iframe></aside></div>
+        <div class="code-studio-tabs" role="tablist" aria-label="Lenguajes"><button type="button" role="tab" data-code-tab="html" class="active" aria-selected="true">HTML</button><button type="button" role="tab" data-code-tab="css" aria-selected="false">CSS</button><button type="button" role="tab" data-code-tab="js" aria-selected="false">JS</button><button type="button" role="tab" data-code-tab="react" aria-selected="false">React / Tailwind</button><span id="code-studio-metrics">1 línea</span><span id="code-studio-status" role="status">Sin cambios</span></div>
+        <div class="code-studio-workspace"><div class="code-studio-editors"><label data-code-panel="html"><span><b>HTML de la página activa</b><small>Documento</small></span><textarea id="code-editor-html" spellcheck="false" aria-label="Editor HTML"></textarea></label><label data-code-panel="css" hidden><span><b>CSS generado y personalizado</b><small>Estilos</small></span><textarea id="code-editor-css" spellcheck="false" aria-label="Editor CSS"></textarea></label><label data-code-panel="js" hidden><span><b>JavaScript personalizado y aislado</b><small>Interacciones</small></span><textarea id="code-editor-js" spellcheck="false" aria-label="Editor JavaScript"></textarea></label><label data-code-panel="react" hidden><span><b>Componente React + Tailwind CSS</b><small>Exportación</small></span><textarea id="code-editor-react" spellcheck="false" aria-label="Editor React Tailwind"></textarea></label></div><button type="button" class="code-studio-splitter" data-code-splitter aria-label="Ajustar ancho entre código y vista previa" title="Arrastra para ajustar la vista"><span></span></button><aside class="code-studio-preview"><header><div><strong>Vista previa</strong><small>Actualización en vivo</small></div><div class="code-preview-devices" role="group" aria-label="Ancho de la vista previa"><button type="button" data-code-preview-width="390" title="Mobile" aria-label="Vista móvil">M</button><button type="button" data-code-preview-width="834" title="Tablet" aria-label="Vista tablet">T</button><button type="button" data-code-preview-width="100%" class="active" title="Desktop" aria-label="Vista de escritorio">D</button></div></header><div class="code-studio-frame-stage"><iframe id="code-studio-frame" title="Vista previa de Code Studio" sandbox="allow-scripts"></iframe></div></aside></div>
         <footer class="code-studio-footer"><p>HTML y CSS se sincronizan con el lienzo. El JavaScript se guarda únicamente en esta página.</p><div><button type="button" data-code-reset>Restablecer</button><button type="button" class="primary" data-code-apply>Aplicar al lienzo</button></div></footer>
       </section>
 
@@ -8387,6 +8496,7 @@ function createCanvasNavigation({ window, document, state, elements, viewportEng
   let spacePressed = false;
   let panSession = null;
   let pickerTrigger = null;
+  let minimapManualOverride = false;
 
   const minimap = document.createElement('aside');
   minimap.className = 'canvas-minimap';
@@ -8497,6 +8607,8 @@ function createCanvasNavigation({ window, document, state, elements, viewportEng
     if (!minimap.hidden) {
       const miniWidth = minimap.offsetWidth || 196;
       const miniHeight = minimap.offsetHeight || 286;
+      minimap.style.right = 'auto';
+      minimap.style.bottom = 'auto';
       minimap.style.left = `${Math.max(rect.left + 12, rect.right - miniWidth - 14)}px`;
       minimap.style.top = `${Math.max(rect.top + 12, rect.bottom - miniHeight - 78)}px`;
     }
@@ -8528,6 +8640,9 @@ function createCanvasNavigation({ window, document, state, elements, viewportEng
     minimapContext.fillStyle = light ? '#f7f9fc' : '#10151d';
     minimapContext.fillRect(0, 0, cssWidth, cssHeight);
     const canvasRect = elements.canvas.getBoundingClientRect();
+    const workspaceRect = viewportEngine.visibleWorkspaceRect?.() || elements.workspace.getBoundingClientRect();
+    const pageFits = canvasRect.width <= workspaceRect.width - 12 && canvasRect.height <= workspaceRect.height - 12;
+    if (!minimapManualOverride && minimap.classList.contains('is-collapsed') !== pageFits) setMinimapCollapsed(pageFits,{announce:false,save:false});
     const scaleX = cssWidth / Math.max(1, canvasRect.width);
     const scaleY = cssHeight / Math.max(1, canvasRect.height);
     const topLevel = [...elements.canvas.children].filter(node => node.matches?.('.canvas-element[data-id]'));
@@ -8542,7 +8657,6 @@ function createCanvasNavigation({ window, document, state, elements, viewportEng
       minimapContext.fillRect(x + 2, y + 2, Math.max(2, rect.width * scaleX - 4), Math.max(3, rect.height * scaleY - 4));
     });
 
-    const workspaceRect = viewportEngine.visibleWorkspaceRect?.() || elements.workspace.getBoundingClientRect();
     const visibleLeft = clamp(workspaceRect.left - canvasRect.left, 0, canvasRect.width);
     const visibleTop = clamp(workspaceRect.top - canvasRect.top, 0, canvasRect.height);
     const visibleRight = clamp(workspaceRect.right - canvasRect.left, 0, canvasRect.width);
@@ -8651,7 +8765,7 @@ function createCanvasNavigation({ window, document, state, elements, viewportEng
   });
   listen(minimap, 'click', event => {
     if (event.target.closest('[data-minimap-close]')) toggleMinimap(false);
-    if (event.target.closest('[data-minimap-collapse]')) setMinimapCollapsed(!minimap.classList.contains('is-collapsed'));
+    if (event.target.closest('[data-minimap-collapse]')){minimapManualOverride=true;setMinimapCollapsed(!minimap.classList.contains('is-collapsed'));}
   });
   listen(minimapCanvas, 'pointerdown', event => {
     event.preventDefault();
@@ -9068,7 +9182,7 @@ async function renderProjectDashboard(){
   $('#project-count').textContent=all.filter(item=>!item.archived).length;
   $('#page-count').textContent=totalPages;
   $('#checkpoint-count').textContent=totalCheckpoints;
-  $('#storage-status').textContent=state.projectDbReady?'IndexedDB':'Respaldo local';
+  $('#storage-status').textContent=state.projectDbReady?'En este equipo':'Respaldo local';
   const hasAnyProjects=all.length>0;
   els.projectEmpty.hidden=hasAnyProjects||!!query||state.projectShowArchived;
   els.projectGrid.classList.toggle('is-list',state.projectView==='list');
@@ -11564,7 +11678,7 @@ function renderInspector(){
   if(state.inspectorMode==='advanced'||['image','button','link','input','textareaField','selectField'].includes(node.type))tabPanels.advanced+=section('accessibility','Accesibilidad',accessibility);
   const stateSwitcher=`<div class="interaction-state-switcher inspector-state-switcher"><span>Estado</span>${[['default','Default'],['hover','Hover'],['focus','Focus'],['active','Active'],['disabled','Disabled']].map(([key,label])=>`<button type="button" data-style-state="${key}" class="${state.styleState===key?'active':''}">${label}</button>`).join('')}</div>`;
   const inspectorView=finalizeInspectorTabs({panels:tabPanels,mode:'advanced',activeTab:state.inspectorTab,renderIcon:uiIcon,stateSwitcher});state.inspectorTab=inspectorView.activeTab;
-  els.inspector.innerHTML=`<div class="inspector-edit-workspace">${inspectorView.tabs}<div class="inspector-edit-content">${html}${inspectorView.panel}</div></div>`;
+  els.inspector.innerHTML=`<div class="inspector-edit-workspace">${inspectorView.tabs}<div class="inspector-edit-content"><label class="inspector-property-search"><span>${uiIcon('search')}</span><input type="search" data-inspector-property-search placeholder="Buscar una propiedad…" aria-label="Buscar una propiedad del elemento"><kbd>⌘F</kbd></label><p class="inspector-search-empty" data-inspector-search-empty hidden>No encontramos esa propiedad en esta sección.</p>${html}${inspectorView.panel}</div></div>`;
 }
 function numericPx(value){const text=String(value??'').trim();return /^-?\d+(\.\d+)?px$/.test(text)?Number.parseFloat(text):null;}
 function responsiveAudit(){
@@ -12957,7 +13071,7 @@ function projectFiles(){
     {name:'src/styles/classes.css',data:generatedGlobalClassesCss()},
     {name:'src/styles/elements.css',data:generatedElementsCss()},
     {name:'src/styles/global.css',data:generatedStyles()},
-    {name:'README.md',data:`# ${state.projectName}\n\nProyecto multipágina generado con Orbit Design Studio v0.13 Pro.\n\n## Ejecutar\n\n\`\`\`bash\nnpm install\nnpm run dev\n\`\`\`\n`},
+    {name:'README.md',data:`# ${state.projectName}\n\nProyecto multipágina generado con Orbit Design Studio v0.23 Pro.\n\n## Ejecutar\n\n\`\`\`bash\nnpm install\nnpm run dev\n\`\`\`\n`},
     {name:'orbit/project.orbit.json',data:JSON.stringify({version:12,projectName:state.projectName,pages:state.pages,tokens:state.tokens,globalClasses:state.globalClasses,components:state.components,assets:state.assets,breakpoints:state.breakpoints,breakpointEnabled:state.breakpointEnabled,canvasWidths:state.canvasWidths},null,2)}
   ];
   state.pages.forEach(page=>files.push({name:pageFilePath(page),data:generatedPageAstro(page,componentNames)}));
@@ -13002,6 +13116,7 @@ let codeStudioDirty=false;
 let codeStudioTab='html';
 let codeStudioOriginal={html:'',css:'',js:'',react:''};
 let codeStudioPreviewTimer=0;
+let codeStudioSplit=null;
 function mapStylesToTailwind(styles={}){
   const classes=[];
   if(styles.display==='flex')classes.push('flex');
@@ -13045,11 +13160,18 @@ function setCodeStudioDirty(value){
   const status=$('#code-studio-status');
   if(status)status.textContent=codeStudioDirty?'Cambios sin aplicar':'Sin cambios';
 }
+function updateCodeStudioMetrics(){
+  const editor=document.querySelector(`[data-code-panel="${codeStudioTab}"] textarea`);
+  const metrics=$('#code-studio-metrics');
+  if(!editor||!metrics)return;
+  const lines=Math.max(1,String(editor.value||'').split('\n').length);
+  metrics.textContent=`${lines} ${lines===1?'línea':'líneas'}`;
+}
 function selectCodeStudioTab(tab='html'){
   codeStudioTab=['html','css','js','react'].includes(tab)?tab:'html';
   document.querySelectorAll('[data-code-tab]').forEach(button=>{const active=button.dataset.codeTab===codeStudioTab;button.classList.toggle('active',active);button.setAttribute('aria-selected',String(active));button.tabIndex=active?0:-1;});
   document.querySelectorAll('[data-code-panel]').forEach(panel=>{panel.hidden=panel.dataset.codePanel!==codeStudioTab;});
-  document.querySelector(`[data-code-panel="${codeStudioTab}"] textarea`)?.focus();
+  document.querySelector(`[data-code-panel="${codeStudioTab}"] textarea`)?.focus();updateCodeStudioMetrics();
 }
 function composeCodeStudioPreview({html,css,js}){
   const safeCss=String(css||'').replace(new RegExp('<'+'/style','gi'),'<\\/style');
@@ -13061,6 +13183,29 @@ function composeCodeStudioPreview({html,css,js}){
 }
 function renderCodeStudioPreview(){
   const frame=$('#code-studio-frame');if(frame)frame.srcdoc=composeCodeStudioPreview(codeStudioValues());
+}
+function setCodeStudioPreviewWidth(value='100%'){
+  const frame=$('#code-studio-frame');if(!frame)return;
+  frame.style.width=value==='100%'?'100%':`${Math.max(320,Number(value)||1200)}px`;
+  document.querySelectorAll('[data-code-preview-width]').forEach(button=>button.classList.toggle('active',button.dataset.codePreviewWidth===String(value)));
+}
+function startCodeStudioSplit(event){
+  const workspace=$('.code-studio-workspace');if(!workspace||matchMedia('(max-width: 900px)').matches)return;
+  event.preventDefault();
+  const rect=workspace.getBoundingClientRect();
+  codeStudioSplit={workspace,rect};
+  document.body.classList.add('is-resizing-code-studio');
+  event.currentTarget.setPointerCapture?.(event.pointerId);
+}
+function moveCodeStudioSplit(event){
+  if(!codeStudioSplit)return;
+  const {workspace,rect}=codeStudioSplit;
+  const editorWidth=Math.max(360,Math.min(rect.width-340,event.clientX-rect.left));
+  workspace.style.setProperty('--code-editor-width',`${editorWidth}px`);
+}
+function endCodeStudioSplit(){
+  if(!codeStudioSplit)return;
+  codeStudioSplit=null;document.body.classList.remove('is-resizing-code-studio');
 }
 function openCodeStudio(){
   const studio=$('#code-studio');if(!studio)return;
@@ -13193,10 +13338,14 @@ $('#code-studio')?.addEventListener('click',event=>{
   if(event.target.closest('[data-code-reset]')){resetCodeStudio();event.stopPropagation();return;}
   if(event.target.closest('[data-code-format]')){formatCodeStudio();event.stopPropagation();return;}
   if(event.target.closest('[data-code-apply]')){applyCodeStudio();event.stopPropagation();return;}
+  const previewWidth=event.target.closest('[data-code-preview-width]');if(previewWidth){setCodeStudioPreviewWidth(previewWidth.dataset.codePreviewWidth);event.stopPropagation();return;}
 });
 $('#code-studio')?.addEventListener('input',event=>{
-  if(!event.target.matches('textarea'))return;setCodeStudioDirty(true);clearTimeout(codeStudioPreviewTimer);codeStudioPreviewTimer=setTimeout(renderCodeStudioPreview,220);
+  if(!event.target.matches('textarea'))return;setCodeStudioDirty(true);updateCodeStudioMetrics();clearTimeout(codeStudioPreviewTimer);codeStudioPreviewTimer=setTimeout(renderCodeStudioPreview,220);
 });
+$('#code-studio')?.addEventListener('pointerdown',event=>{if(event.target.closest('[data-code-splitter]'))startCodeStudioSplit(event);});
+document.addEventListener('pointermove',moveCodeStudioSplit);
+document.addEventListener('pointerup',endCodeStudioSplit);
 $('#responsive-suite-trigger')?.addEventListener('click',event=>{const trigger=event.currentTarget;setResponsiveSuiteOpen(trigger.getAttribute('aria-expanded')!=='true');event.stopPropagation();});
 $('#responsive-compare')?.addEventListener('click',()=>setResponsiveSuiteOpen(false));
 $('#breakpoint-manager')?.addEventListener('click',()=>setResponsiveSuiteOpen(false));
@@ -13463,6 +13612,13 @@ document.addEventListener('submit',event=>{
 
 document.addEventListener('input',event=>{
   const t=event.target;
+  if(t.dataset.inspectorPropertySearch!==undefined){
+    const query=t.value.trim().toLocaleLowerCase();
+    const content=t.closest('.inspector-edit-content');let visible=0;
+    content?.querySelectorAll('.inspector-section').forEach(section=>{const match=!query||section.textContent.toLocaleLowerCase().includes(query);section.hidden=!match;if(match)visible+=1;});
+    const empty=content?.querySelector('[data-inspector-search-empty]');if(empty)empty.hidden=visible>0||!query;
+    return;
+  }
   if(t.dataset.tokenEditorColor!==undefined){const value=t.closest('.token-editor-value-row')?.querySelector('[data-token-editor-value]');if(value)value.value=t.value;return;}
   if(t.dataset.tokenEditorValue!==undefined&&/^#[0-9a-f]{6}$/i.test(t.value.trim())){const picker=t.closest('.token-editor-value-row')?.querySelector('[data-token-editor-color]');if(picker)picker.value=t.value.trim();return;}
   if(t.dataset.googleFontSearch!==undefined){googleFontQuery=t.value;refreshGoogleFontManager(true);return;}

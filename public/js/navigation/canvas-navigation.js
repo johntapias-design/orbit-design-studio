@@ -25,6 +25,7 @@ function createCanvasNavigation({ window, document, state, elements, viewportEng
   let spacePressed = false;
   let panSession = null;
   let pickerTrigger = null;
+  let minimapManualOverride = false;
 
   const minimap = document.createElement('aside');
   minimap.className = 'canvas-minimap';
@@ -135,6 +136,8 @@ function createCanvasNavigation({ window, document, state, elements, viewportEng
     if (!minimap.hidden) {
       const miniWidth = minimap.offsetWidth || 196;
       const miniHeight = minimap.offsetHeight || 286;
+      minimap.style.right = 'auto';
+      minimap.style.bottom = 'auto';
       minimap.style.left = `${Math.max(rect.left + 12, rect.right - miniWidth - 14)}px`;
       minimap.style.top = `${Math.max(rect.top + 12, rect.bottom - miniHeight - 78)}px`;
     }
@@ -166,6 +169,9 @@ function createCanvasNavigation({ window, document, state, elements, viewportEng
     minimapContext.fillStyle = light ? '#f7f9fc' : '#10151d';
     minimapContext.fillRect(0, 0, cssWidth, cssHeight);
     const canvasRect = elements.canvas.getBoundingClientRect();
+    const workspaceRect = viewportEngine.visibleWorkspaceRect?.() || elements.workspace.getBoundingClientRect();
+    const pageFits = canvasRect.width <= workspaceRect.width - 12 && canvasRect.height <= workspaceRect.height - 12;
+    if (!minimapManualOverride && minimap.classList.contains('is-collapsed') !== pageFits) setMinimapCollapsed(pageFits,{announce:false,save:false});
     const scaleX = cssWidth / Math.max(1, canvasRect.width);
     const scaleY = cssHeight / Math.max(1, canvasRect.height);
     const topLevel = [...elements.canvas.children].filter(node => node.matches?.('.canvas-element[data-id]'));
@@ -180,7 +186,6 @@ function createCanvasNavigation({ window, document, state, elements, viewportEng
       minimapContext.fillRect(x + 2, y + 2, Math.max(2, rect.width * scaleX - 4), Math.max(3, rect.height * scaleY - 4));
     });
 
-    const workspaceRect = viewportEngine.visibleWorkspaceRect?.() || elements.workspace.getBoundingClientRect();
     const visibleLeft = clamp(workspaceRect.left - canvasRect.left, 0, canvasRect.width);
     const visibleTop = clamp(workspaceRect.top - canvasRect.top, 0, canvasRect.height);
     const visibleRight = clamp(workspaceRect.right - canvasRect.left, 0, canvasRect.width);
@@ -289,7 +294,7 @@ function createCanvasNavigation({ window, document, state, elements, viewportEng
   });
   listen(minimap, 'click', event => {
     if (event.target.closest('[data-minimap-close]')) toggleMinimap(false);
-    if (event.target.closest('[data-minimap-collapse]')) setMinimapCollapsed(!minimap.classList.contains('is-collapsed'));
+    if (event.target.closest('[data-minimap-collapse]')){minimapManualOverride=true;setMinimapCollapsed(!minimap.classList.contains('is-collapsed'));}
   });
   listen(minimapCanvas, 'pointerdown', event => {
     event.preventDefault();
@@ -706,7 +711,7 @@ async function renderProjectDashboard(){
   $('#project-count').textContent=all.filter(item=>!item.archived).length;
   $('#page-count').textContent=totalPages;
   $('#checkpoint-count').textContent=totalCheckpoints;
-  $('#storage-status').textContent=state.projectDbReady?'IndexedDB':'Respaldo local';
+  $('#storage-status').textContent=state.projectDbReady?'En este equipo':'Respaldo local';
   const hasAnyProjects=all.length>0;
   els.projectEmpty.hidden=hasAnyProjects||!!query||state.projectShowArchived;
   els.projectGrid.classList.toggle('is-list',state.projectView==='list');
@@ -3202,7 +3207,7 @@ function renderInspector(){
   if(state.inspectorMode==='advanced'||['image','button','link','input','textareaField','selectField'].includes(node.type))tabPanels.advanced+=section('accessibility','Accesibilidad',accessibility);
   const stateSwitcher=`<div class="interaction-state-switcher inspector-state-switcher"><span>Estado</span>${[['default','Default'],['hover','Hover'],['focus','Focus'],['active','Active'],['disabled','Disabled']].map(([key,label])=>`<button type="button" data-style-state="${key}" class="${state.styleState===key?'active':''}">${label}</button>`).join('')}</div>`;
   const inspectorView=finalizeInspectorTabs({panels:tabPanels,mode:'advanced',activeTab:state.inspectorTab,renderIcon:uiIcon,stateSwitcher});state.inspectorTab=inspectorView.activeTab;
-  els.inspector.innerHTML=`<div class="inspector-edit-workspace">${inspectorView.tabs}<div class="inspector-edit-content">${html}${inspectorView.panel}</div></div>`;
+  els.inspector.innerHTML=`<div class="inspector-edit-workspace">${inspectorView.tabs}<div class="inspector-edit-content"><label class="inspector-property-search"><span>${uiIcon('search')}</span><input type="search" data-inspector-property-search placeholder="Buscar una propiedad…" aria-label="Buscar una propiedad del elemento"><kbd>⌘F</kbd></label><p class="inspector-search-empty" data-inspector-search-empty hidden>No encontramos esa propiedad en esta sección.</p>${html}${inspectorView.panel}</div></div>`;
 }
 function numericPx(value){const text=String(value??'').trim();return /^-?\d+(\.\d+)?px$/.test(text)?Number.parseFloat(text):null;}
 function responsiveAudit(){
@@ -4595,7 +4600,7 @@ function projectFiles(){
     {name:'src/styles/classes.css',data:generatedGlobalClassesCss()},
     {name:'src/styles/elements.css',data:generatedElementsCss()},
     {name:'src/styles/global.css',data:generatedStyles()},
-    {name:'README.md',data:`# ${state.projectName}\n\nProyecto multipágina generado con Orbit Design Studio v0.13 Pro.\n\n## Ejecutar\n\n\`\`\`bash\nnpm install\nnpm run dev\n\`\`\`\n`},
+    {name:'README.md',data:`# ${state.projectName}\n\nProyecto multipágina generado con Orbit Design Studio v0.23 Pro.\n\n## Ejecutar\n\n\`\`\`bash\nnpm install\nnpm run dev\n\`\`\`\n`},
     {name:'orbit/project.orbit.json',data:JSON.stringify({version:12,projectName:state.projectName,pages:state.pages,tokens:state.tokens,globalClasses:state.globalClasses,components:state.components,assets:state.assets,breakpoints:state.breakpoints,breakpointEnabled:state.breakpointEnabled,canvasWidths:state.canvasWidths},null,2)}
   ];
   state.pages.forEach(page=>files.push({name:pageFilePath(page),data:generatedPageAstro(page,componentNames)}));
@@ -4640,6 +4645,7 @@ let codeStudioDirty=false;
 let codeStudioTab='html';
 let codeStudioOriginal={html:'',css:'',js:'',react:''};
 let codeStudioPreviewTimer=0;
+let codeStudioSplit=null;
 function mapStylesToTailwind(styles={}){
   const classes=[];
   if(styles.display==='flex')classes.push('flex');
@@ -4683,11 +4689,18 @@ function setCodeStudioDirty(value){
   const status=$('#code-studio-status');
   if(status)status.textContent=codeStudioDirty?'Cambios sin aplicar':'Sin cambios';
 }
+function updateCodeStudioMetrics(){
+  const editor=document.querySelector(`[data-code-panel="${codeStudioTab}"] textarea`);
+  const metrics=$('#code-studio-metrics');
+  if(!editor||!metrics)return;
+  const lines=Math.max(1,String(editor.value||'').split('\n').length);
+  metrics.textContent=`${lines} ${lines===1?'línea':'líneas'}`;
+}
 function selectCodeStudioTab(tab='html'){
   codeStudioTab=['html','css','js','react'].includes(tab)?tab:'html';
   document.querySelectorAll('[data-code-tab]').forEach(button=>{const active=button.dataset.codeTab===codeStudioTab;button.classList.toggle('active',active);button.setAttribute('aria-selected',String(active));button.tabIndex=active?0:-1;});
   document.querySelectorAll('[data-code-panel]').forEach(panel=>{panel.hidden=panel.dataset.codePanel!==codeStudioTab;});
-  document.querySelector(`[data-code-panel="${codeStudioTab}"] textarea`)?.focus();
+  document.querySelector(`[data-code-panel="${codeStudioTab}"] textarea`)?.focus();updateCodeStudioMetrics();
 }
 function composeCodeStudioPreview({html,css,js}){
   const safeCss=String(css||'').replace(new RegExp('<'+'/style','gi'),'<\\/style');
@@ -4699,6 +4712,29 @@ function composeCodeStudioPreview({html,css,js}){
 }
 function renderCodeStudioPreview(){
   const frame=$('#code-studio-frame');if(frame)frame.srcdoc=composeCodeStudioPreview(codeStudioValues());
+}
+function setCodeStudioPreviewWidth(value='100%'){
+  const frame=$('#code-studio-frame');if(!frame)return;
+  frame.style.width=value==='100%'?'100%':`${Math.max(320,Number(value)||1200)}px`;
+  document.querySelectorAll('[data-code-preview-width]').forEach(button=>button.classList.toggle('active',button.dataset.codePreviewWidth===String(value)));
+}
+function startCodeStudioSplit(event){
+  const workspace=$('.code-studio-workspace');if(!workspace||matchMedia('(max-width: 900px)').matches)return;
+  event.preventDefault();
+  const rect=workspace.getBoundingClientRect();
+  codeStudioSplit={workspace,rect};
+  document.body.classList.add('is-resizing-code-studio');
+  event.currentTarget.setPointerCapture?.(event.pointerId);
+}
+function moveCodeStudioSplit(event){
+  if(!codeStudioSplit)return;
+  const {workspace,rect}=codeStudioSplit;
+  const editorWidth=Math.max(360,Math.min(rect.width-340,event.clientX-rect.left));
+  workspace.style.setProperty('--code-editor-width',`${editorWidth}px`);
+}
+function endCodeStudioSplit(){
+  if(!codeStudioSplit)return;
+  codeStudioSplit=null;document.body.classList.remove('is-resizing-code-studio');
 }
 function openCodeStudio(){
   const studio=$('#code-studio');if(!studio)return;
@@ -4831,10 +4867,14 @@ $('#code-studio')?.addEventListener('click',event=>{
   if(event.target.closest('[data-code-reset]')){resetCodeStudio();event.stopPropagation();return;}
   if(event.target.closest('[data-code-format]')){formatCodeStudio();event.stopPropagation();return;}
   if(event.target.closest('[data-code-apply]')){applyCodeStudio();event.stopPropagation();return;}
+  const previewWidth=event.target.closest('[data-code-preview-width]');if(previewWidth){setCodeStudioPreviewWidth(previewWidth.dataset.codePreviewWidth);event.stopPropagation();return;}
 });
 $('#code-studio')?.addEventListener('input',event=>{
-  if(!event.target.matches('textarea'))return;setCodeStudioDirty(true);clearTimeout(codeStudioPreviewTimer);codeStudioPreviewTimer=setTimeout(renderCodeStudioPreview,220);
+  if(!event.target.matches('textarea'))return;setCodeStudioDirty(true);updateCodeStudioMetrics();clearTimeout(codeStudioPreviewTimer);codeStudioPreviewTimer=setTimeout(renderCodeStudioPreview,220);
 });
+$('#code-studio')?.addEventListener('pointerdown',event=>{if(event.target.closest('[data-code-splitter]'))startCodeStudioSplit(event);});
+document.addEventListener('pointermove',moveCodeStudioSplit);
+document.addEventListener('pointerup',endCodeStudioSplit);
 $('#responsive-suite-trigger')?.addEventListener('click',event=>{const trigger=event.currentTarget;setResponsiveSuiteOpen(trigger.getAttribute('aria-expanded')!=='true');event.stopPropagation();});
 $('#responsive-compare')?.addEventListener('click',()=>setResponsiveSuiteOpen(false));
 $('#breakpoint-manager')?.addEventListener('click',()=>setResponsiveSuiteOpen(false));
@@ -5101,6 +5141,13 @@ document.addEventListener('submit',event=>{
 
 document.addEventListener('input',event=>{
   const t=event.target;
+  if(t.dataset.inspectorPropertySearch!==undefined){
+    const query=t.value.trim().toLocaleLowerCase();
+    const content=t.closest('.inspector-edit-content');let visible=0;
+    content?.querySelectorAll('.inspector-section').forEach(section=>{const match=!query||section.textContent.toLocaleLowerCase().includes(query);section.hidden=!match;if(match)visible+=1;});
+    const empty=content?.querySelector('[data-inspector-search-empty]');if(empty)empty.hidden=visible>0||!query;
+    return;
+  }
   if(t.dataset.tokenEditorColor!==undefined){const value=t.closest('.token-editor-value-row')?.querySelector('[data-token-editor-value]');if(value)value.value=t.value;return;}
   if(t.dataset.tokenEditorValue!==undefined&&/^#[0-9a-f]{6}$/i.test(t.value.trim())){const picker=t.closest('.token-editor-value-row')?.querySelector('[data-token-editor-color]');if(picker)picker.value=t.value.trim();return;}
   if(t.dataset.googleFontSearch!==undefined){googleFontQuery=t.value;refreshGoogleFontManager(true);return;}

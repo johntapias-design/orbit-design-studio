@@ -1,6 +1,6 @@
 {
   "name": "orbit-design-studio",
-  "version": "0.13.0-alpha",
+  "version": "0.23.0-alpha",
   "description": "Constructor visual de sitios enfocado en Astro con arquitectura modular y soporte IA.",
   "type": "module",
   "scripts": {
