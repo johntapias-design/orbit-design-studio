@@ -2852,6 +2852,15 @@ function refreshGoogleFontManager(focusSearch=false){
   els.modalContent.innerHTML=googleFontManagerMarkup();
   if(focusSearch)requestAnimationFrame(()=>{const input=els.modalContent.querySelector('[data-google-font-search]');input?.focus();input?.setSelectionRange(input.value.length,input.value.length);});
 }
+function installGoogleFontByName(family){
+  const font=googleFontCatalog.find(item=>item.family.toLowerCase()===family.toLowerCase());
+  if(!font)return;
+  const key=googleFontTokenKey(font.family);
+  if(state.tokens.typography[key])return;
+  const before=snapshot();
+  state.tokens.typography[key]={name:font.family,value:googleFontFamilyValue(font),source:'google',family:font.family,category:font.category,fallback:font.fallback,weights:[400,700],italic:false};
+  pushHistory(before);markUnsaved();syncGoogleFontsStylesheet();render();
+}
 function installGoogleFont(button){
   const family=button.dataset.googleFontUse;const font=googleFontCatalog.find(item=>item.family===family);const card=button.closest('[data-google-font-card]');if(!font||!card)return;
   const weights=[...card.querySelectorAll('[data-google-font-weight]:checked')].map(input=>Number(input.value));if(!weights.length)weights.push(font.weights.includes(400)?400:font.weights[0]);
@@ -3447,11 +3456,53 @@ function renderInspector(){
   const layout=state.inspectorMode==='essentials'?compactLayoutControl(node,s):`<div class="layout-inspector-pro">${displayControl(displayValue)}${flexSettings(s)}${gridSettings(s)}${gridItemSettings(node,s)}${flexItemSettings(node,s)}${inlineSettings(s)}${sizeSettings(s,node)}${positionSettings(s)}</div>`;
   tabPanels.layout+=section('layout',state.inspectorMode==='essentials'?'Layout esencial':'Layout',layout);
   tabPanels.design+=section('spacing','Espaciado',state.inspectorMode==='essentials'?compactSpacingControl(node,s):boxModelControl(node,s));
+function typographyStudioControl(node, s) {
+  const currentFont = String(s.fontFamily || '').replace(/['"]/g, '').split(',')[0].trim();
+  const fonts = [
+    { name: 'Inter', category: 'Sans-Serif', specimen: 'Aa' },
+    { name: 'Playfair Display', category: 'Serif Pro', specimen: 'Aa' },
+    { name: 'Outfit', category: 'Modern Sans', specimen: 'Aa' },
+    { name: 'Space Grotesk', category: 'Tech Display', specimen: 'Aa' },
+    { name: 'Syne', category: 'Cyber Avant', specimen: 'Aa' },
+    { name: 'Plus Jakarta Sans', category: 'Corporate', specimen: 'Aa' },
+    { name: 'Poppins', category: 'Geometric', specimen: 'Aa' },
+    { name: 'Roboto Mono', category: 'Developer', specimen: 'Aa' }
+  ];
+
+  const pairings = [
+    { id: 'editorial', name: 'Editorial Serif', font: 'Playfair Display' },
+    { id: 'tech', name: 'Modern Tech', font: 'Space Grotesk' },
+    { id: 'cyber', name: 'Cyber Display', font: 'Syne' },
+    { id: 'corporate', name: 'Clean Corporate', font: 'Plus Jakarta Sans' }
+  ];
+
+  const fontCardsHtml = `<div class="typography-font-cards-grid">${fonts.map(f => {
+    const isSelected = currentFont.toLowerCase() === f.name.toLowerCase();
+    return `<button type="button" class="typography-font-card ${isSelected ? 'is-selected' : ''}" data-typography-font="${f.name}">
+      <header><strong>${f.name}</strong><small>${f.category}</small></header>
+      <span class="typography-font-specimen" style="font-family: '${f.name}', sans-serif;">${f.specimen}</span>
+    </button>`;
+  }).join('')}</div>`;
+
+  const pairingsHtml = `<div class="typography-pairings-grid">${pairings.map(p => {
+    return `<button type="button" class="typography-pairing-chip" data-typography-font="${p.font}">
+      <strong>${p.name}</strong>
+      <small>${p.font}</small>
+    </button>`;
+  }).join('')}</div>`;
+
+  return `<div class="typography-studio-shell">
+    ${field('Explorador Tipográfico Visual', fontCardsHtml)}
+    ${field('Combinaciones Estilo 1-Clic', pairingsHtml)}
+  </div>`;
+}
+
   if(isTextual(node)){
     const alignIcons=[['left',iconSvg('alignLeft'),'Alinear a la izquierda'],['center',iconSvg('alignCenter'),'Centrar'],['right',iconSvg('alignRight'),'Alinear a la derecha'],['justify',iconSvg('alignJustify'),'Justificar']];
     const transformIcons=[['none','<span class="type-icon">Aa</span>','Sin transformación'],['uppercase','<span class="type-icon">AA</span>','Mayúsculas'],['lowercase','<span class="type-icon">aa</span>','Minúsculas'],['capitalize','<span class="type-icon">Aa·</span>','Capitalizar']];
     const decorationIcons=[['none',iconSvg('decorNone'),'Sin decoración'],['underline',iconSvg('decorUnderline'),'Subrayado'],['line-through',iconSvg('decorStrike'),'Tachado'],['overline',iconSvg('decorOverline'),'Overline']];
-    tabPanels.design+=section('type','Tipografía',
+    tabPanels.design+=section('type','Typography Studio 2.0',
+      `${typographyStudioControl(node,s)}`+
       `${field('Color',tokenField('color','colors',s.color,colorInput('color',s.color)),hasOverride(node,'color'))}`+
       `${field('Font family',fontFamilyInput(s.fontFamily),hasOverride(node,'fontFamily'))}`+
       `<div class="field-grid">${field('Font size',tokenField('fontSize','typography',s.fontSize,unitInput('fontSize',s.fontSize)),hasOverride(node,'fontSize'))}${field('Font weight',selectInput('fontWeight',[[100,'100'],[200,'200'],[300,'300'],[400,'400'],[500,'500'],[600,'600'],[700,'700'],[800,'800'],[900,'900']],s.fontWeight||400),hasOverride(node,'fontWeight'))}</div>`+
@@ -5284,6 +5335,16 @@ function updateCarouselFromControl(input){
 }
 
 document.addEventListener('click',event=>{
+  const typeFontBtn=event.target.closest('[data-typography-font]');
+  if(typeFontBtn){
+    const fontName=typeFontBtn.dataset.typographyFont;
+    if(!installedGoogleFonts().some(f=>f.family.toLowerCase()===fontName.toLowerCase())){
+      installGoogleFontByName(fontName);
+    }
+    commit(()=>directStyle('fontFamily',`'${fontName}', sans-serif`));
+    toast(`Fuente ${fontName} aplicada`);
+    return;
+  }
   const shadowPresetBtn=event.target.closest('[data-shadow-preset]');
   if(shadowPresetBtn){commit(()=>directStyle('boxShadow',shadowPresetBtn.dataset.shadowPreset));return;}
   const dupLayerBtn=event.target.closest('[data-layer-duplicate]');

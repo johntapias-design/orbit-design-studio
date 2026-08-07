@@ -5957,6 +5957,23 @@ swiper-container[data-pagination-style="hidden"]::part(pagination) { display: no
 .shadow-preset-card span { font-size: 9px; font-weight: 700; color: var(--text-secondary); text-align: center; }
 .shadow-preset-card i { width: 24px; height: 16px; border-radius: 4px; background: var(--surface-chrome); }
 
+/* Typography Studio 2.0 */
+.typography-studio-shell { display: flex; flex-direction: column; gap: 10px; margin-bottom: 12px; }
+.typography-font-cards-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 8px; }
+.typography-font-card { display: flex; flex-direction: column; justify-content: space-between; height: 66px; padding: 8px 10px; border: 1px solid var(--border-subtle); border-radius: 10px; background: var(--surface-control); cursor: pointer; transition: all 0.16s ease; text-align: left; }
+.typography-font-card:hover { border-color: var(--orbit-orange); background: color-mix(in srgb, var(--orbit-orange) 6%, var(--surface-control)); }
+.typography-font-card.is-selected { border-color: var(--orbit-orange); background: color-mix(in srgb, var(--orbit-orange) 14%, var(--surface-control)); box-shadow: 0 0 0 1px var(--orbit-orange); }
+.typography-font-specimen { font-size: 20px; font-weight: 700; color: var(--text-primary); line-height: 1; }
+.typography-font-card header { display: flex; align-items: center; justify-content: space-between; width: 100%; }
+.typography-font-card strong { font-size: 10.5px; font-weight: 700; color: var(--text-secondary); }
+.typography-font-card small { font-size: 8px; color: var(--text-tertiary); font-family: var(--font-family-mono); }
+.typography-pairings-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 6px; margin-top: 4px; }
+.typography-pairing-chip { display: flex; flex-direction: column; gap: 2px; padding: 8px; border: 1px solid var(--border-subtle); border-radius: 8px; background: var(--surface-control); cursor: pointer; transition: all 0.16s ease; text-align: left; }
+.typography-pairing-chip:hover { border-color: var(--orbit-orange); background: color-mix(in srgb, var(--orbit-orange) 6%, var(--surface-control)); }
+.typography-pairing-chip strong { font-size: 10px; font-weight: 700; color: var(--text-primary); }
+.typography-pairing-chip small { font-size: 8.5px; color: var(--text-tertiary); }
+
+
 
 
 @media(max-width:900px){.orbit-carousel-design-meta small{display:none}.carousel-slide-context{grid-template-columns:34px minmax(0,1fr) 30px}.carousel-slide-context button:nth-of-type(1){display:none}}
