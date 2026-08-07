@@ -2586,12 +2586,14 @@ function filteredLayerTree(nodes,query=''){
   return (nodes||[]).map(node=>{const children=filteredLayerTree(node.children||[],term);const hit=node.name.toLowerCase().includes(term)||node.type.toLowerCase().includes(term)||classAttribute(node).toLowerCase().includes(term);return hit||children.length?{...node,children}:null;}).filter(Boolean);
 }
 function layerRows(nodes,depth){
+  if(!nodes||!nodes.length)return depth===0?'<div class="layer-empty">Sin capas</div>':'';
+  const icons={section:'layout',container:'box',grid:'grid',block:'box',div:'box',card:'card',gallery:'gallery',carousel:'gallery',slide:'page',heading:'type',text:'type',richtext:'type',badge:'tag',quote:'type',link:'link',icon:'box',button:'box',image:'image',video:'video',form:'box',input:'box',textareaField:'box',selectField:'box',statCard:'card',testimonial:'card',pricingCard:'card',faqItem:'box',svg:'box'};
   return nodes.map(node=>{
-    const collapsed=!!state.collapsed[node.id];
-    const hasChildren=!!node.children?.length;
+    const collapsed=state.collapsedLayers[node.id];
     const selected=isSelectedId(node.id);
-    const componentBadge=node.componentRef?`<span class="layer-component" title="${node.componentSource==='master'?'Componente principal':'Instancia'}">◇</span>`:'';
-    return `<div class="layer-wrap"><div class="layer-row ${selected?'active':''} ${state.selectedId===node.id?'primary':''} ${node.hidden?'is-hidden':''} ${node.locked?'is-locked':''}" data-layer="${node.id}" draggable="${node.locked?'false':'true'}" data-drag-node="${node.id}" style="padding-left:${7+depth*14}px"><span class="layer-drag">⠿</span>${hasChildren?`<button class="layer-collapse" type="button" data-collapse="${node.id}">${collapsed?'›':'⌄'}</button>`:'<span class="layer-collapse"></span>'}<span class="layer-kind">${uiIcon(icons[node.type])}</span><span class="layer-name">${escapeHtml(node.name)}</span>${componentBadge}<span class="layer-layout">${layoutBadge(node)}</span><button class="layer-visibility" type="button" data-layer-visible="${node.id}" title="${node.hidden?'Mostrar':'Ocultar'}">${uiIcon(node.hidden?'eyeOff':'eye')}</button><button class="layer-lock" type="button" data-layer-lock="${node.id}" title="${node.locked?'Desbloquear':'Bloquear'}">${uiIcon(node.locked?'lock':'unlock')}</button></div>${hasChildren&&!collapsed?layerRows(node.children,depth+1):''}</div>`;
+    const hasChildren=node.children&&node.children.length;
+    const componentBadge=node.componentRef?`<span class="layer-component-badge ${node.componentSource==='master'?'is-master':''}">◇</span>`:'';
+    return `<div class="layer-wrap"><div class="layer-row ${selected?'active':''} ${state.selectedId===node.id?'primary':''} ${node.hidden?'is-hidden':''} ${node.locked?'is-locked':''}" data-layer="${node.id}" draggable="${node.locked?'false':'true'}" data-drag-node="${node.id}" style="padding-left:${7+depth*14}px"><span class="layer-drag">⠿</span>${hasChildren?`<button class="layer-collapse" type="button" data-collapse="${node.id}">${collapsed?'›':'⌄'}</button>`:'<span class="layer-collapse"></span>'}<span class="layer-kind">${uiIcon(icons[node.type]||'box')}</span><span class="layer-name" data-layer-rename="${node.id}" title="Doble clic para renombrar">${escapeHtml(node.name)}</span>${componentBadge}<span class="layer-layout">${layoutBadge(node)}</span><div class="layer-row-actions"><button type="button" data-layer-visible="${node.id}" title="${node.hidden?'Mostrar':'Ocultar'}">${uiIcon(node.hidden?'eyeOff':'eye')}</button><button type="button" data-layer-lock="${node.id}" title="${node.locked?'Desbloquear':'Bloquear'}">${uiIcon(node.locked?'lock':'unlock')}</button><button type="button" data-layer-duplicate="${node.id}" title="Duplicar">${uiIcon('copy')}</button><button type="button" data-layer-delete="${node.id}" title="Eliminar">${uiIcon('trash')}</button></div></div>${hasChildren&&!collapsed?layerRows(node.children,depth+1):''}</div>`;
   }).join('');
 }
 function layoutBadge(node){const s=effective(node);if(String(s.display).includes('grid'))return `${uiIcon('grid')}<span>GRID</span>`;if(String(s.display).includes('flex'))return `${uiIcon('flex')}<span>FLEX</span>`;return '';}
@@ -3462,7 +3464,25 @@ function renderInspector(){
       `${textShadowControl(s.textShadow,hasOverride(node,'textShadow'))}`
     );
   }
-  tabPanels.design+=section('appearance','Apariencia',`${backgroundEditor(node,s)}${(node.type!=='image'&&!isTextual(node))?field('Color',tokenField('color','colors',s.color,colorInput('color',s.color)),hasOverride(node,'color')):''}<div class="field-grid">${field('Radio',tokenField('borderRadius','radius',s.borderRadius,unitInput('borderRadius',s.borderRadius)),hasOverride(node,'borderRadius'))}${field('Opacidad',`<input data-style-prop="opacity" type="number" min="0" max="1" step="0.05" value="${s.opacity??1}">`,hasOverride(node,'opacity'))}</div><div class="field-grid">${field('Ancho de borde',unitInput('borderWidth',s.borderWidth),hasOverride(node,'borderWidth'))}${field('Color de borde',inspectorColorControl('borderColor',s.borderColor||'transparent','Borde'),hasOverride(node,'borderColor'))}</div>${field('Sombra',tokenField('boxShadow','shadows',s.boxShadow,`<input data-style-prop="boxShadow" value="${escapeHtml(s.boxShadow||'')}" placeholder="0 20px 50px rgba(...)">`),hasOverride(node,'boxShadow'))}${node.type==='image'?field('Ajuste',segmented('objectFit',[['cover','Cubrir'],['contain','Contener']],s.objectFit||'cover'),hasOverride(node,'objectFit')):''}`);
+function shadowStudioControl(node, s) {
+  const current = String(s.boxShadow || 'none').trim();
+  const presets = [
+    { id: 'none', title: 'Sin sombra', value: 'none' },
+    { id: 'soft-float', title: 'Flotante', value: '0 10px 30px rgba(0,0,0,0.08)' },
+    { id: 'editorial-card', title: 'Editorial', value: '0 20px 40px rgba(0,0,0,0.14)' },
+    { id: 'deep-elevation', title: 'Elevada 3D', value: '0 30px 70px rgba(0,0,0,0.22)' },
+    { id: 'neon-glow', title: 'Brillo Neón', value: '0 0 30px rgba(239,90,36,0.35)' },
+    { id: 'inner-inset', title: 'Hundida', value: 'inset 0 2px 8px rgba(0,0,0,0.16)' }
+  ];
+  const presetsHtml = `<div class="shadow-presets-grid">${presets.map(p => {
+    const isSelected = current === p.value;
+    return `<button type="button" class="shadow-preset-card ${isSelected ? 'is-selected' : ''}" data-shadow-preset="${escapeHtml(p.value)}"><i style="box-shadow: ${p.value};"></i><span>${p.title}</span></button>`;
+  }).join('')}</div>`;
+
+  return field('Shadow Studio Pro', `${presetsHtml}${tokenField('boxShadow', 'shadows', s.boxShadow, `<input data-style-prop="boxShadow" value="${escapeHtml(s.boxShadow || '')}" placeholder="0 20px 50px rgba(...)">`)}`, hasOverride(node, 'boxShadow'));
+}
+
+  tabPanels.design+=section('appearance','Apariencia',`${backgroundEditor(node,s)}${(node.type!=='image'&&!isTextual(node))?field('Color',tokenField('color','colors',s.color,colorInput('color',s.color)),hasOverride(node,'color')):''}<div class="field-grid">${field('Radio',tokenField('borderRadius','radius',s.borderRadius,unitInput('borderRadius',s.borderRadius)),hasOverride(node,'borderRadius'))}${field('Opacidad',`<input data-style-prop="opacity" type="number" min="0" max="1" step="0.05" value="${s.opacity??1}">`,hasOverride(node,'opacity'))}</div><div class="field-grid">${field('Ancho de borde',unitInput('borderWidth',s.borderWidth),hasOverride(node,'borderWidth'))}${field('Color de borde',inspectorColorControl('borderColor',s.borderColor||'transparent','Borde'),hasOverride(node,'borderColor'))}</div>${shadowStudioControl(node,s)}${node.type==='image'?field('Ajuste',segmented('objectFit',[['cover','Cubrir'],['contain','Contener']],s.objectFit||'cover'),hasOverride(node,'objectFit')):''}`);
   if(state.inspectorMode==='advanced')tabPanels.interactions+=section('interaction','Interacción y transición',`${field('Transform',`<input data-style-prop="transform" value="${escapeHtml(s.transform||'')}" placeholder="translateY(-2px) scale(1.02)">`,hasOverride(node,'transform'))}${field('Transition',`<input data-style-prop="transition" value="${escapeHtml(s.transition||'')}" placeholder="all 200ms ease">`,hasOverride(node,'transition'))}<div class="field-grid">${field('Cursor',selectInput('cursor',[['auto','Auto'],['pointer','Pointer'],['grab','Grab'],['text','Text'],['not-allowed','Not allowed']],s.cursor||'auto'),hasOverride(node,'cursor'))}${field('Pointer events',selectInput('pointerEvents',[['auto','Auto'],['none','None']],s.pointerEvents||'auto'),hasOverride(node,'pointerEvents'))}</div><p class="hint">Selecciona Hover, Focus, Active o Disabled arriba para diseñar cada estado.</p>`);
   const accessibility=node.type==='image'?field('Texto alternativo',textInput('alt',node.alt||'')):node.type==='button'?field(semanticTag(node)==='a'?'Destino del enlace':'Tipo de acción',semanticTag(node)==='a'?textInput('href',node.href||'#'):'<p class="hint">Se exportará como button type="button".</p>'):'<p class="hint">La semántica y ARIA se gestionan en el panel HTML semántico.</p>';
   if(state.inspectorMode==='advanced'||['image','button','link','input','textareaField','selectField'].includes(node.type))tabPanels.advanced+=section('accessibility','Accesibilidad',accessibility);
@@ -5180,7 +5200,24 @@ function applyInspectorColor(prop,value){
   commit(()=>directStyle(prop,value));
 }
 document.addEventListener('click',event=>{if(!event.target.closest('.responsive-suite'))setResponsiveSuiteOpen(false);if(!event.target.closest('.zoom-pro-shell'))setZoomMenuOpen(false);if(!event.target.closest('.guides-pro-shell'))setGuidesMenuOpen(false);if(!event.target.closest('.context-color-menu'))closeContextColorMenu();if(!event.target.closest('.inspector-color-control'))closeInspectorColorMenus();});
-document.addEventListener('keydown',event=>{if(event.key==='Escape'){setGuidesMenuOpen(false);closeContextColorMenu();closeInspectorColorMenus();}});
+document.addEventListener('dblclick',event=>{
+  const renameTarget=event.target.closest('[data-layer-rename]');
+  if(renameTarget){
+    const nodeId=renameTarget.dataset.layerRename;
+    const node=find(state.nodes,nodeId);
+    if(node){
+      const newName=prompt('Nuevo nombre para la capa',node.name);
+      if(newName&&newName.trim()){
+        commit(()=>{
+          state.nodes=update(state.nodes,nodeId,item=>({...item,name:newName.trim()}));
+        },nodeId);
+        toast(`Capa renombrada a "${newName.trim()}"`);
+      }
+    }
+    return;
+  }
+});
+
 
 function applySwiperPreset(node, presetId) {
   let swiperPatch = { preset: presetId };
@@ -5247,6 +5284,12 @@ function updateCarouselFromControl(input){
 }
 
 document.addEventListener('click',event=>{
+  const shadowPresetBtn=event.target.closest('[data-shadow-preset]');
+  if(shadowPresetBtn){commit(()=>directStyle('boxShadow',shadowPresetBtn.dataset.shadowPreset));return;}
+  const dupLayerBtn=event.target.closest('[data-layer-duplicate]');
+  if(dupLayerBtn){duplicateNode(dupLayerBtn.dataset.layerDuplicate);return;}
+  const delLayerBtn=event.target.closest('[data-layer-delete]');
+  if(delLayerBtn){deleteNode(delLayerBtn.dataset.layerDelete);return;}
   const activeSlideBtn=event.target.closest('[data-carousel-active-slide]');
   if(activeSlideBtn){const slideId=activeSlideBtn.dataset.carouselActiveSlide;setSelection(slideId);render();return;}
   const carouselPresetButton=event.target.closest('[data-carousel-preset]');

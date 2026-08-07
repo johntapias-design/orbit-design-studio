@@ -5923,5 +5923,40 @@ swiper-container[data-pagination-style="hidden"]::part(pagination) { display: no
 .orbit-carousel-slide-toolbar button:hover { border-color: var(--orbit-orange); color: var(--orbit-orange); }
 .orbit-carousel-slide-toolbar button.active { background: var(--orbit-orange); color: #ffffff; border-color: var(--orbit-orange); }
 
+/* Box Model Studio */
+.box-model-container { display: flex; flex-direction: column; align-items: center; padding: 10px; border-radius: 12px; background: var(--surface-control); border: 1px solid var(--border-subtle); margin-bottom: 12px; }
+.box-model-margin { position: relative; width: 100%; padding: 26px 36px; border: 1px dashed color-mix(in srgb, var(--orbit-orange) 50%, var(--border-default)); border-radius: 10px; background: color-mix(in srgb, var(--orbit-orange) 5%, transparent); text-align: center; }
+.box-model-margin-label { position: absolute; top: 4px; left: 8px; font: 700 7.5px/1 var(--font-family-mono); color: var(--orbit-orange); letter-spacing: 0.1em; }
+.box-model-padding { position: relative; width: 100%; padding: 22px 32px; border: 1px dashed color-mix(in srgb, var(--ui-accent) 50%, var(--border-default)); border-radius: 8px; background: color-mix(in srgb, var(--ui-accent) 8%, transparent); }
+.box-model-padding-label { position: absolute; top: 4px; left: 8px; font: 700 7.5px/1 var(--font-family-mono); color: var(--ui-accent); letter-spacing: 0.1em; }
+.box-model-content-box { padding: 6px 12px; border-radius: 6px; background: var(--surface-chrome); border: 1px solid var(--border-default); font: 700 9px/1 var(--font-family-mono); color: var(--text-primary); text-align: center; white-space: nowrap; }
+.box-model-input { position: absolute; width: 34px; height: 18px; padding: 0; border: 1px solid var(--border-default); border-radius: 4px; background: var(--surface-chrome); color: var(--text-secondary); font: 600 8.5px/1 var(--font-family-mono); text-align: center; }
+.box-model-input:focus { border-color: var(--orbit-orange); outline: none; }
+.box-model-input.m-top { top: 4px; left: calc(50% - 17px); }
+.box-model-input.m-bottom { bottom: 4px; left: calc(50% - 17px); }
+.box-model-input.m-left { left: 4px; top: calc(50% - 9px); }
+.box-model-input.m-right { right: 4px; top: calc(50% - 9px); }
+.box-model-input.p-top { top: 3px; left: calc(50% - 17px); }
+.box-model-input.p-bottom { bottom: 3px; left: calc(50% - 17px); }
+.box-model-input.p-left { left: 4px; top: calc(50% - 9px); }
+.box-model-input.p-right { right: 4px; top: calc(50% - 9px); }
+
+/* Layers Tree Hover Actions & Renaming */
+.layer-row { position: relative; display: flex; align-items: center; gap: 6px; padding: 5px 8px; border-radius: 8px; cursor: pointer; transition: background 0.15s ease; }
+.layer-row:hover .layer-row-actions { display: flex; }
+.layer-row-actions { display: none; align-items: center; gap: 2px; margin-left: auto; }
+.layer-row-actions button { display: grid; place-items: center; width: 22px; height: 22px; border-radius: 5px; border: 0; background: transparent; color: var(--text-tertiary); cursor: pointer; }
+.layer-row-actions button:hover { background: var(--surface-control); color: var(--orbit-orange); }
+.layer-name-input { height: 22px; padding: 0 6px; border: 1px solid var(--orbit-orange); border-radius: 4px; background: var(--surface-chrome); color: var(--text-primary); font-size: 11px; width: 100%; }
+
+/* Shadow Studio Presets */
+.shadow-presets-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; margin-bottom: 12px; }
+.shadow-preset-card { display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 6px; height: 64px; padding: 6px; border: 1px solid var(--border-subtle); border-radius: 10px; background: var(--surface-control); cursor: pointer; transition: all 0.16s ease; }
+.shadow-preset-card:hover { border-color: var(--orbit-orange); }
+.shadow-preset-card.is-selected { border-color: var(--orbit-orange); background: color-mix(in srgb, var(--orbit-orange) 12%, var(--surface-control)); box-shadow: 0 0 0 1px var(--orbit-orange); }
+.shadow-preset-card span { font-size: 9px; font-weight: 700; color: var(--text-secondary); text-align: center; }
+.shadow-preset-card i { width: 24px; height: 16px; border-radius: 4px; background: var(--surface-chrome); }
+
+
 
 @media(max-width:900px){.orbit-carousel-design-meta small{display:none}.carousel-slide-context{grid-template-columns:34px minmax(0,1fr) 30px}.carousel-slide-context button:nth-of-type(1){display:none}}
