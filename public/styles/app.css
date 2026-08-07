@@ -5973,6 +5973,23 @@ swiper-container[data-pagination-style="hidden"]::part(pagination) { display: no
 .typography-pairing-chip strong { font-size: 10px; font-weight: 700; color: var(--text-primary); }
 .typography-pairing-chip small { font-size: 8.5px; color: var(--text-tertiary); }
 
+/* Scroll Entrance FX Studio */
+.orbit-scroll-fx-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; margin-bottom: 12px; }
+.orbit-scroll-card { display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 4px; height: 54px; padding: 6px; border: 1px solid var(--border-subtle); border-radius: 10px; background: var(--surface-control); cursor: pointer; transition: all 0.16s ease; }
+.orbit-scroll-card:hover { border-color: var(--orbit-orange); }
+.orbit-scroll-card.is-selected { border-color: var(--orbit-orange); background: color-mix(in srgb, var(--orbit-orange) 12%, var(--surface-control)); box-shadow: 0 0 0 1px var(--orbit-orange); }
+.orbit-scroll-card span { font-size: 9px; font-weight: 700; color: var(--text-secondary); text-align: center; }
+
+/* Scroll Animation Keyframes & Target Classes */
+[data-orbit-anim] { transition-property: transform, opacity, filter; transition-timing-function: cubic-bezier(0.16, 1, 0.3, 1); will-change: transform, opacity; }
+[data-orbit-anim="fade-up"]:not(.is-orbit-animated) { opacity: 0; transform: translateY(32px); }
+[data-orbit-anim="fade-down"]:not(.is-orbit-animated) { opacity: 0; transform: translateY(-32px); }
+[data-orbit-anim="scale-in"]:not(.is-orbit-animated) { opacity: 0; transform: scale(0.88); }
+[data-orbit-anim="slide-right"]:not(.is-orbit-animated) { opacity: 0; transform: translateX(40px); }
+[data-orbit-anim="blur-in"]:not(.is-orbit-animated) { opacity: 0; filter: blur(12px); transform: scale(0.96); }
+[data-orbit-anim].is-orbit-animated { opacity: 1; transform: none; filter: none; }
+
+
 
 
 

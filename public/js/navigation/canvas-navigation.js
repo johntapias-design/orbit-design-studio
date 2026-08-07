@@ -3533,8 +3533,28 @@ function shadowStudioControl(node, s) {
   return field('Shadow Studio Pro', `${presetsHtml}${tokenField('boxShadow', 'shadows', s.boxShadow, `<input data-style-prop="boxShadow" value="${escapeHtml(s.boxShadow || '')}" placeholder="0 20px 50px rgba(...)">`)}`, hasOverride(node, 'boxShadow'));
 }
 
+function scrollFxControl(node) {
+  const current = node.scrollAnim || 'none';
+  const presets = [
+    { id: 'none', title: 'Sin animación' },
+    { id: 'fade-up', title: 'Fade Up ↑' },
+    { id: 'scale-in', title: 'Scale In 🔍' },
+    { id: 'slide-right', title: 'Slide Right →' },
+    { id: 'blur-in', title: 'Blur In ✨' },
+    { id: 'fade-down', title: 'Fade Down ↓' }
+  ];
+  const gridHtml = `<div class="orbit-scroll-fx-grid">${presets.map(p => {
+    const isSelected = current === p.id;
+    return `<button type="button" class="orbit-scroll-card ${isSelected ? 'is-selected' : ''}" data-scroll-anim-preset="${p.id}">
+      <span>${p.title}</span>
+    </button>`;
+  }).join('')}</div>`;
+
+  return field('Scroll Entrance FX Studio', gridHtml);
+}
+
   tabPanels.design+=section('appearance','Apariencia',`${backgroundEditor(node,s)}${(node.type!=='image'&&!isTextual(node))?field('Color',tokenField('color','colors',s.color,colorInput('color',s.color)),hasOverride(node,'color')):''}<div class="field-grid">${field('Radio',tokenField('borderRadius','radius',s.borderRadius,unitInput('borderRadius',s.borderRadius)),hasOverride(node,'borderRadius'))}${field('Opacidad',`<input data-style-prop="opacity" type="number" min="0" max="1" step="0.05" value="${s.opacity??1}">`,hasOverride(node,'opacity'))}</div><div class="field-grid">${field('Ancho de borde',unitInput('borderWidth',s.borderWidth),hasOverride(node,'borderWidth'))}${field('Color de borde',inspectorColorControl('borderColor',s.borderColor||'transparent','Borde'),hasOverride(node,'borderColor'))}</div>${shadowStudioControl(node,s)}${node.type==='image'?field('Ajuste',segmented('objectFit',[['cover','Cubrir'],['contain','Contener']],s.objectFit||'cover'),hasOverride(node,'objectFit')):''}`);
-  if(state.inspectorMode==='advanced')tabPanels.interactions+=section('interaction','Interacción y transición',`${field('Transform',`<input data-style-prop="transform" value="${escapeHtml(s.transform||'')}" placeholder="translateY(-2px) scale(1.02)">`,hasOverride(node,'transform'))}${field('Transition',`<input data-style-prop="transition" value="${escapeHtml(s.transition||'')}" placeholder="all 200ms ease">`,hasOverride(node,'transition'))}<div class="field-grid">${field('Cursor',selectInput('cursor',[['auto','Auto'],['pointer','Pointer'],['grab','Grab'],['text','Text'],['not-allowed','Not allowed']],s.cursor||'auto'),hasOverride(node,'cursor'))}${field('Pointer events',selectInput('pointerEvents',[['auto','Auto'],['none','None']],s.pointerEvents||'auto'),hasOverride(node,'pointerEvents'))}</div><p class="hint">Selecciona Hover, Focus, Active o Disabled arriba para diseñar cada estado.</p>`);
+  tabPanels.interactions+=section('interaction','Interacciones y Animaciones Scroll',`${scrollFxControl(node)}${field('Transform',`<input data-style-prop="transform" value="${escapeHtml(s.transform||'')}" placeholder="translateY(-2px) scale(1.02)">`,hasOverride(node,'transform'))}${field('Transition',`<input data-style-prop="transition" value="${escapeHtml(s.transition||'')}" placeholder="all 200ms ease">`,hasOverride(node,'transition'))}<div class="field-grid">${field('Cursor',selectInput('cursor',[['auto','Auto'],['pointer','Pointer'],['grab','Grab'],['text','Text'],['not-allowed','Not allowed']],s.cursor||'auto'),hasOverride(node,'cursor'))}${field('Pointer events',selectInput('pointerEvents',[['auto','Auto'],['none','None']],s.pointerEvents||'auto'),hasOverride(node,'pointerEvents'))}</div>`);
   const accessibility=node.type==='image'?field('Texto alternativo',textInput('alt',node.alt||'')):node.type==='button'?field(semanticTag(node)==='a'?'Destino del enlace':'Tipo de acción',semanticTag(node)==='a'?textInput('href',node.href||'#'):'<p class="hint">Se exportará como button type="button".</p>'):'<p class="hint">La semántica y ARIA se gestionan en el panel HTML semántico.</p>';
   if(state.inspectorMode==='advanced'||['image','button','link','input','textareaField','selectField'].includes(node.type))tabPanels.advanced+=section('accessibility','Accesibilidad',accessibility);
   const stateSwitcher=`<div class="interaction-state-switcher inspector-state-switcher"><span>Estado</span>${[['default','Default'],['hover','Hover'],['focus','Focus'],['active','Active'],['disabled','Disabled']].map(([key,label])=>`<button type="button" data-style-state="${key}" class="${state.styleState===key?'active':''}">${label}</button>`).join('')}</div>`;
@@ -5335,6 +5355,16 @@ function updateCarouselFromControl(input){
 }
 
 document.addEventListener('click',event=>{
+  const animPresetBtn=event.target.closest('[data-scroll-anim-preset]');
+  if(animPresetBtn){
+    const target=selected();if(!target)return;
+    const animId=animPresetBtn.dataset.scrollAnimPreset;
+    commit(()=>{
+      state.nodes=update(state.nodes,target.id,item=>({...item,scrollAnim:animId}));
+    },target.id);
+    toast(`Animación ${animId} aplicada`);
+    return;
+  }
   const typeFontBtn=event.target.closest('[data-typography-font]');
   if(typeFontBtn){
     const fontName=typeFontBtn.dataset.typographyFont;
