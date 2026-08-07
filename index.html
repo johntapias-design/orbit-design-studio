@@ -11140,7 +11140,7 @@ function layerRows(nodes,depth){
   if(!nodes||!nodes.length)return depth===0?'<div class="layer-empty">Sin capas</div>':'';
   const icons={section:'layout',container:'box',grid:'grid',block:'box',div:'box',card:'card',gallery:'gallery',carousel:'gallery',slide:'page',heading:'type',text:'type',richtext:'type',badge:'tag',quote:'type',link:'link',icon:'box',button:'box',image:'image',video:'video',form:'box',input:'box',textareaField:'box',selectField:'box',statCard:'card',testimonial:'card',pricingCard:'card',faqItem:'box',svg:'box'};
   return nodes.map(node=>{
-    const collapsed=state.collapsedLayers[node.id];
+    const collapsed=!!(state.collapsed&&state.collapsed[node.id]);
     const selected=isSelectedId(node.id);
     const hasChildren=node.children&&node.children.length;
     const componentBadge=node.componentRef?`<span class="layer-component-badge ${node.componentSource==='master'?'is-master':''}">◇</span>`:'';
