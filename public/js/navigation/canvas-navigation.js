@@ -782,7 +782,7 @@ function restoreWorkspaceSnapshot(saved){
 function defaultProjectSnapshot(mode='starter',name='Untitled project'){
   const nodes=mode==='blank'?[]:hydrateNodes(clone(starter));
   const meta={language:'es',title:name,description:'Sitio creado con Orbit Design Studio'};
-  return {version:currentOrbitDocumentVersion(),projectName:name,pageMeta:clone(meta),nodes:clone(nodes),tokens:clone(defaultTokens),assets:[],components:[],globalClasses:[],pages:[{id:'page-home',name:'Home',slug:'/',nodes:clone(nodes),meta:clone(meta)}],currentPageId:'page-home',breakpoints:{desktopXL:1440,desktop:1200,tablet:1024,mobileL:768,mobile:480},breakpointEnabled:{desktopXL:true,mobileL:true},canvasWidths:{desktopXL:1440,desktop:1200,tablet:834,mobileL:640,mobile:390},selectedId:nodes[0]?.id||null,selectedIds:nodes[0]?.id?[nodes[0].id]:[],zoom:.85,breakpoint:'desktop',styleState:'default',tab:'pages',grid:false,rulers:true,guides:true,guidesVisible:true,guidesLocked:false,guideUnitVersion:2,snap:true,customGuides:[],exportSettings:{componentize:true,astroImage:true,splitCss:true,minify:false},elementFavorites:['section','container','heading','text','button','image'],elementRecent:[],rightPanelWidth:360,rightPanelCollapsed:false,leftPanelWidth:380,leftPanelCollapsed:false,tokenGroupsOpen:{colors:true,typography:false,spacing:false,radius:false,shadows:false},inspectorMode:'advanced',inspectorTab:'content',directEditEnabled:true,assetSearch:'',assetFilter:'all',responsiveCompareSync:true,responsiveCompareSelected:true,responsiveCompareZoom:{desktop:1,tablet:1,mobile:1},responsiveAuditIgnored:[]};
+  return {version:currentOrbitDocumentVersion(),projectName:name,pageMeta:clone(meta),nodes:clone(nodes),tokens:clone(defaultTokens),assets:[],components:[],globalClasses:[],pages:[{id:'page-home',name:'Home',slug:'/',nodes:clone(nodes),meta:clone(meta)}],currentPageId:'page-home',breakpoints:{desktopXL:1440,desktop:1200,tablet:1024,mobileL:768,mobile:480},breakpointEnabled:{desktopXL:true,mobileL:true},canvasWidths:{desktopXL:1440,desktop:1200,tablet:834,mobileL:640,mobile:390},selectedId:nodes[0]?.id||null,selectedIds:nodes[0]?.id?[nodes[0].id]:[],zoom:.85,breakpoint:'desktop',styleState:'default',tab:'pages',grid:false,rulers:true,guides:true,guidesVisible:true,guidesLocked:false,guideUnitVersion:2,snap:true,customGuides:[],exportSettings:normalizeOrbitProductionExportSettings({},name),elementFavorites:['section','container','heading','text','button','image'],elementRecent:[],rightPanelWidth:360,rightPanelCollapsed:false,leftPanelWidth:380,leftPanelCollapsed:false,tokenGroupsOpen:{colors:true,typography:false,spacing:false,radius:false,shadows:false},inspectorMode:'advanced',inspectorTab:'content',directEditEnabled:true,assetSearch:'',assetFilter:'all',responsiveCompareSync:true,responsiveCompareSelected:true,responsiveCompareZoom:{desktop:1,tablet:1,mobile:1},responsiveAuditIgnored:[]};
 }
 function projectAccent(record){return record.snapshot?.tokens?.colors?.accent?.value||'#ef5a24';}
 function projectBackground(record){return record.snapshot?.tokens?.colors?.background?.value||'#f5f1e8';}
@@ -4884,7 +4884,10 @@ function exportNode(node,depth=2,ctx={}){
     const srcBinding=componentBinding(ctx,node,'src'),altBinding=componentBinding(ctx,node,'alt');
     const info=srcBinding?null:assetExportInfo(node.src);
     let img='';
-    if(ctx.optimizedImages&&info)img=`<Image class="${cls}${tag==='figure'?'__image':''}"${orbitId} src={${info.varName}} alt=${altBinding?`{${altBinding}}`:`"${escapeHtml(node.alt||'')}"`} widths={[480, 768, 1200, 1600]} sizes="(max-width: 768px) 100vw, 50vw" formats={['avif','webp']} />`;
+    if(ctx.optimizedImages&&info){
+      const priority=ctx.priorityImageId===node.id?' priority':'';
+      img=`<Picture class="${cls}${tag==='figure'?'__image':''}"${orbitId} src={${info.varName}} alt=${altBinding?`{${altBinding}}`:`"${escapeHtml(node.alt||'')}"`} widths={[480, 768, 1200, 1600]} sizes="(max-width: 768px) 100vw, 50vw" formats={['avif','webp']} quality=${JSON.stringify(ctx.imageQuality||'high')}${priority} />`;
+    }
     else{const source=ctx.previewAssets?node.src:assetPathFor(node.src);img=`<img class="${cls}${tag==='figure'?'__image':''}"${orbitId} src=${srcBinding?`{${srcBinding}}`:`"${escapeHtml(source)}"`} alt=${altBinding?`{${altBinding}}`:`"${escapeHtml(node.alt||'')}"`} loading="lazy" decoding="async" />`;}
     if(tag==='figure')return `${pad}<figure class="${cls}"${orbitId}${aria}>\n${pad}  ${img}${node.caption?`\n${pad}  <figcaption class="${cls}__caption">${escapeHtml(node.caption)}</figcaption>`:''}\n${pad}</figure>`;
     return `${pad}${img}`;
@@ -4948,7 +4951,8 @@ function generatedGlobalClassesCss(){
   ['desktopXL','tablet','mobileL','mobile'].forEach(bp=>{
     blocks[bp]=classes.filter(item=>hasResponsiveOverride(item.styles||{},bp)).map(item=>`.${sanitizeClass(item.name)} {\n${cssRules(mergedResponsiveStyle(item.styles||{},bp))}\n}`).join('\n\n');
   });
-  return `${baseAndStates}${responsiveMediaBlocks(blocks)}\n`;
+  const output=`${baseAndStates}${responsiveMediaBlocks(blocks)}`.trim();
+  return output?`${output}\n`:'/* Orbit: no hay clases globales en este proyecto. */\n';
 }
 function generatedElementsCss(){
   const flat=flattenNodes(allProjectNodes());const unique=new Map();flat.forEach(node=>unique.set(className(node),node));const nodes=[...unique.values()];
@@ -4966,7 +4970,8 @@ function generatedStyles(){
 }
 function pageFilePath(page){const route=pageRouteLabel(page);if(route==='/')return 'src/pages/index.astro';const clean=route.replace(/^\/+|\/+$/g,'');return `src/pages/${clean}.astro`;}
 function generatedLayout(){
-  return `---\nimport '../styles/global.css';\ninterface Props { title: string; description?: string; language?: string; ogImage?: string; canonicalUrl?: string; noIndex?: boolean; }\nconst { title, description = '', language = 'es', ogImage = '', canonicalUrl = '', noIndex = false } = Astro.props;\nconst schemaData = JSON.stringify({ "@context": "https://schema.org", "@type": "WebPage", "name": title, "description": description });\n---\n<!doctype html>\n<html lang={language}>\n  <head>\n    <meta charset="UTF-8" />\n    <meta name="viewport" content="width=device-width" />\n    <meta name="description" content={description} />${googleFontsHeadMarkup()}\n    {canonicalUrl && <link rel="canonical" href={canonicalUrl} />}\n    {noIndex && <meta name="robots" content="noindex,nofollow" />}\n    <meta property="og:title" content={title} />\n    <meta property="og:description" content={description} />\n    <meta property="og:type" content="website" />\n    {ogImage && <meta property="og:image" content={ogImage} />}\n    <meta name="twitter:card" content="summary_large_image" />\n    <meta name="twitter:title" content={title} />\n    <meta name="twitter:description" content={description} />\n    {ogImage && <meta name="twitter:image" content={ogImage} />}\n    <script type="application/ld+json" set:html={schemaData} />\n    <title>{title}</title>\n  </head>\n  <body>\n    <slot />\n  </body>\n</html>\n`;
+  const settings=normalizeOrbitProductionExportSettings(state.exportSettings,state.projectName);
+  return `---\nimport '../styles/global.css';\ninterface Props { title: string; description?: string; language?: string; ogImage?: string; canonicalUrl?: string; noIndex?: boolean; }\nconst { title, description = '', language = 'es', ogImage = '', canonicalUrl = '', noIndex = false } = Astro.props;\nconst siteName = ${JSON.stringify(settings.siteName)};\nconst author = ${JSON.stringify(settings.author)};\nconst canonical = canonicalUrl || (Astro.site ? new URL(Astro.url.pathname, Astro.site).toString() : '');\nconst socialImage = ogImage && Astro.site && !/^https?:\\/\\//i.test(ogImage) ? new URL(ogImage, Astro.site).toString() : ogImage;\nconst schemaData = JSON.stringify({ "@context": "https://schema.org", "@type": "WebPage", "name": title, "description": description, ...(canonical ? { url: canonical } : {}), ...(author ? { author: { "@type": "Organization", name: author } } : {}) });\n---\n<!doctype html>\n<html lang={language}>\n  <head>\n    <meta charset="UTF-8" />\n    <meta name="viewport" content="width=device-width, initial-scale=1" />\n    <meta name="generator" content={Astro.generator} />\n    <meta name="description" content={description} />\n    {author && <meta name="author" content={author} />}${googleFontsHeadMarkup()}\n    <meta name="theme-color" content="#ef5a24" />\n    {canonical && <link rel="canonical" href={canonical} />}\n    <meta name="robots" content={noIndex ? 'noindex,nofollow' : 'index,follow'} />\n    <meta property="og:title" content={title} />\n    <meta property="og:description" content={description} />\n    <meta property="og:type" content="website" />\n    <meta property="og:site_name" content={siteName} />\n    {canonical && <meta property="og:url" content={canonical} />}\n    {socialImage && <meta property="og:image" content={socialImage} />}\n    <meta name="twitter:card" content="summary_large_image" />\n    <meta name="twitter:title" content={title} />\n    <meta name="twitter:description" content={description} />\n    {socialImage && <meta name="twitter:image" content={socialImage} />}\n    <link rel="icon" href="/favicon.svg" type="image/svg+xml" />\n    ${settings.webManifest?'<link rel="manifest" href="/site.webmanifest" />':''}\n    <script type="application/ld+json" set:html={schemaData} />\n    <title>{title}</title>\n  </head>\n  <body>\n    <slot />\n  </body>\n</html>\n`;
 }
 function safeInlineScript(value=''){
   return String(value).replace(new RegExp('<'+'/script','gi'),'<\\/script');
@@ -4993,15 +4998,17 @@ function astroSwiperMarkup(nodes){
 function generatedPageAstro(page,componentNames){
   const nodes=page.nodes||[];const meta=page.meta||{};const refs=nodeComponentRefs(nodes).filter(ref=>componentNames.has(ref));const assets=nodeAssets(nodes);const imports=[`import BaseLayout from '../layouts/BaseLayout.astro';`];
   refs.forEach(ref=>imports.push(`import ${componentNames.get(ref)} from '../components/${componentNames.get(ref)}.astro';`));
-  if(assets.length){imports.push(`import { Image } from 'astro:assets';`);assets.forEach(info=>imports.push(`import ${info.varName} from '../assets/${info.file}';`));}
-  const body=nodes.map(node=>exportNode(node,1,{useComponents:true,componentNames,optimizedImages:true})).join('\n');
+  const optimizeImages=state.exportSettings?.astroImage!==false;
+  if(assets.length&&optimizeImages){imports.push(`import { Picture } from 'astro:assets';`);assets.forEach(info=>imports.push(`import ${info.varName} from '../assets/${info.file}';`));}
+  const priorityImageId=flattenNodes(nodes).find(node=>node.type==='image'&&assetExportInfo(node.src))?.id||'';
+  const body=nodes.map(node=>exportNode(node,1,{useComponents:true,componentNames,optimizedImages:optimizeImages,priorityImageId,imageQuality:state.exportSettings?.imageQuality||'high'})).join('\n');
   const customScript=inlineScriptMarkup(page.customJs||'',' is:inline');
   const swiperScript=astroSwiperMarkup(nodes);
   return `---\n${imports.join('\n')}\n---\n<BaseLayout title=${JSON.stringify(meta.title||page.name)} description=${JSON.stringify(meta.description||'')} language=${JSON.stringify(meta.language||'es')} ogImage=${JSON.stringify(meta.ogImage||'')} canonicalUrl=${JSON.stringify(meta.canonicalUrl||'')} noIndex={${!!meta.noIndex}}>\n${body}${customScript}${swiperScript}\n</BaseLayout>\n`;
 }
 function generatedComponentAstro(component,componentNames){
   const master=componentMasterAcrossPages(component.id);if(!master)return null;
-  const assets=nodeAssets([master]);const imports=[];if(assets.length){imports.push(`import { Image } from 'astro:assets';`);assets.forEach(info=>imports.push(`import ${info.varName} from '../assets/${info.file}';`));}
+  const assets=nodeAssets([master]);const imports=[];const optimizeImages=state.exportSettings?.astroImage!==false;if(assets.length&&optimizeImages){imports.push(`import { Picture } from 'astro:assets';`);assets.forEach(info=>imports.push(`import ${info.varName} from '../assets/${info.file}';`));}
   const propNames=componentPropCodeMap(component);const props=component.props||[];
   const bindings=new Map(props.map(prop=>[`${prop.path}|${prop.property}`,propNames.get(prop.id)]));
   const interfaceLines=props.map(prop=>`  ${propNames.get(prop.id)}?: string;`);
@@ -5009,7 +5016,7 @@ function generatedComponentAstro(component,componentNames){
   const frontLines=[...imports];
   if(props.length){frontLines.push(`interface Props {\n${interfaceLines.join('\n')}\n}`);frontLines.push(`const { ${destructure} } = Astro.props;`);}
   const front=frontLines.length?`---\n${frontLines.join('\n')}\n---\n`:'';
-  return `${front}${exportNode(master,0,{insideComponent:true,useComponents:false,componentNames,optimizedImages:true,componentBindings:bindings})}\n`;
+  return `${front}${exportNode(master,0,{insideComponent:true,useComponents:false,componentNames,optimizedImages:optimizeImages,imageQuality:state.exportSettings?.imageQuality||'high',componentBindings:bindings})}\n`;
 }
 function generatedAstro(options={}){
   const meta=state.pageMeta||{};const body=state.nodes.map(n=>exportNode(n,2,{optimizedImages:false,previewAssets:!!options.previewAssets})).join('\n');
@@ -5019,20 +5026,29 @@ function generatedAstro(options={}){
 }
 function dataUrlBytes(dataUrl){ const [header,data]=dataUrl.split(','); if(header.includes(';base64')){ const raw=atob(data); return Uint8Array.from(raw,c=>c.charCodeAt(0)); } return new TextEncoder().encode(decodeURIComponent(data)); }
 function projectFiles(){
-  syncCurrentPageRecord();const componentNames=componentNameMap();const dependencies={astro:'^7.1.6'};if(nodesUseSwiper(state.pages.flatMap(page=>page.nodes||[])))dependencies.swiper='^14.0.6';const files=[
-    {name:'package.json',data:JSON.stringify({name:slug(state.projectName),version:'0.1.0',private:true,type:'module',scripts:{dev:'astro dev',build:'astro build',preview:'astro preview'},dependencies},null,2)},
-    {name:'astro.config.mjs',data:"import { defineConfig } from 'astro/config';\nexport default defineConfig({});\n"},
+  syncCurrentPageRecord();state.exportSettings=normalizeOrbitProductionExportSettings(state.exportSettings,state.projectName);const componentNames=componentNameMap();const allNodes=state.pages.flatMap(page=>page.nodes||[]);const usesSwiper=nodesUseSwiper(allNodes);const productionAudit=auditOrbitProductionExport({projectName:state.projectName,pages:state.pages,nodes:state.nodes,pageMeta:state.pageMeta},state.exportSettings);const packageData=createOrbitProductionPackage({name:slug(state.projectName),usesSwiper,settings:state.exportSettings});const files=[
+    {name:'package.json',data:JSON.stringify(packageData,null,2)},
+    {name:'astro.config.mjs',data:createOrbitAstroConfig(state.exportSettings,state.projectName)},
+    {name:'.nvmrc',data:'26\n'},
+    {name:'.gitignore',data:'node_modules/\ndist/\n.astro/\n.lighthouseci/\nlighthouse-reports/\n'},
     {name:'src/layouts/BaseLayout.astro',data:generatedLayout()},
     {name:'src/styles/tokens.css',data:generatedTokensCss()},
     {name:'src/styles/classes.css',data:generatedGlobalClassesCss()},
     {name:'src/styles/elements.css',data:generatedElementsCss()},
     {name:'src/styles/global.css',data:generatedStyles()},
-    {name:'README.md',data:`# ${state.projectName}\n\nProyecto multipágina generado con Orbit Design Studio ${ORBIT_APP.versionLabel} Pro.\n\n## Ejecutar\n\n\`\`\`bash\nnpm install\nnpm run dev\n\`\`\`\n`},
+    {name:'README.md',data:`# ${state.projectName}\n\nProyecto Astro de producción generado con Orbit Design Studio ${ORBIT_APP.versionLabel}.\n\n## Desarrollo\n\n\`\`\`bash\nnpm install\nnpm run dev\n\`\`\`\n\n## Compilar y verificar\n\n\`\`\`bash\nnpm run build\n${state.exportSettings.lighthouse?'npm run lighthouse\n':''}\`\`\`\n\nLas imágenes locales se transforman a AVIF/WebP durante la compilación. Los reportes Lighthouse quedan en \`lighthouse-reports/\`.\n`},
     {name:'orbit/project.orbit.json',data:JSON.stringify({version:currentOrbitDocumentVersion(),projectName:state.projectName,pages:state.pages,tokens:state.tokens,globalClasses:state.globalClasses,components:state.components,assets:state.assets,breakpoints:state.breakpoints,breakpointEnabled:state.breakpointEnabled,canvasWidths:state.canvasWidths},null,2)}
   ];
+  if(state.exportSettings.robots)files.push({name:'public/robots.txt',data:createOrbitRobotsTxt(state.exportSettings,state.projectName)});
+  if(state.exportSettings.webManifest)files.push({name:'public/site.webmanifest',data:createOrbitWebManifest(state.exportSettings,state.projectName)});
+  files.push({name:'public/favicon.svg',data:`<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64"><rect width="64" height="64" rx="14" fill="#111318"/><path d="M17 17h15v15H17zM32 32h15v15H32zM32 17h15v15H32zM17 32h15v15H17z" fill="none" stroke="#ef5a24" stroke-width="4"/></svg>\n`});
+  if(state.exportSettings.lighthouse){
+    files.push({name:'lighthouserc.json',data:createOrbitLighthouseConfig(productionAudit.routes)});
+    files.push({name:'.github/workflows/lighthouse.yml',data:`name: Production Lighthouse\n\non:\n  push:\n    branches: [main]\n  pull_request:\n    branches: [main]\n\njobs:\n  production-quality:\n    runs-on: ubuntu-latest\n    timeout-minutes: 15\n    steps:\n      - uses: actions/checkout@v7\n      - uses: actions/setup-node@v7\n        with:\n          node-version-file: .nvmrc\n      - run: npm install\n      - run: npm run build\n      - run: npm run lighthouse\n      - uses: actions/upload-artifact@v7\n        if: always()\n        with:\n          name: lighthouse-reports\n          path: lighthouse-reports\n`});
+  }
   state.pages.forEach(page=>files.push({name:pageFilePath(page),data:generatedPageAstro(page,componentNames)}));
   state.components.forEach(component=>{const data=generatedComponentAstro(component,componentNames);if(data)files.push({name:`src/components/${componentNames.get(component.id)}.astro`,data});});
-  state.assets.filter(asset=>String(asset.src).startsWith('data:')).forEach(asset=>{const info=assetExportInfo(asset.src);files.push({name:`src/assets/${info.file}`,data:dataUrlBytes(asset.src)});});
+  state.assets.filter(asset=>String(asset.src).startsWith('data:')).forEach(asset=>{const info=assetExportInfo(asset.src);files.push({name:`${state.exportSettings.astroImage?'src':'public'}/assets/${info.file}`,data:dataUrlBytes(asset.src)});});
   return files;
 }
 
@@ -5057,6 +5073,40 @@ function makeZip(files){
 
 function downloadBlob(name,blob){ const url=URL.createObjectURL(blob); const a=document.createElement('a'); a.href=url; a.download=name; a.click(); setTimeout(()=>URL.revokeObjectURL(url),1200); }
 function downloadText(name,content,type='text/plain'){ downloadBlob(name,new Blob([content],{type})); }
+function productionExportAudit(){
+  syncCurrentPageRecord();
+  state.exportSettings=normalizeOrbitProductionExportSettings(state.exportSettings,state.projectName);
+  return auditOrbitProductionExport({projectName:state.projectName,pages:state.pages,nodes:state.nodes,pageMeta:state.pageMeta},state.exportSettings);
+}
+function productionExportIssuesMarkup(report){
+  if(!report.issues.length)return '<div class="production-export-empty"><span>✓</span><strong>Listo para producción</strong><p>No se detectaron bloqueos ni advertencias.</p></div>';
+  return report.issues.map(issue=>`<article class="production-export-issue is-${issue.severity}"><span>${issue.severity==='error'?'×':'!'}</span><div><strong>${escapeHtml(issue.title)}</strong><p>${escapeHtml(issue.detail)}</p><code>${escapeHtml(issue.path)}</code></div></article>`).join('');
+}
+function showProductionExport(){
+  const report=productionExportAudit(),settings=report.settings;
+  const status=report.ready?(report.warnings.length?'Preparado con advertencias':'Preparado para compilar'):'Requiere correcciones';
+  openModal('Production Export','ORBIT v0.28',`<div class="production-export-studio">
+    <section class="production-export-hero"><div class="production-export-score ${report.ready?'is-ready':'has-errors'}"><strong>${report.score}</strong><span>/100</span></div><div><span>ASTRO PRODUCTION</span><h3>${status}</h3><p>${report.pages} páginas · ${report.images.total} imágenes · ${report.errors.length} errores · ${report.warnings.length} advertencias</p></div></section>
+    <section class="production-export-grid">
+      <label class="production-export-field production-export-url"><span>URL pública del sitio</span><input type="url" data-production-setting="siteUrl" value="${escapeHtml(settings.siteUrl)}" placeholder="https://mi-dominio.com"><small>Activa canonical, sitemap y robots completos.</small></label>
+      <label class="production-export-field"><span>Nombre del sitio</span><input data-production-setting="siteName" value="${escapeHtml(settings.siteName)}"></label>
+      <label class="production-export-field"><span>Autor / organización</span><input data-production-setting="author" value="${escapeHtml(settings.author)}" placeholder="Tu estudio"></label>
+      <label class="production-export-field"><span>Calidad de imagen</span><select data-production-setting="imageQuality">${[['mid','Equilibrada'],['high','Alta'],['max','Máxima']].map(([value,label])=>`<option value="${value}" ${settings.imageQuality===value?'selected':''}>${label}</option>`).join('')}</select></label>
+    </section>
+    <section class="production-export-options">
+      ${[['astroImage','Picture AVIF + WebP','Imágenes responsive y prioridad LCP'],['sitemap','Sitemap Astro','Mapa XML al compilar'],['robots','robots.txt','Reglas para buscadores'],['webManifest','Web manifest','Identidad instalable'],['lighthouse','Lighthouse CI','Performance ≥90 y SEO ≥95']].map(([key,title,copy])=>`<label><input type="checkbox" data-production-setting="${key}" ${settings[key]?'checked':''}><span><strong>${title}</strong><small>${copy}</small></span></label>`).join('')}
+    </section>
+    <section class="production-export-summary"><article><span>ASTRO</span><strong>7.2.6</strong><small>Static build</small></article><article><span>IMÁGENES</span><strong>${report.images.optimized}/${report.images.total}</strong><small>optimizables</small></article><article><span>LIGHTHOUSE</span><strong>${settings.lighthouse?'4 gates':'Off'}</strong><small>quality budgets</small></article></section>
+    <section class="production-export-issues"><header><div><span>PRE-FLIGHT</span><strong>Informe de salida</strong></div><b>${report.issues.length}</b></header><div>${productionExportIssuesMarkup(report)}</div></section>
+    <footer class="production-export-actions"><button type="button" class="secondary-action" data-close-modal>Cancelar</button><button type="button" class="primary-action" data-production-export ${report.ready?'':'disabled'}>${report.ready?'Compilar y descargar Astro':'Corrige los errores para exportar'}</button></footer>
+  </div>`,'production-export-modal');
+}
+function readProductionExportSettings(){
+  const modal=document.querySelector('.production-export-modal');
+  const next={...state.exportSettings};
+  modal?.querySelectorAll('[data-production-setting]').forEach(input=>{next[input.dataset.productionSetting]=input.type==='checkbox'?input.checked:input.value;});
+  return normalizeOrbitProductionExportSettings(next,state.projectName);
+}
 function exportProject(force=false){
   const report=responsiveAudit();
   if(!force&&report.errors.length){
@@ -5563,6 +5613,7 @@ document.addEventListener('click',event=>{
   if(event.target.closest('[data-open-responsive-compare]')){openResponsiveCompare();return;}
   const responsiveFix=event.target.closest('[data-responsive-fix]');if(responsiveFix){applyResponsiveFix(responsiveFix.dataset.responsiveIssue,responsiveFix.dataset.responsiveFix);return;}
   const responsiveIgnore=event.target.closest('[data-responsive-ignore]');if(responsiveIgnore){state.responsiveAuditIgnored=[...new Set([...(state.responsiveAuditIgnored||[]),responsiveIgnore.dataset.responsiveIgnore])];markUnsaved();showResponsiveAudit();return;}
+  if(event.target.closest('[data-production-export]')){const siteInput=document.querySelector('[data-production-setting="siteUrl"]');if(siteInput?.value&&!normalizeOrbitSiteUrl(siteInput.value)){siteInput.setCustomValidity('Usa una URL completa, por ejemplo https://mi-dominio.com');siteInput.reportValidity();siteInput.addEventListener('input',()=>siteInput.setCustomValidity(''),{once:true});return;}state.exportSettings=readProductionExportSettings();markUnsaved();closeModal();exportProject();return;}
   if(event.target.closest('[data-export-anyway]')){closeModal();exportProject(true);return;}
   if(event.target.closest('#responsive-compare-sync')){state.responsiveCompareSync=!state.responsiveCompareSync;renderResponsiveCompare();markUnsaved();return;}
   if(event.target.closest('#responsive-compare-selection')){state.responsiveCompareSelected=!state.responsiveCompareSelected;renderResponsiveCompare();markUnsaved();return;}
@@ -5821,7 +5872,7 @@ initCoreControls({
     undo, redo, render, renderCanvas, toast, preview, openResponsiveCompare, closeResponsiveCompare,
     renderResponsiveCompare, toggleRightPanel, toggleLeftPanel, showBreakpointManager, openQuickInsert,
     insertionForClick, openCommandPalette, applyAdaptiveWorkspace, applyLeftPanelChrome, applyRightPanelChrome,
-    positionQuickInsert, fitResponsiveCompareFrames, showImportHub, showPageSettings, showAudit, exportProject,
+    positionQuickInsert, fitResponsiveCompareFrames, showImportHub, showPageSettings, showAudit, showProductionExport, exportProject,
     exportWorkspaceBackup, openProjectDashboard, createCheckpoint, renderProjectDashboard,
     exportAllWorkspaceProjects, cleanupWorkspaceVersions, importWorkspaceBackup,
     toggleFocusView:trigger=>focusView?.toggle(trigger),renderMeasurement:()=>measurementTools?.scheduleRender(),markUnsaved,
@@ -5873,7 +5924,7 @@ function loadSaved(){
 window.addEventListener('error',event=>{console.error('[Orbit runtime]',event.error||event.message);toast('Orbit encontró un error inesperado. Puedes seguir trabajando o deshacer el último cambio.','error',3500);});
 window.addEventListener('unhandledrejection',event=>{console.error('[Orbit promise]',event.reason);toast('Una operación no pudo completarse. Revisa la consola si necesitas el detalle.','error',3500);});
 
-window.__ORBIT_QA__={openProjectDashboard,createWorkspaceProject,generatedElementsCss,generatedGlobalClassesCss,generatedStyles,generatedAstro,generatedPreviewHtml,safeInlineScriptJson,livePreviewPayload,isLivePreviewOpen,projectFiles,projectDbList,projectDbListRaw,projectDbPut,normalizeProjectRecord,repairWorkspaceStorage,renderProjectDashboard,workspaceSnapshot,currentProjectProfile,runtimePerformanceSnapshot:()=>runtimePerformance.snapshot(),recoveryDraft:()=>parseOrbitRecoveryEnvelope(safeLocalGet(SESSION_RECOVERY_DRAFT_KEY)),orbitJsonStudio:{parse:parseOrbitJsonSource,migrate:migrateOrbitJsonToV13,validate:validateOrbitJsonV13,repair:repairOrbitJsonV13,preview:createOrbitJsonPreviewHtml},normalizeOrbitImport,primarySharedStyleClass,setSharedStyleMode,directStyle,render,setSelection,loadOrbitDocument(data,selectedId=''){
+window.__ORBIT_QA__={openProjectDashboard,createWorkspaceProject,generatedElementsCss,generatedGlobalClassesCss,generatedStyles,generatedAstro,generatedPreviewHtml,safeInlineScriptJson,livePreviewPayload,isLivePreviewOpen,projectFiles,productionExportAudit,showProductionExport,productionExportSettings(value){if(value)state.exportSettings=normalizeOrbitProductionExportSettings(value,state.projectName);return clone(state.exportSettings);},projectDbList,projectDbListRaw,projectDbPut,normalizeProjectRecord,repairWorkspaceStorage,renderProjectDashboard,workspaceSnapshot,currentProjectProfile,runtimePerformanceSnapshot:()=>runtimePerformance.snapshot(),recoveryDraft:()=>parseOrbitRecoveryEnvelope(safeLocalGet(SESSION_RECOVERY_DRAFT_KEY)),orbitJsonStudio:{parse:parseOrbitJsonSource,migrate:migrateOrbitJsonToV13,validate:validateOrbitJsonV13,repair:repairOrbitJsonV13,preview:createOrbitJsonPreviewHtml},normalizeOrbitImport,primarySharedStyleClass,setSharedStyleMode,directStyle,render,setSelection,loadOrbitDocument(data,selectedId=''){
   const result=normalizeOrbitImport(data);const doc=result.document;state.nodes=hydrateNodes(clone(doc.nodes));state.tokens=doc.tokens||clone(defaultTokens);ensureTokenGroups();state.assets=doc.assets||[];state.components=(doc.components||[]).map(normalizeComponentDefinition);state.globalClasses=doc.globalClasses||[];state.projectName=doc.projectName||'QA project';state.pageMeta=doc.pageMeta||state.pageMeta;state.pages=[{id:'page-qa',name:'QA',slug:'/',nodes:clone(state.nodes),meta:clone(state.pageMeta)}];state.currentPageId='page-qa';setSelection(selectedId&&find(state.nodes,selectedId)?selectedId:state.nodes[0]?.id||null);render();return result.report;
 }};
 setWorkspaceVisibility(true);

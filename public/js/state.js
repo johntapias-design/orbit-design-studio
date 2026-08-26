@@ -74,7 +74,7 @@ function createOrbitState({ clone, hydrateNodes, starter, defaultTokens }) {
     importMode:'design-system',
     pendingImport:null,
     aiImportReport:null,
-    exportSettings:{componentize:true,astroImage:true,splitCss:true,minify:false},
+    exportSettings:{...ORBIT_PRODUCTION_EXPORT_DEFAULTS},
     rightPanelWidth:360,
     rightPanelCollapsed:false,
     rightPanelResizing:null,

@@ -5,17 +5,44 @@ import vm from 'node:vm';
 
 function loadScript(relativePath, expose) {
   const source = readFileSync(new URL(`../${relativePath}`, import.meta.url), 'utf8');
-  const context = vm.createContext({ Blob });
+  const context = vm.createContext({ Blob, URL });
   vm.runInContext(`${source}\nglobalThis.__orbitTestValue = ${expose};`, context);
   return context.__orbitTestValue;
 }
 
-test('metadata de v0.27 define Orbit JSON v13 como formato actual', () => {
+test('metadata de v0.28 conserva Orbit JSON v13 como formato actual', () => {
   const metadata = loadScript('public/js/core/app-metadata.js', 'ORBIT_APP');
-  assert.equal(metadata.version, '0.27.0-alpha');
-  assert.equal(metadata.versionLabel, 'v0.27');
+  assert.equal(metadata.version, '0.28.0-alpha');
+  assert.equal(metadata.versionLabel, 'v0.28');
   assert.equal(metadata.documentVersion, 13);
   assert.deepEqual([...metadata.supportedDocumentVersions], [12, 13]);
+});
+
+test('Production Export detecta bloqueos SEO y rutas duplicadas', () => {
+  const production = loadScript('public/js/export/production-export.js', '({ auditOrbitProductionExport })');
+  const report = production.auditOrbitProductionExport({ projectName: 'Demo', pages: [
+    { name: 'Home', slug: '/', meta: { title: '', description: '' }, nodes: [] },
+    { name: 'Copy', slug: '/', meta: { title: 'Copy', description: 'Description' }, nodes: [] },
+  ] }, { siteUrl: 'https://example.com' });
+  assert.equal(report.ready, false);
+  assert.ok(report.errors.some(issue => issue.code === 'seo.title.missing'));
+  assert.ok(report.errors.some(issue => issue.code === 'route.duplicate'));
+});
+
+test('Production Export genera Astro, robots y Lighthouse reproducibles', () => {
+  const production = loadScript('public/js/export/production-export.js', '({ createOrbitAstroConfig, createOrbitRobotsTxt, createOrbitLighthouseConfig, createOrbitProductionPackage })');
+  const settings = { siteUrl: 'https://orbit.example/', sitemap: true, lighthouse: true };
+  const config = production.createOrbitAstroConfig(settings, 'Orbit');
+  assert.match(config, /@astrojs\/sitemap/);
+  assert.match(config, /https:\/\/orbit\.example/);
+  assert.match(production.createOrbitRobotsTxt(settings, 'Orbit'), /sitemap-index\.xml/);
+  const lighthouse = JSON.parse(production.createOrbitLighthouseConfig(['/', '/work']));
+  assert.equal(lighthouse.ci.assert.assertions['categories:performance'][1].minScore, 0.9);
+  assert.equal(lighthouse.ci.upload.target, 'filesystem');
+  const packageJson = production.createOrbitProductionPackage({ name: 'orbit', settings });
+  assert.equal(packageJson.dependencies.astro, '^7.2.6');
+  assert.equal(packageJson.dependencies['@astrojs/sitemap'], '^3.7.3');
+  assert.match(packageJson.scripts.lighthouse, /@lhci\/cli@0\.15\.1/);
 });
 
 test('Orbit JSON Studio migra v12 a v13 con defaults explícitos', () => {

@@ -1,5 +1,28 @@
 # Changelog
 
+## v0.28.0-alpha — Production Export
+
+### Astro compilable e imágenes
+
+- Exportación actualizada a Astro 7.2.6 con salida estática reproducible.
+- Imágenes locales exportadas con `Picture`, variantes AVIF/WebP, `srcset`, calidad configurable y prioridad para la primera imagen relevante.
+- Dependencias de sitemap y Swiper añadidas únicamente cuando el proyecto las necesita.
+- Configuración, `.nvmrc`, `.gitignore` y documentación de ejecución incluidas en el ZIP.
+
+### SEO de producción
+
+- Preflight visible para rutas duplicadas, títulos, descripciones, jerarquía H1, imágenes vacías y textos alternativos.
+- Canonical automático desde `Astro.site`, Open Graph, Twitter Cards y JSON-LD en el layout base.
+- Generación opcional de sitemap, `robots.txt`, web manifest y favicon.
+
+### Lighthouse y QA
+
+- Lighthouse CI 0.15.1 fijado en el comando de auditoría sin contaminar las dependencias instaladas del proyecto.
+- Umbrales de Performance ≥90, Accessibility ≥95, Best Practices ≥90 y SEO ≥95.
+- Workflow de GitHub y reportes locales incluidos en cada exportación.
+- Pruebas unitarias, flujo visual y compilación real de un proyecto Astro generado por Orbit.
+- Artefacto CI actualizado a `Orbit-Netlify-v0.28`.
+
 ## v0.27.0-alpha — Orbit JSON Studio
 
 ### Migración y validación

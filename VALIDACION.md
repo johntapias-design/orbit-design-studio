@@ -2,11 +2,11 @@
 
 Resultado: **aprobado**, sin errores de JavaScript ni de consola.
 
-Baseline v0.27:
+Baseline v0.28:
 
 - Build standalone reproducible desde el manifest modular.
-- Versión `0.27.0-alpha` sincronizada entre paquete, runtime e interfaz.
-- Pruebas unitarias para resolución de Chrome, Scroll Entrance FX, recuperación y Orbit JSON Studio.
+- Versión `0.28.0-alpha` sincronizada entre paquete, runtime e interfaz.
+- Pruebas unitarias para resolución de Chrome, Scroll Entrance FX, recuperación, Orbit JSON Studio y Production Export.
 - QA compatible con macOS y Ubuntu/GitHub Actions.
 - Orbit JSON v13 como formato actual y compatibilidad de lectura con v12.
 - Autosave adaptativo con coalescencia y tres reintentos progresivos.
@@ -14,6 +14,9 @@ Baseline v0.27:
 - Historial adaptativo y omisión de reemplazos DOM idénticos para proyectos grandes.
 - Migración v12→v13 validada con defaults explícitos y rechazo de versiones incompatibles.
 - Rutas de error, reparación de IDs/tipos y preview sandbox verificados con documentos dañados.
+- Preflight de producción verificado con rutas, SEO, encabezados e imágenes.
+- Proyecto exportado compilado realmente con Astro 7.2.6 y optimización AVIF/WebP.
+- Sitemap, robots, manifest, canonical, Open Graph, JSON-LD y Lighthouse CI verificados.
 
 | Resolución | Barra global | Barra de selección | Lienzo borde a borde | Reajuste de paneles | Overflow global |
 | --- | --- | --- | --- | --- | --- |

@@ -15,6 +15,7 @@ export const JS_MODULES = Object.freeze([
   'performance/runtime-performance.js',
   'reliability/project-reliability.js',
   'json/orbit-json-studio.js',
+  'export/production-export.js',
   'projects/workspace-storage.js',
   'inspector/inspector-tabs.js',
   'theme/theme-system.js',

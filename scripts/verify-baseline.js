@@ -27,14 +27,16 @@ const labelMatch = metadataSource.match(/versionLabel:\s*'([^']+)'/);
 const documentVersionMatch = metadataSource.match(/documentVersion:\s*(\d+)/);
 
 check('package y runtime comparten versión', versionMatch?.[1] === packageVersion);
-check('release v0.27 visible', labelMatch?.[1] === 'v0.27' && indexHtml.includes('<title>Orbit Design Studio — v0.27</title>') && indexHtml.includes('<span class="version-badge">v0.27</span>'));
+check('release v0.28 visible', labelMatch?.[1] === 'v0.28' && indexHtml.includes('<title>Orbit Design Studio — v0.28</title>') && indexHtml.includes('<span class="version-badge">v0.28</span>'));
 check('Orbit JSON v13 es el formato actual', Number(documentVersionMatch?.[1]) === 13 && navigationSource.includes('currentOrbitDocumentVersion()'));
 check('Node está fijado para CI y desarrollo', read('.nvmrc').trim() === '26' && packageJson.engines?.node === '>=26 <27');
 check('QA usa resolución multiplataforma de Chrome', qaSource.includes('resolveChromePath()') && !qaSource.includes("const chromePath = '/Applications/Google Chrome"));
-check('CI publica artefacto v0.27', workflowSource.includes('Orbit-Netlify-v0.27') && workflowSource.includes("node-version-file: '.nvmrc'"));
+check('CI publica artefacto v0.28', workflowSource.includes('Orbit-Netlify-v0.28') && workflowSource.includes("node-version-file: '.nvmrc'"));
 check('Scroll Entrance FX está fuera del monolito', !navigationSource.includes('function scrollFxControl(') && navigationSource.includes('renderScrollFxControl(node,field)'));
 check('Performance y recuperación están modularizadas', JS_MODULES.includes('reliability/project-reliability.js') && navigationSource.includes('createOrbitAutosaveScheduler'));
 check('Orbit JSON Studio está modularizado', JS_MODULES.includes('json/orbit-json-studio.js') && navigationSource.includes('validateOrbitJsonV13') && navigationSource.includes('createOrbitJsonPreviewHtml'));
+check('Production Export está modularizado', JS_MODULES.includes('export/production-export.js') && navigationSource.includes('auditOrbitProductionExport') && navigationSource.includes('createOrbitLighthouseConfig'));
+check('Astro exporta imágenes modernas y Lighthouse', navigationSource.includes("import { Picture } from 'astro:assets'") && navigationSource.includes('lighthouserc.json') && navigationSource.includes('public/robots.txt'));
 check('Build conserva rutas JSON con signo dólar', buildSource.includes('() => `<!-- Orbit bundled standalone script -->') && indexHtml.includes("'$.nodes'"));
 
 let previousIndex = -1;

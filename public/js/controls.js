@@ -111,7 +111,7 @@ function initCoreControls({ document, window, state, elements, viewportEngine, a
   click('import-tools', () => actions.showImportHub('design-system'));
   click('audit', () => actions.showAudit());
   click('inspector-top-toggle', () => actions.toggleRightPanel());
-  click('export-project', () => actions.exportProject());
+  click('export-project', () => actions.showProductionExport());
   click('export-json', () => actions.exportWorkspaceBackup());
   click('import-json', () => elements.jsonUpload?.click());
   click('project-dashboard-trigger', () => actions.openProjectDashboard());

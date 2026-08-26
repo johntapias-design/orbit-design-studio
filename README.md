@@ -1,6 +1,6 @@
-# Orbit Design Studio — v0.27 Orbit JSON Studio
+# Orbit Design Studio — v0.28 Production Export
 
-Versión standalone profesional de Orbit Design Studio v0.27.
+Versión standalone profesional de Orbit Design Studio v0.28.
 
 [![Netlify Deploy Status](https://api.netlify.com/api/v1/badges/orbit-design-studio/deploy-status)](https://app.netlify.com)
 
@@ -9,6 +9,14 @@ Versión standalone profesional de Orbit Design Studio v0.27.
 Abre `index.html` con doble clic. No requiere instalación, npm ni compilación.
 
 ## Cambios incluidos
+
+- Production Export Studio con preflight de rutas, SEO, encabezados e imágenes antes de descargar.
+- Proyectos Astro 7.2.6 compilables, con configuración estática y sitemap oficial opcional.
+- Imágenes locales mediante `Picture`, AVIF/WebP, `srcset`, prioridad LCP y calidad configurable.
+- Canonical automático, Open Graph, Twitter Cards, JSON-LD, `robots.txt`, manifest y favicon.
+- Lighthouse CI fijado en versión, con límites de Performance, Accessibility, Best Practices y SEO.
+- Workflow de GitHub y reportes Lighthouse locales incluidos dentro de cada ZIP Astro.
+- Módulo independiente `public/js/export/production-export.js` y verificación de compilación del proyecto exportado.
 
 - Orbit JSON Studio con flujo visible de detección, migración, validación, reparación y preview.
 - Migración determinista de documentos v12 y formatos legacy al contrato Orbit JSON v13.

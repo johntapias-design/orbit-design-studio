@@ -2,7 +2,7 @@ import { spawn } from 'node:child_process';
 import { createServer } from 'node:net';
 import { once } from 'node:events';
 import { mkdtempSync, mkdirSync, readFileSync, rmSync, writeFileSync } from 'node:fs';
-import { dirname, join } from 'node:path';
+import { dirname, join, resolve } from 'node:path';
 import { fileURLToPath, pathToFileURL } from 'node:url';
 import { tmpdir } from 'node:os';
 import { resolveChromePath } from './scripts/lib/chrome-path.js';
@@ -11,6 +11,8 @@ const here = dirname(fileURLToPath(import.meta.url));
 const chromePath = resolveChromePath();
 const profile = mkdtempSync(join(tmpdir(), 'orbit-contextual-qa-'));
 const updateEvidence = process.argv.includes('--update-evidence');
+const productionExportArg = process.argv.find(argument => argument.startsWith('--export-production='));
+const productionExportDir = productionExportArg ? resolve(productionExportArg.split('=').slice(1).join('=')) : '';
 const evidenceDir = updateEvidence
   ? join(here, 'qa-evidence')
   : mkdtempSync(join(tmpdir(), 'orbit-qa-evidence-'));
@@ -633,6 +635,21 @@ try {
     const frame=document.getElementById('orbit-json-preview');const result={opened:document.getElementById('modal-title')?.textContent==='Importar a Orbit',blocked,paths,preview:!!frame&&frame.getAttribute('sandbox')===''&&frame.srcdoc.includes('Preview'),download:!!document.querySelector('[data-download-orbit-v13]'),commit:!!document.querySelector('[data-commit-orbit-import]')};document.querySelector('[data-close-modal]')?.click();return result;
   })()`);
 
+  const productionExportSuite=await evaluate(`(()=>{
+    const qa=window.__ORBIT_QA__;const image='data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mNk+A8AAQUBAScY42YAAAAASUVORK5CYII=';
+    qa.loadOrbitDocument({version:13,projectName:'Production QA',pageMeta:{language:'es',title:'Production QA',description:'Salida Astro lista para producción',ogImage:'/og.jpg'},assets:[{id:'asset-qa-image',name:'hero.png',alt:'Hero de producción',src:image,type:'image/png'}],nodes:[{id:'production-main',type:'section',name:'Main',htmlTag:'main',styles:{base:{}},children:[{id:'production-title',type:'heading',name:'Title',tag:'h1',htmlTag:'h1',content:'Production QA',styles:{base:{}}},{id:'production-image',type:'image',name:'Hero',src:image,alt:'Hero de producción',styles:{base:{width:'100%',maxWidth:'1200px'}}}]}]},'production-title');
+    qa.productionExportSettings({siteUrl:'https://orbit.example',siteName:'Production QA',astroImage:true,sitemap:true,robots:true,webManifest:true,lighthouse:true,imageQuality:'high'});
+    const report=qa.productionExportAudit(),files=qa.projectFiles(),byName=name=>files.find(file=>file.name===name)?.data||'';const pkg=JSON.parse(byName('package.json'));const page=byName('src/pages/index.astro'),layout=byName('src/layouts/BaseLayout.astro'),config=byName('astro.config.mjs'),lhci=JSON.parse(byName('lighthouserc.json'));
+    qa.showProductionExport();const modal=document.querySelector('.production-export-modal');const ui={opened:!!modal,score:!!modal?.querySelector('.production-export-score'),settings:modal?.querySelectorAll('[data-production-setting]').length>=9,preflight:!!modal?.querySelector('.production-export-issues'),action:!!modal?.querySelector('[data-production-export]:not([disabled])')};modal?.querySelector('[data-close-modal]')?.click();
+    return {ready:report.ready&&report.errors.length===0,astroVersion:pkg.dependencies.astro==='^7.2.6',sitemapDependency:pkg.dependencies['@astrojs/sitemap']==='^3.7.3',lighthousePinned:pkg.scripts.lighthouse.includes('@lhci/cli@0.15.1'),picture:page.includes("import { Picture } from 'astro:assets'")&&page.includes('<Picture')&&page.includes("formats={['avif','webp']}")&&page.includes(' priority'),seo:layout.includes('og:site_name')&&layout.includes('canonical')&&layout.includes('application/ld+json'),crawler:files.some(file=>file.name==='public/robots.txt')&&files.some(file=>file.name==='public/site.webmanifest'),sitemapConfig:config.includes('@astrojs/sitemap')&&config.includes('https://orbit.example'),lighthouse:lhci.ci.assert.assertions['categories:performance'][1].minScore===0.9&&lhci.ci.upload.target==='filesystem',workflow:files.some(file=>file.name==='.github/workflows/lighthouse.yml'),ui};
+  })()`);
+  if(productionExportDir){
+    const exportedFiles=await evaluate(`window.__ORBIT_QA__.projectFiles().map(file=>({name:file.name,binary:file.data instanceof Uint8Array,data:file.data instanceof Uint8Array?Array.from(file.data):file.data}))`);
+    mkdirSync(productionExportDir,{recursive:true});
+    exportedFiles.forEach(file=>{const target=join(productionExportDir,file.name);mkdirSync(dirname(target),{recursive:true});writeFileSync(target,file.binary?Buffer.from(file.data):file.data);});
+    process.stderr.write(`qa:production-export:${productionExportDir}\n`);
+  }
+
   await setViewport(1600,900);
   const swiperSuite=await evaluate(`(async()=>{
     const qa=window.__ORBIT_QA__;
@@ -698,6 +715,7 @@ try {
   for (const [key,value] of Object.entries(sharedClassesSuite)) if(!value) failures.push(`shared-classes:${key}`);
   for (const [key,value] of Object.entries(orbitJsonStudioSuite)) if(!value) failures.push(`orbit-json-studio:${key}`);
   for (const [key,value] of Object.entries(orbitJsonStudioUi)) if(!value) failures.push(`orbit-json-studio-ui:${key}`);
+  for (const [key,value] of Object.entries(productionExportSuite)) {if(key==='ui'){for(const [uiKey,uiValue] of Object.entries(value))if(!uiValue)failures.push(`production-export-ui:${uiKey}`);}else if(!value)failures.push(`production-export:${key}`);}
   for (const [key,value] of Object.entries(swiperSuite)) if(!value) failures.push(`swiper:${key}`);
   if (lightTheme.mode !== 'global' || !lightTheme.visible || !lightTheme.themeTogglePresent || lightTheme.surface === 'rgba(0, 0, 0, 0)') failures.push('theme:light-contextual-toolbar');
   if(!typographyAudit.coherent)failures.push(`typography:scale-${typographyAudit.minimum}`);
@@ -705,7 +723,7 @@ try {
   for(const [key,value] of Object.entries(awardDashboardWide)){if(key==='documentOverflow'){if(value)failures.push('award-wide:overflow');}else if(!value)failures.push(`award-wide:${key}`);}
   if (runtimeErrors.length) failures.push(...runtimeErrors.map(error => `runtime:${error}`));
 
-  const output = { ok: failures.length === 0, failures, runtimeErrors, dashboardState, report, textDirectEditSuite, backgroundStudioSuite, googleFontsSuite, googleFontsCompact, googleFontsWide, tokenCrudSuite, inspectorColorSuite, tokenClearSuite, responsiveSuite, responsiveCompactLayout, zoomSuite, guidesSuite, minimapSuite, codeStudio, sharedClassesSuite, orbitJsonStudioSuite, orbitJsonStudioUi, swiperSuite, lightTheme, typographyAudit, awardDashboard, awardDashboardWide, evidenceDir };
+  const output = { ok: failures.length === 0, failures, runtimeErrors, dashboardState, report, textDirectEditSuite, backgroundStudioSuite, googleFontsSuite, googleFontsCompact, googleFontsWide, tokenCrudSuite, inspectorColorSuite, tokenClearSuite, responsiveSuite, responsiveCompactLayout, zoomSuite, guidesSuite, minimapSuite, codeStudio, sharedClassesSuite, orbitJsonStudioSuite, orbitJsonStudioUi, productionExportSuite, swiperSuite, lightTheme, typographyAudit, awardDashboard, awardDashboardWide, evidenceDir };
   process.stdout.write(`${JSON.stringify(output, null, 2)}\n`);
   if (failures.length) process.exitCode = 1;
 } finally {
