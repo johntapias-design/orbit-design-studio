@@ -109,6 +109,7 @@ function initCoreControls({ document, window, state, elements, viewportEngine, a
   }, { passive: true });
 
   click('import-tools', () => actions.showImportHub('design-system'));
+  click('ai-design-tools', () => actions.showAiDesignWorkflow('capture'));
   click('audit', () => actions.showAudit());
   click('inspector-top-toggle', () => actions.toggleRightPanel());
   click('export-project', () => actions.showProductionExport());

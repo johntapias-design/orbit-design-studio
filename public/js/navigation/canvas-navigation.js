@@ -3873,6 +3873,77 @@ function saveGlobalClass(classId){
   const before=snapshot();item.name=name;item.styles={...(item.styles||{}),base:declarationsToOrbit(parseCssDeclarations(css))};pushHistory(before);markUnsaved();closeModal();render();toast(`Clase .${name} actualizada`);
 }
 
+let aiWorkflowTab='capture';
+let aiWorkflowCapture=null;
+let aiWorkflowPrompt='';
+let aiWorkflowBrief='';
+let aiWorkflowTask='rebuild';
+let aiWorkflowScope='selection';
+
+function aiWorkflowProjectContext(scope=aiWorkflowScope){
+  const page=currentPage();
+  return createOrbitAiContext({...workspaceSnapshot(),pageName:page?.name||state.pageMeta?.title||'Página actual'},{scope,selectedId:state.selectedId});
+}
+function syncAiWorkflowForm(){
+  const brief=els.modalContent.querySelector('[data-ai-brief]');if(brief)aiWorkflowBrief=brief.value;
+  const task=els.modalContent.querySelector('[data-ai-task]');if(task)aiWorkflowTask=task.value;
+  const scope=els.modalContent.querySelector('[data-ai-scope]');if(scope)aiWorkflowScope=scope.value;
+  const promptArea=els.modalContent.querySelector('[data-ai-prompt]');if(promptArea)aiWorkflowPrompt=promptArea.value;
+}
+function aiWorkflowHeader(report){
+  return `<header class="ai-workflow-hero"><div><span class="ai-workflow-kicker">AI DESIGN WORKFLOW · V0.30</span><h3>De referencia a diseño editable</h3><p>Captura, contexto Orbit JSON v13 y auditoría visual en un flujo verificable.</p></div><div class="ai-workflow-health"><strong>${report.score}</strong><span>Visual score</span><small>${report.issues.length} hallazgos</small></div></header>`;
+}
+function aiWorkflowCaptureMarkup(){
+  const capture=aiWorkflowCapture;
+  const preview=capture?`<div class="ai-capture-preview"><img src="${capture.dataUrl}" alt="Referencia visual ${escapeHtml(capture.name)}"><div><strong>${escapeHtml(capture.name)}</strong><span>${capture.width} × ${capture.height}px · ${Math.max(1,Math.round(capture.size/1024))} KB</span><button type="button" data-ai-clear-capture>Quitar captura</button></div></div>`:`<label class="ai-capture-dropzone" data-ai-capture-dropzone><input type="file" data-ai-capture-file accept="image/png,image/jpeg,image/webp,image/avif" hidden><span>${uiIcon('image')}</span><strong>Captura a Orbit</strong><p>Selecciona o arrastra una referencia PNG, JPG, WebP o AVIF.</p><b>Elegir captura</b></label>`;
+  return `<div class="ai-workflow-grid"><section class="ai-workflow-card"><header><span>01</span><div><strong>Referencia visual</strong><small>La imagen permanece local en esta sesión.</small></div></header>${preview}</section><section class="ai-workflow-card"><header><span>02</span><div><strong>Intención</strong><small>Describe qué debe conservarse o cambiar.</small></div></header><label class="ai-workflow-field"><span>Brief de diseño</span><textarea data-ai-brief rows="8" placeholder="Recrear esta landing con máxima fidelidad, conservar la jerarquía y resolver Mobile…">${escapeHtml(aiWorkflowBrief)}</textarea></label><div class="ai-inline-fields"><label><span>Tarea</span><select data-ai-task><option value="rebuild" ${aiWorkflowTask==='rebuild'?'selected':''}>Reconstruir captura</option><option value="improve" ${aiWorkflowTask==='improve'?'selected':''}>Mejorar diseño</option><option value="variant" ${aiWorkflowTask==='variant'?'selected':''}>Crear variante</option><option value="audit" ${aiWorkflowTask==='audit'?'selected':''}>Corregir auditoría</option></select></label><label><span>Alcance</span><select data-ai-scope><option value="selection" ${aiWorkflowScope==='selection'?'selected':''} ${state.selectedId?'':'disabled'}>Selección actual</option><option value="page" ${aiWorkflowScope==='page'?'selected':''}>Página actual</option><option value="project" ${aiWorkflowScope==='project'?'selected':''}>Proyecto completo</option></select></label></div><div class="ai-workflow-actions"><button type="button" class="secondary-action" data-ai-local-generate>${uiIcon('plus')} Generar sección local</button><button type="button" class="primary-action" data-ai-build-prompt>${uiIcon('sparkles')} Crear prompt contextual</button></div></section></div>`;
+}
+function aiWorkflowGenerateMarkup(){
+  const context=aiWorkflowProjectContext();
+  return `<div class="ai-generation-layout"><section class="ai-context-summary"><header><strong>Contexto activo</strong><span>${escapeHtml(context.scope)}</span></header><div><article><strong>${context.stats.nodes}</strong><span>Nodos</span></article><article><strong>${context.stats.sections}</strong><span>Secciones</span></article><article><strong>${context.stats.components}</strong><span>Componentes</span></article><article><strong>${Object.values(context.tokens||{}).flat().length}</strong><span>Tokens</span></article></div><p>${context.selected?`Selección: <b>${escapeHtml(context.selected.name)}</b> · ${escapeHtml(context.selected.type)}`:'Contexto de toda la página, sin selección específica.'}</p></section><section class="ai-workflow-card ai-prompt-card"><header><span>AI</span><div><strong>Prompt contextual</strong><small>Adjunta la captura en tu IA y pega este contexto.</small></div></header><textarea class="code-area" data-ai-prompt rows="15" spellcheck="false" placeholder="Genera el prompt desde Captura…">${escapeHtml(aiWorkflowPrompt)}</textarea><div class="ai-workflow-actions"><button type="button" class="secondary-action" data-ai-build-prompt>Actualizar contexto</button><button type="button" class="primary-action" data-ai-copy-prompt ${aiWorkflowPrompt?'':'disabled'}>Copiar prompt</button></div></section><section class="ai-workflow-card ai-response-card"><header><span>JSON</span><div><strong>Respuesta generada</strong><small>Acepta JSON puro o dentro de un bloque de código.</small></div></header><textarea class="code-area" data-ai-response rows="10" spellcheck="false" placeholder='{ "version": 13, "nodes": [ ... ] }'></textarea><button type="button" class="primary-action" data-ai-validate-response>Validar en Orbit JSON Studio</button></section></div>`;
+}
+function aiWorkflowAuditMarkup(report){
+  const cards=report.issues.length?report.issues.map(issue=>`<article class="ai-audit-issue severity-${issue.severity}"><button type="button" ${issue.nodeId?`data-ai-audit-node="${issue.nodeId}"`:''}><span>${issue.severity==='critical'?'!':issue.severity==='warning'?'△':'+'}</span><div><small>${escapeHtml(issue.category)}</small><strong>${escapeHtml(issue.title)}</strong><p>${escapeHtml(issue.detail)}</p></div></button><footer>${escapeHtml(issue.suggestion)}</footer></article>`).join(''):`<div class="ai-audit-clean"><span>✓</span><strong>Lenguaje visual consistente</strong><p>No se detectaron hallazgos deterministas en la página actual.</p></div>`;
+  return `<section class="ai-audit-overview"><div class="ai-audit-score"><strong>${report.score}</strong><span>/100</span></div><div><h4>Auditor visual</h4><p>${report.checked} elementos revisados en jerarquía, tipografía, color, espaciado, contenido y responsive.</p></div><div class="ai-audit-counts"><span><b>${report.critical.length}</b> críticos</span><span><b>${report.warnings.length}</b> avisos</span><span><b>${report.opportunities.length}</b> oportunidades</span></div></section><div class="ai-audit-toolbar"><span>${report.categories.length} áreas con observaciones</span><button type="button" class="secondary-action" data-ai-audit-prompt>Crear prompt de corrección</button></div><div class="ai-audit-list">${cards}</div>`;
+}
+function showAiDesignWorkflow(tab=aiWorkflowTab){
+  syncAiWorkflowForm();aiWorkflowTab=tab;
+  if(aiWorkflowScope==='selection'&&!state.selectedId)aiWorkflowScope='page';
+  const report=auditOrbitVisualDesign(workspaceSnapshot());
+  const tabs=[['capture','Captura a Orbit'],['generate','Generación contextual'],['audit','Auditor visual']];
+  const body=tab==='capture'?aiWorkflowCaptureMarkup():tab==='generate'?aiWorkflowGenerateMarkup():aiWorkflowAuditMarkup(report);
+  openModal('AI Design Workflow','ORBIT AI',`<div class="ai-workflow">${aiWorkflowHeader(report)}<nav class="ai-workflow-tabs">${tabs.map(([key,label])=>`<button type="button" data-ai-workflow-tab="${key}" class="${tab===key?'active':''}">${label}</button>`).join('')}</nav><div class="ai-workflow-pane">${body}</div></div>`,'ai-workflow-modal');
+}
+function loadAiWorkflowCapture(file){
+  if(!file)return;
+  if(!/^image\/(png|jpe?g|webp|avif)$/i.test(file.type||'')){toast('Usa una imagen PNG, JPG, WebP o AVIF','error');return;}
+  if(file.size>15*1024*1024){toast('La captura supera el límite de 15 MB','error');return;}
+  const reader=new FileReader();reader.onload=()=>{const image=new Image();image.onload=()=>{aiWorkflowCapture={...normalizeOrbitAiCapture({name:file.name,type:file.type,size:file.size,width:image.naturalWidth,height:image.naturalHeight}),dataUrl:String(reader.result||'')};showAiDesignWorkflow('capture');toast('Captura lista para contextualizar');};image.onerror=()=>toast('No se pudo leer la captura','error');image.src=String(reader.result||'');};reader.onerror=()=>toast('No se pudo cargar el archivo','error');reader.readAsDataURL(file);
+}
+function buildAiWorkflowPrompt(task=aiWorkflowTask){
+  syncAiWorkflowForm();
+  const report=auditOrbitVisualDesign(workspaceSnapshot());
+  aiWorkflowPrompt=createOrbitAiPrompt({context:aiWorkflowProjectContext(),capture:aiWorkflowCapture,audit:report,brief:aiWorkflowBrief,task});
+  showAiDesignWorkflow('generate');
+}
+async function copyAiWorkflowPrompt(){
+  syncAiWorkflowForm();if(!aiWorkflowPrompt)return;
+  try{await navigator.clipboard.writeText(aiWorkflowPrompt);}catch{const area=els.modalContent.querySelector('[data-ai-prompt]');area?.select();document.execCommand('copy');}
+  toast('Prompt contextual copiado');
+}
+function generateLocalAiSection(){
+  syncAiWorkflowForm();
+  const context=aiWorkflowProjectContext(aiWorkflowScope==='project'?'page':aiWorkflowScope);
+  const node=createOrbitContextualSection({brief:aiWorkflowBrief,context});
+  commit(()=>{state.nodes=hydrateNodes([...state.nodes,node]);},node.id);
+  closeModal();toast('Sección contextual añadida al final de la página');
+}
+function validateAiWorkflowResponse(){
+  const raw=els.modalContent.querySelector('[data-ai-response]')?.value||'';const extracted=extractOrbitJsonFromAiResponse(raw);
+  if(!extracted.ok){toast(extracted.error,'error');return;}
+  showImportHub('orbit-json');const area=$('#import-orbit-json');if(area)area.value=JSON.stringify(extracted.value,null,2);analyzeOrbitJsonSource();
+}
+
 function orbitJsonStudioMarkup(){
   return `<div class="import-copy ai-import-copy orbit-json-studio-intro"><span class="ai-import-icon">${uiIcon('sparkles')}</span><div><h3>Orbit JSON Studio</h3><p>Migra a v13, valida cada ruta y repara solo después de tu revisión.</p></div><span class="orbit-json-source-badge">v13</span></div><section class="orbit-json-source"><div class="orbit-json-source-head"><div><strong>Fuente del documento</strong><span>Admite Orbit JSON v12, v13 y documentos legacy.</span></div><span class="orbit-json-source-badge">JSON</span></div><label class="orbit-json-dropzone" data-orbit-json-dropzone><input id="orbit-json-file" type="file" accept=".json,application/json" hidden><span class="orbit-json-file-icon">${uiIcon('page')}</span><span class="orbit-json-file-copy"><strong data-orbit-file-title>Cargar archivo JSON</strong><small data-orbit-file-name>Selecciona o arrastra un archivo .json</small></span><span class="orbit-json-file-action" data-orbit-file-action>Seleccionar archivo</span></label><div class="orbit-json-file-status" data-orbit-file-status hidden><span class="orbit-json-status-dot"></span><div><strong data-orbit-status-title>Archivo listo</strong><small data-orbit-status-detail></small></div><button type="button" data-clear-orbit-json-file aria-label="Quitar archivo" title="Quitar archivo">${uiIcon('trash')}</button></div><div class="orbit-json-divider"><span>o pega el contenido</span></div><label class="orbit-json-editor-label"><span>Documento JSON</span><textarea id="import-orbit-json" class="code-area orbit-json-editor" rows="14" spellcheck="false" placeholder='{ "version": 13, "nodes": [ ... ] }'></textarea></label></section><div class="import-actions ai-import-actions"><select id="orbit-import-mode"><option value="replace">Reemplazar página actual</option><option value="append">Insertar en la página actual</option><option value="new-page">Crear nueva página</option></select><button class="primary-action" type="button" data-analyze-orbit-json>${uiIcon('sparkles')} Validar y previsualizar</button></div><div id="orbit-import-report" aria-live="polite"></div>`;
 }
@@ -5085,7 +5156,7 @@ function productionExportIssuesMarkup(report){
 function showProductionExport(){
   const report=productionExportAudit(),settings=report.settings;
   const status=report.ready?(report.warnings.length?'Preparado con advertencias':'Preparado para compilar'):'Requiere correcciones';
-  openModal('Production Export','ORBIT v0.28',`<div class="production-export-studio">
+  openModal('Production Export',`ORBIT ${ORBIT_APP.versionLabel}`,`<div class="production-export-studio">
     <section class="production-export-hero"><div class="production-export-score ${report.ready?'is-ready':'has-errors'}"><strong>${report.score}</strong><span>/100</span></div><div><span>ASTRO PRODUCTION</span><h3>${status}</h3><p>${report.pages} páginas · ${report.images.total} imágenes · ${report.errors.length} errores · ${report.warnings.length} advertencias</p></div></section>
     <section class="production-export-grid">
       <label class="production-export-field production-export-url"><span>URL pública del sitio</span><input type="url" data-production-setting="siteUrl" value="${escapeHtml(settings.siteUrl)}" placeholder="https://mi-dominio.com"><small>Activa canonical, sitemap y robots completos.</small></label>
@@ -5520,6 +5591,14 @@ document.addEventListener('click',event=>{
   if(event.target.closest('[data-open-layers]')){activateWorkspacePanel('layers');return;}
   if(event.target.closest('[data-open-seo]')){showPageSettings();return;}
   if(event.target.closest('[data-open-audit]')){showAudit();return;}
+  const aiWorkflowTabButton=event.target.closest('[data-ai-workflow-tab]');if(aiWorkflowTabButton){showAiDesignWorkflow(aiWorkflowTabButton.dataset.aiWorkflowTab);return;}
+  if(event.target.closest('[data-ai-clear-capture]')){aiWorkflowCapture=null;showAiDesignWorkflow('capture');return;}
+  if(event.target.closest('[data-ai-build-prompt]')){buildAiWorkflowPrompt();return;}
+  if(event.target.closest('[data-ai-copy-prompt]')){void copyAiWorkflowPrompt();return;}
+  if(event.target.closest('[data-ai-local-generate]')){generateLocalAiSection();return;}
+  if(event.target.closest('[data-ai-validate-response]')){validateAiWorkflowResponse();return;}
+  if(event.target.closest('[data-ai-audit-prompt]')){aiWorkflowTask='audit';buildAiWorkflowPrompt('audit');return;}
+  const aiAuditNode=event.target.closest('[data-ai-audit-node]');if(aiAuditNode){setSelection(aiAuditNode.dataset.aiAuditNode);closeModal();render();return;}
   if(event.target.closest('[data-open-inspector]')){toggleRightPanel(false);return;}
   const inspectorMode=event.target.closest('[data-inspector-mode]');if(inspectorMode){state.inspectorMode=inspectorMode.dataset.inspectorMode;renderInspector();markUnsaved();return;}
   const inspectorTab=event.target.closest('[data-inspector-tab]');if(inspectorTab){if(state.rightPanelCollapsed)toggleRightPanel(false);state.inspectorTab=inspectorTab.dataset.inspectorTab;renderInspector();requestAnimationFrame(()=>els.inspector?.querySelector(`[data-inspector-tab="${state.inspectorTab}"]`)?.focus());markUnsaved();return;}
@@ -5674,6 +5753,8 @@ document.addEventListener('pointermove',event=>{resizeMove(event);moveDirectEdit
 document.addEventListener('pointerup',event=>{resizeEnd(event);endDirectEdit(event);endGuideDrag(event);endRightPanelResize(event);endLeftPanelResize(event);});
 
 document.addEventListener('dragover',event=>{
+  const captureZone=event.target.closest?.('[data-ai-capture-dropzone]');
+  if(captureZone){event.preventDefault();event.stopPropagation();captureZone.classList.add('is-dragging');if(event.dataTransfer)event.dataTransfer.dropEffect='copy';return;}
   const zone=event.target.closest?.('[data-orbit-json-dropzone]');
   if(!zone)return;
   event.preventDefault();
@@ -5682,10 +5763,14 @@ document.addEventListener('dragover',event=>{
   if(event.dataTransfer)event.dataTransfer.dropEffect='copy';
 });
 document.addEventListener('dragleave',event=>{
+  const captureZone=event.target.closest?.('[data-ai-capture-dropzone]');
+  if(captureZone&&!captureZone.contains(event.relatedTarget)){captureZone.classList.remove('is-dragging');return;}
   const zone=event.target.closest?.('[data-orbit-json-dropzone]');
   if(zone&&!zone.contains(event.relatedTarget))zone.classList.remove('is-dragging');
 });
 document.addEventListener('drop',event=>{
+  const captureZone=event.target.closest?.('[data-ai-capture-dropzone]');
+  if(captureZone){event.preventDefault();event.stopPropagation();captureZone.classList.remove('is-dragging');loadAiWorkflowCapture(event.dataTransfer?.files?.[0]);return;}
   const zone=event.target.closest?.('[data-orbit-json-dropzone]');
   if(!zone)return;
   event.preventDefault();
@@ -5764,6 +5849,7 @@ document.addEventListener('input',event=>{
 
 document.addEventListener('change',async event=>{
   const t=event.target;
+  if(t.dataset.aiCaptureFile!==undefined){loadAiWorkflowCapture(t.files?.[0]);return;}
   if(t.dataset.carouselResponsive!==undefined||t.dataset.carouselField!==undefined){
     if(state.transaction){updateCarouselFromControl(t);endTransaction();}
     else{const node=selected(),patcher=carouselControlPatch(t);if(node?.type==='carousel'&&patcher)commit(()=>{state.nodes=update(state.nodes,node.id,item=>{const current=normalizeSwiperConfig(item.swiper);return {...item,swiper:normalizeSwiperConfig({...current,...patcher(current)})};});},node.id);}
@@ -5872,7 +5958,7 @@ initCoreControls({
     undo, redo, render, renderCanvas, toast, preview, openResponsiveCompare, closeResponsiveCompare,
     renderResponsiveCompare, toggleRightPanel, toggleLeftPanel, showBreakpointManager, openQuickInsert,
     insertionForClick, openCommandPalette, applyAdaptiveWorkspace, applyLeftPanelChrome, applyRightPanelChrome,
-    positionQuickInsert, fitResponsiveCompareFrames, showImportHub, showPageSettings, showAudit, showProductionExport, exportProject,
+    positionQuickInsert, fitResponsiveCompareFrames, showImportHub, showAiDesignWorkflow, showPageSettings, showAudit, showProductionExport, exportProject,
     exportWorkspaceBackup, openProjectDashboard, createCheckpoint, renderProjectDashboard,
     exportAllWorkspaceProjects, cleanupWorkspaceVersions, importWorkspaceBackup,
     toggleFocusView:trigger=>focusView?.toggle(trigger),renderMeasurement:()=>measurementTools?.scheduleRender(),markUnsaved,
@@ -5924,7 +6010,7 @@ function loadSaved(){
 window.addEventListener('error',event=>{console.error('[Orbit runtime]',event.error||event.message);toast('Orbit encontró un error inesperado. Puedes seguir trabajando o deshacer el último cambio.','error',3500);});
 window.addEventListener('unhandledrejection',event=>{console.error('[Orbit promise]',event.reason);toast('Una operación no pudo completarse. Revisa la consola si necesitas el detalle.','error',3500);});
 
-window.__ORBIT_QA__={openProjectDashboard,createWorkspaceProject,generatedElementsCss,generatedGlobalClassesCss,generatedStyles,generatedAstro,generatedPreviewHtml,safeInlineScriptJson,livePreviewPayload,isLivePreviewOpen,projectFiles,productionExportAudit,showProductionExport,productionExportSettings(value){if(value)state.exportSettings=normalizeOrbitProductionExportSettings(value,state.projectName);return clone(state.exportSettings);},projectDbList,projectDbListRaw,projectDbPut,normalizeProjectRecord,repairWorkspaceStorage,renderProjectDashboard,workspaceSnapshot,currentProjectProfile,runtimePerformanceSnapshot:()=>runtimePerformance.snapshot(),recoveryDraft:()=>parseOrbitRecoveryEnvelope(safeLocalGet(SESSION_RECOVERY_DRAFT_KEY)),orbitJsonStudio:{parse:parseOrbitJsonSource,migrate:migrateOrbitJsonToV13,validate:validateOrbitJsonV13,repair:repairOrbitJsonV13,preview:createOrbitJsonPreviewHtml},normalizeOrbitImport,primarySharedStyleClass,setSharedStyleMode,directStyle,render,setSelection,loadOrbitDocument(data,selectedId=''){
+window.__ORBIT_QA__={openProjectDashboard,createWorkspaceProject,generatedElementsCss,generatedGlobalClassesCss,generatedStyles,generatedAstro,generatedPreviewHtml,safeInlineScriptJson,livePreviewPayload,isLivePreviewOpen,projectFiles,productionExportAudit,showProductionExport,productionExportSettings(value){if(value)state.exportSettings=normalizeOrbitProductionExportSettings(value,state.projectName);return clone(state.exportSettings);},projectDbList,projectDbListRaw,projectDbPut,normalizeProjectRecord,repairWorkspaceStorage,renderProjectDashboard,workspaceSnapshot,currentProjectProfile,runtimePerformanceSnapshot:()=>runtimePerformance.snapshot(),recoveryDraft:()=>parseOrbitRecoveryEnvelope(safeLocalGet(SESSION_RECOVERY_DRAFT_KEY)),orbitJsonStudio:{parse:parseOrbitJsonSource,migrate:migrateOrbitJsonToV13,validate:validateOrbitJsonV13,repair:repairOrbitJsonV13,preview:createOrbitJsonPreviewHtml},aiDesignWorkflow:{context:createOrbitAiContext,audit:auditOrbitVisualDesign,prompt:createOrbitAiPrompt,localSection:createOrbitContextualSection,extract:extractOrbitJsonFromAiResponse,open:showAiDesignWorkflow},normalizeOrbitImport,primarySharedStyleClass,setSharedStyleMode,directStyle,render,setSelection,loadOrbitDocument(data,selectedId=''){
   const result=normalizeOrbitImport(data);const doc=result.document;state.nodes=hydrateNodes(clone(doc.nodes));state.tokens=doc.tokens||clone(defaultTokens);ensureTokenGroups();state.assets=doc.assets||[];state.components=(doc.components||[]).map(normalizeComponentDefinition);state.globalClasses=doc.globalClasses||[];state.projectName=doc.projectName||'QA project';state.pageMeta=doc.pageMeta||state.pageMeta;state.pages=[{id:'page-qa',name:'QA',slug:'/',nodes:clone(state.nodes),meta:clone(state.pageMeta)}];state.currentPageId='page-qa';setSelection(selectedId&&find(state.nodes,selectedId)?selectedId:state.nodes[0]?.id||null);render();return result.report;
 }};
 setWorkspaceVisibility(true);

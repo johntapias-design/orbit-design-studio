@@ -10,12 +10,57 @@ function loadScript(relativePath, expose) {
   return context.__orbitTestValue;
 }
 
-test('metadata de v0.28 conserva Orbit JSON v13 como formato actual', () => {
+test('metadata de v0.30 conserva Orbit JSON v13 como formato actual', () => {
   const metadata = loadScript('public/js/core/app-metadata.js', 'ORBIT_APP');
-  assert.equal(metadata.version, '0.28.0-alpha');
-  assert.equal(metadata.versionLabel, 'v0.28');
+  assert.equal(metadata.version, '0.30.0-alpha');
+  assert.equal(metadata.versionLabel, 'v0.30');
   assert.equal(metadata.documentVersion, 13);
   assert.deepEqual([...metadata.supportedDocumentVersions], [12, 13]);
+});
+
+test('AI Design Workflow construye contexto limitado a la selección', () => {
+  const ai = loadScript('public/js/ai/ai-design-workflow.js', '({ createOrbitAiContext })');
+  const context = ai.createOrbitAiContext({
+    version: 13,
+    projectName: 'Orbit AI',
+    nodes: [{ id: 'hero', type: 'section', children: [{ id: 'title', type: 'heading', content: 'Diseña mejor', styles: { base: { color: '#111111' } } }] }],
+    tokens: { colors: { brand: { name: 'Brand', value: '#ef5a24', cssVar: '--color-brand' } } },
+  }, { scope: 'selection', selectedId: 'title' });
+  assert.equal(context.scope, 'selection');
+  assert.equal(context.stats.nodes, 1);
+  assert.equal(context.selected.id, 'title');
+  assert.deepEqual([...context.textSamples], ['Diseña mejor']);
+});
+
+test('auditor visual detecta jerarquía, legibilidad y riesgo responsive', () => {
+  const ai = loadScript('public/js/ai/ai-design-workflow.js', '({ auditOrbitVisualDesign })');
+  const report = ai.auditOrbitVisualDesign({ nodes: [{
+    id: 'section', type: 'section', name: 'Hero', children: [
+      { id: 'copy', type: 'text', name: 'Legal', content: 'Texto', styles: { base: { fontSize: '10px', width: '900px' } } },
+      { id: 'image', type: 'image', name: 'Product', src: '/product.png', alt: '' },
+    ],
+  }] });
+  assert.ok(report.score < 100);
+  assert.ok(report.critical.some(issue => issue.code === 'h1-count'));
+  assert.ok(report.critical.some(issue => issue.code === 'fixed-mobile-width'));
+  assert.ok(report.warnings.some(issue => issue.code === 'small-text'));
+  assert.ok(report.warnings.some(issue => issue.code === 'image-alt'));
+});
+
+test('generación contextual crea sección responsive y prompt Orbit JSON v13', () => {
+  const ai = loadScript('public/js/ai/ai-design-workflow.js', '({ createOrbitContextualSection, createOrbitAiPrompt, extractOrbitJsonFromAiResponse })');
+  const context = { scope: 'page', projectName: 'Demo', tokens: { colors: [{ name: 'Brand primary', cssVar: '--color-brand' }] } };
+  const section = ai.createOrbitContextualSection({ brief: 'Presenta el nuevo producto con claridad', context, now: 123456 });
+  assert.equal(section.type, 'section');
+  assert.equal(section.children.length, 3);
+  assert.equal(section.children[2].styles.base.background, 'var(--color-brand)');
+  assert.equal(section.styles.mobile.paddingLeft, '20px');
+  const prompt = ai.createOrbitAiPrompt({ context, brief: 'Mejorar el hero', task: 'improve' });
+  assert.match(prompt, /version 13/);
+  assert.match(prompt, /Mejorar el hero/);
+  const extracted = ai.extractOrbitJsonFromAiResponse('Respuesta:\n```json\n{"version":13,"nodes":[]}\n```');
+  assert.equal(extracted.ok, true);
+  assert.equal(extracted.value.version, 13);
 });
 
 test('Production Export detecta bloqueos SEO y rutas duplicadas', () => {

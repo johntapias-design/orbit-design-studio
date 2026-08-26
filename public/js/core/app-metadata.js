@@ -5,9 +5,9 @@
  */
 const ORBIT_APP = Object.freeze({
   name: 'Orbit Design Studio',
-  version: '0.28.0-alpha',
-  versionLabel: 'v0.28',
-  releaseName: 'Production Export',
+  version: '0.30.0-alpha',
+  versionLabel: 'v0.30',
+  releaseName: 'AI Design Workflow',
   documentVersion: 13,
   supportedDocumentVersions: Object.freeze([12, 13]),
 });

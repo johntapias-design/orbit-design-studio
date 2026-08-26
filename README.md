@@ -1,6 +1,6 @@
-# Orbit Design Studio — v0.28 Production Export
+# Orbit Design Studio — v0.30 AI Design Workflow
 
-Versión standalone profesional de Orbit Design Studio v0.28.
+Versión standalone profesional de Orbit Design Studio v0.30.
 
 [![Netlify Deploy Status](https://api.netlify.com/api/v1/badges/orbit-design-studio/deploy-status)](https://app.netlify.com)
 
@@ -9,6 +9,13 @@ Versión standalone profesional de Orbit Design Studio v0.28.
 Abre `index.html` con doble clic. No requiere instalación, npm ni compilación.
 
 ## Cambios incluidos
+
+- AI Design Workflow accesible desde el rail del editor, con captura visual local y privada por sesión.
+- Contexto compacto y verificable por selección, página o proyecto, incluyendo estructura, tokens y lenguaje visual.
+- Prompt contextual listo para una IA externa y respuesta conectada directamente con Orbit JSON Studio v13.
+- Generador local de secciones editables que reutiliza tokens del proyecto y añade estilos Tablet/Mobile.
+- Auditor visual determinista para jerarquía, tipografía, color, espaciado, contenido y responsive.
+- Módulo independiente `public/js/ai/ai-design-workflow.js` con pruebas unitarias sin DOM.
 
 - Production Export Studio con preflight de rutas, SEO, encabezados e imágenes antes de descargar.
 - Proyectos Astro 7.2.6 compilables, con configuración estática y sitemap oficial opcional.

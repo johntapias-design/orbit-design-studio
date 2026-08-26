@@ -1,5 +1,27 @@
 # Changelog
 
+## v0.30.0-alpha — AI Design Workflow
+
+### Captura a Orbit
+
+- Entrada de referencias PNG, JPG, WebP y AVIF mediante selección o arrastre, conservadas localmente durante la sesión.
+- Lectura de dimensiones, relación de aspecto y peso para enriquecer el contexto sin enviar archivos automáticamente.
+- Brief, tarea y alcance configurables antes de generar instrucciones.
+
+### Generación contextual
+
+- Contexto compacto por selección, página o proyecto con estructura, textos, tokens, componentes y lenguaje visual.
+- Prompt reproducible para reconstrucción, mejora, variante o corrección de auditoría.
+- Generador local de secciones Orbit editables con reutilización de tokens y estilos responsive.
+- Extracción de JSON puro o bloques Markdown y validación inmediata mediante Orbit JSON Studio v13.
+
+### Auditor visual y QA
+
+- Score y hallazgos accionables de jerarquía, tipografía, paleta, espaciado, contenido y responsive.
+- Navegación directa desde cada hallazgo al nodo afectado y prompt de corrección priorizado.
+- Nuevo módulo DOM-free `public/js/ai/ai-design-workflow.js` y pruebas unitarias deterministas.
+- Artefacto CI actualizado a `Orbit-Netlify-v0.30`.
+
 ## v0.28.0-alpha — Production Export
 
 ### Astro compilable e imágenes
