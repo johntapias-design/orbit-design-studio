@@ -26,12 +26,13 @@ const labelMatch = metadataSource.match(/versionLabel:\s*'([^']+)'/);
 const documentVersionMatch = metadataSource.match(/documentVersion:\s*(\d+)/);
 
 check('package y runtime comparten versión', versionMatch?.[1] === packageVersion);
-check('release v0.25 visible', labelMatch?.[1] === 'v0.25' && indexHtml.includes('<title>Orbit Design Studio — v0.25</title>') && indexHtml.includes('<span class="version-badge">v0.25</span>'));
+check('release v0.26 visible', labelMatch?.[1] === 'v0.26' && indexHtml.includes('<title>Orbit Design Studio — v0.26</title>') && indexHtml.includes('<span class="version-badge">v0.26</span>'));
 check('Orbit JSON v13 es el formato actual', Number(documentVersionMatch?.[1]) === 13 && navigationSource.includes('currentOrbitDocumentVersion()'));
 check('Node está fijado para CI y desarrollo', read('.nvmrc').trim() === '26' && packageJson.engines?.node === '>=26 <27');
 check('QA usa resolución multiplataforma de Chrome', qaSource.includes('resolveChromePath()') && !qaSource.includes("const chromePath = '/Applications/Google Chrome"));
-check('CI publica artefacto v0.25', workflowSource.includes('Orbit-Netlify-v0.25') && workflowSource.includes("node-version-file: '.nvmrc'"));
+check('CI publica artefacto v0.26', workflowSource.includes('Orbit-Netlify-v0.26') && workflowSource.includes("node-version-file: '.nvmrc'"));
 check('Scroll Entrance FX está fuera del monolito', !navigationSource.includes('function scrollFxControl(') && navigationSource.includes('renderScrollFxControl(node,field)'));
+check('Performance y recuperación están modularizadas', JS_MODULES.includes('reliability/project-reliability.js') && navigationSource.includes('createOrbitAutosaveScheduler'));
 
 let previousIndex = -1;
 for (const modulePath of JS_MODULES) {

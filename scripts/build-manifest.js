@@ -13,6 +13,7 @@ export const JS_MODULES = Object.freeze([
   'focus-view/focus-view.js',
   'measurement/measurement-overlay.js',
   'performance/runtime-performance.js',
+  'reliability/project-reliability.js',
   'projects/workspace-storage.js',
   'inspector/inspector-tabs.js',
   'theme/theme-system.js',

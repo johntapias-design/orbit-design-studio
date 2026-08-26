@@ -5,9 +5,9 @@
  */
 const ORBIT_APP = Object.freeze({
   name: 'Orbit Design Studio',
-  version: '0.25.0-alpha',
-  versionLabel: 'v0.25',
-  releaseName: 'Engineering Baseline',
+  version: '0.26.0-alpha',
+  versionLabel: 'v0.26',
+  releaseName: 'Performance & Reliability',
   documentVersion: 13,
   supportedDocumentVersions: Object.freeze([12, 13]),
 });

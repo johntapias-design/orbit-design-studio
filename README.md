@@ -1,6 +1,6 @@
-# Orbit Design Studio — v0.25 Engineering Baseline
+# Orbit Design Studio — v0.26 Performance & Reliability
 
-Versión standalone profesional de Orbit Design Studio v0.25.
+Versión standalone profesional de Orbit Design Studio v0.26.
 
 [![Netlify Deploy Status](https://api.netlify.com/api/v1/badges/orbit-design-studio/deploy-status)](https://app.netlify.com)
 
@@ -9,6 +9,14 @@ Versión standalone profesional de Orbit Design Studio v0.25.
 Abre `index.html` con doble clic. No requiere instalación, npm ni compilación.
 
 ## Cambios incluidos
+
+- Perfil adaptativo para proyectos grandes: autosave menos agresivo y memoria de deshacer acotada según nodos y páginas.
+- Cola de autosave coalescida: guarda la revisión más reciente y evita acumulaciones mientras hay una escritura en curso.
+- Reintentos automáticos con espera progresiva cuando el almacenamiento falla temporalmente.
+- Borrador local de emergencia con checksum, persistido antes de cerrar u ocultar la pestaña.
+- Recuperación real del último borrador; si no es válido, Orbit vuelve al último guardado automático.
+- Canvas protegido contra reconstrucciones DOM idénticas y telemetría local de render/guardado para QA.
+- Módulo independiente `public/js/reliability/project-reliability.js` con políticas verificables mediante pruebas unitarias.
 
 - CI multiplataforma con detección de Chrome en macOS, Linux y Windows.
 - Versión del producto centralizada y sincronizada entre runtime, paquete, interfaz y artefactos.

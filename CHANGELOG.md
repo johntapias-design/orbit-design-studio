@@ -1,5 +1,28 @@
 # Changelog
 
+## v0.26.0-alpha — Performance & Reliability
+
+### Proyectos grandes
+
+- Perfil de complejidad por cantidad de nodos y páginas con autosave e historial adaptativos.
+- Historial máximo de 80, 40 o 20 estados para contener memoria sin retirar Deshacer/Rehacer.
+- El canvas evita reemplazar el DOM cuando el markup no cambió y registra tiempos de render para QA.
+- La comparación completa y la segunda clonación del proyecto fueron retiradas del registro de historial.
+
+### Autosave y recuperación
+
+- Programador de autosave coalescido con semántica “último cambio gana”.
+- Tres reintentos con espera exponencial ante fallos transitorios de IndexedDB.
+- Borrador local de emergencia con checksum, revisión y límite seguro de tamaño.
+- Persistencia síncrona del borrador en `visibilitychange` y `pagehide`, antes del guardado asíncrono.
+- Recuperación del borrador exacto cuando es válido y fallback al último proyecto guardado cuando no lo es.
+
+### Calidad
+
+- Nuevo módulo DOM-free `public/js/reliability/project-reliability.js`.
+- Pruebas unitarias para perfiles de carga y detección de borradores alterados.
+- Artefacto CI actualizado a `Orbit-Netlify-v0.26`.
+
 ## v0.25.0-alpha — Engineering Baseline
 
 ### CI y reproducibilidad

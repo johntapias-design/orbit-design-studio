@@ -13,6 +13,8 @@ const packageJson = JSON.parse(fs.readFileSync(packagePath, 'utf8'));
 const versionParts = String(packageJson.version).match(/^(\d+)\.(\d+)\.(\d+)(?:-(.+))?$/);
 if (!versionParts) throw new Error(`Invalid package version: ${packageJson.version}`);
 const versionLabel = `v${versionParts[1]}.${versionParts[2]}`;
+const metadataSource = fs.readFileSync(path.join(publicDir, 'js', 'core', 'app-metadata.js'), 'utf8');
+const releaseName = metadataSource.match(/releaseName:\s*'([^']+)'/)?.[1] || 'Visual Editor';
 
 console.log(`Building Orbit Design Studio ${packageJson.version} from modular source files...`);
 
@@ -34,7 +36,7 @@ let currentHtml = originalHtml;
 
 // Synchronize product metadata in the standalone shell.
 currentHtml = currentHtml
-  .replace(/<meta name="description" content="[^"]*"\s*\/>/, `<meta name="description" content="Orbit Design Studio ${versionLabel} — Engineering Baseline, editor visual profesional para Astro con arquitectura modular, QA automatizada y exportación standalone." />`)
+  .replace(/<meta name="description" content="[^"]*"\s*\/>/, `<meta name="description" content="Orbit Design Studio ${versionLabel} — ${releaseName}, editor visual profesional para Astro con arquitectura modular, QA automatizada y exportación standalone." />`)
   .replace(/<title>Orbit Design Studio[^<]*<\/title>/, `<title>Orbit Design Studio — ${versionLabel}</title>`)
   .replace(/<span class="version-badge">[^<]*<\/span>/, `<span class="version-badge">${versionLabel}</span>`);
 

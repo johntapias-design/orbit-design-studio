@@ -445,6 +445,7 @@ const PROJECT_DB_VERSION = 1;
 const PROJECT_STORE = 'projects';
 const ACTIVE_PROJECT_KEY = 'orbit-v0-9-active-project';
 const SESSION_RECOVERY_KEY = 'orbit-v0-9-session-recovery';
+const SESSION_RECOVERY_DRAFT_KEY = 'orbit-v0-26-recovery-draft';
 const MIGRATION_KEY = 'orbit-v0-9-migration-complete';
 const LEGACY_STORAGE_KEY = 'orbit-builder-alpha-v5';
 const BREAKPOINTS = ['desktopXL','desktop','tablet','mobileL','mobile'];
@@ -718,6 +719,7 @@ let focusView=null;
 let measurementTools=null;
 let themeSystem=null;
 let canvasNavigation=null;
+let autosaveScheduler=null;
 const runtimePerformance=createRuntimePerformance({window});
 const { $, els } = createDomRegistry(document);
 const workspaceStorage=createWorkspaceStorage({
@@ -742,6 +744,7 @@ function escapeHtml(value=''){ return String(value).replace(/[&<>'"]/g,c=>({'&':
 function safeLocalGet(key){try{return window.localStorage.getItem(key);}catch{return null;}}
 function safeLocalSet(key,value){try{window.localStorage.setItem(key,value);return true;}catch{return false;}}
 function safeLocalRemove(key){try{window.localStorage.removeItem(key);}catch{}}
+function currentProjectProfile(){return orbitProjectProfile({nodes:state.nodes,pages:state.pages,currentPageId:state.currentPageId});}
 function sanitizeSvgMarkup(markup=''){
   const source=String(markup||'').trim();
   if(!source)return '';
@@ -797,18 +800,36 @@ function snapshotFingerprint(snapshot){
 }
 function maybeAppendAutoVersion(existing,snapshot){
   const versions=[...(existing.autoVersions||[])];const last=versions[0];const now=Date.now();
-  const changed=!last||last.fingerprint!==snapshotFingerprint(snapshot);
-  if(changed&&(!last||now-last.createdAt>=120000))versions.unshift({id:uid('auto'),name:'Autosave',createdAt:now,pageName:(snapshot.pages||[]).find(page=>page.id===snapshot.currentPageId)?.name||'Home',fingerprint:snapshotFingerprint(snapshot),snapshot:clone(snapshot)});
+  const fingerprint=snapshotFingerprint(snapshot);const changed=!last||last.fingerprint!==fingerprint;
+  if(changed&&(!last||now-last.createdAt>=120000))versions.unshift({id:uid('auto'),name:'Autosave',createdAt:now,pageName:(snapshot.pages||[]).find(page=>page.id===snapshot.currentPageId)?.name||'Home',fingerprint,snapshot:clone(snapshot)});
   return versions.slice(0,12);
 }
 let activeSavePromise=Promise.resolve();
-async function saveActiveProject({silent=false}={}){
+async function saveActiveProject({silent=false,revision=autosaveScheduler?.snapshot().revision||0}={}){
   if(!state.currentProjectId)return null;
-  const id=state.currentProjectId;const snap=workspaceSnapshot();const name=state.projectName||'Untitled project';
-  activeSavePromise=activeSavePromise.catch(()=>null).then(async()=>{const existing=await projectDbGet(id).catch(()=>null);const record=projectRecordFromSnapshot(id,name,snap,existing||{});record.autoVersions=maybeAppendAutoVersion(existing||{},snap);await projectDbPut(record);safeLocalSet(ACTIVE_PROJECT_KEY,id);safeLocalSet(SESSION_RECOVERY_KEY,JSON.stringify({projectId:id,name:record.name,updatedAt:record.updatedAt,dirty:false}));return record;});
-  try{const result=await activeSavePromise;if(!silent){els.saveLabel.textContent='Guardado en proyectos';els.saveDot.classList.add('saved');}return result;}catch(error){els.saveLabel.textContent='No se pudo guardar';throw error;}
+  const startedAt=performance.now();const id=state.currentProjectId;const snap=workspaceSnapshot();const name=state.projectName||'Untitled project';
+  activeSavePromise=activeSavePromise.catch(()=>null).then(async()=>{const existing=await projectDbGet(id).catch(()=>null);const record=projectRecordFromSnapshot(id,name,snap,existing||{});record.autoVersions=maybeAppendAutoVersion(existing||{},snap);await projectDbPut(record);return record;});
+  try{
+    const result=await activeSavePromise;runtimePerformance.recordSave(performance.now()-startedAt);
+    const currentRevision=autosaveScheduler?.snapshot().revision||0;
+    if(state.currentProjectId===id&&currentRevision<=revision){safeLocalSet(ACTIVE_PROJECT_KEY,id);safeLocalRemove(SESSION_RECOVERY_DRAFT_KEY);safeLocalSet(SESSION_RECOVERY_KEY,JSON.stringify({projectId:id,name:result.name,updatedAt:result.updatedAt,dirty:false}));}
+    else if(state.currentProjectId===id)markProjectSessionDirty(currentRevision);
+    if(!silent){els.saveLabel.textContent='Guardado automático';els.saveDot.classList.add('saved');}
+    return result;
+  }catch(error){els.saveLabel.textContent='No se pudo guardar';throw error;}
 }
-function markProjectSessionDirty(){if(!state.currentProjectId)return;try{safeLocalSet(SESSION_RECOVERY_KEY,JSON.stringify({projectId:state.currentProjectId,name:state.projectName,updatedAt:Date.now(),dirty:true}));}catch{}}
+function markProjectSessionDirty(revision=autosaveScheduler?.snapshot().revision||0,extra={}){if(!state.currentProjectId)return;try{safeLocalSet(SESSION_RECOVERY_KEY,JSON.stringify({projectId:state.currentProjectId,name:state.projectName,updatedAt:Date.now(),revision,dirty:true,...extra}));}catch{}}
+function persistRecoveryDraft({revision=autosaveScheduler?.snapshot().revision||0,reason='idle'}={}){
+  if(!state.currentProjectId)return false;
+  try{
+    const profile=currentProjectProfile();
+    const draft=createOrbitRecoveryEnvelope({projectId:state.currentProjectId,name:state.projectName,snapshot:workspaceSnapshot(),revision});
+    if(draft.bytes>profile.maxRecoveryBytes){markProjectSessionDirty(revision,{hasDraft:false,reason:'draft-too-large'});return false;}
+    const stored=safeLocalSet(SESSION_RECOVERY_DRAFT_KEY,draft.serialized);
+    markProjectSessionDirty(revision,{hasDraft:stored,draftUpdatedAt:stored?draft.envelope.createdAt:0,reason});
+    return stored;
+  }catch{return false;}
+}
 function setWorkspaceVisibility(dashboardOpen){
   state.projectDashboardOpen=dashboardOpen;els.dashboard.hidden=!dashboardOpen;els.builder.hidden=dashboardOpen;document.body.classList.toggle('project-dashboard-open',dashboardOpen);
 }
@@ -863,7 +884,7 @@ async function openProjectDashboard(){
 async function openProjectById(id){
   try{
     const record=await projectDbGet(id);if(!record){toast('No se encontró el proyecto','error');return;}
-    restoreWorkspaceSnapshot(record.snapshot);state.currentProjectId=record.id;safeLocalSet(ACTIVE_PROJECT_KEY,record.id);safeLocalSet(SESSION_RECOVERY_KEY,JSON.stringify({projectId:record.id,name:record.name,updatedAt:record.updatedAt,dirty:false}));setWorkspaceVisibility(false);render();scheduleFluidCanvasFit();toast(`Proyecto abierto · ${record.name}`);
+    restoreWorkspaceSnapshot(record.snapshot);state.currentProjectId=record.id;autosaveScheduler?.reset();safeLocalRemove(SESSION_RECOVERY_DRAFT_KEY);safeLocalSet(ACTIVE_PROJECT_KEY,record.id);safeLocalSet(SESSION_RECOVERY_KEY,JSON.stringify({projectId:record.id,name:record.name,updatedAt:record.updatedAt,dirty:false}));setWorkspaceVisibility(false);render();scheduleFluidCanvasFit();toast(`Proyecto abierto · ${record.name}`);
     requestAnimationFrame(()=>els.canvas?.focus());
   }catch(error){
     state.currentProjectId=null;safeLocalRemove(ACTIVE_PROJECT_KEY);setWorkspaceVisibility(true);reportWorkspaceHealth(`No pudimos abrir ese proyecto todavía: ${error?.message||'estructura incompatible'}. Usa “Reparar almacenamiento” para recuperarlo.`);await renderProjectDashboard();toast('El proyecto se mantuvo protegido en el inicio','error',3600);
@@ -929,9 +950,21 @@ async function restoreProjectCheckpoint(projectId,checkpointId,kind='manual'){co
 async function deleteProjectCheckpoint(projectId,checkpointId){const record=await projectDbGet(projectId);if(!record)return;record.checkpoints=(record.checkpoints||[]).filter(item=>item.id!==checkpointId);record.updatedAt=Date.now();await projectDbPut(record);await showProjectCheckpoints(projectId);await renderProjectDashboard();}
 function renderRecoveryBanner(){
   let recovery=null;try{recovery=JSON.parse(safeLocalGet(SESSION_RECOVERY_KEY)||'null');}catch{}
-  const visible=!!(recovery?.dirty&&recovery.projectId);els.recoveryBanner.hidden=!visible;if(visible)els.recoveryCopy.textContent=`${recovery.name||'Proyecto'} tuvo cambios recientes. Recupera la última versión guardada.`;
+  const draft=parseOrbitRecoveryEnvelope(safeLocalGet(SESSION_RECOVERY_DRAFT_KEY));
+  const visible=!!(recovery?.dirty&&recovery.projectId);els.recoveryBanner.hidden=!visible;
+  if(visible)els.recoveryCopy.textContent=draft?.projectId===recovery.projectId?`${recovery.name||'Proyecto'} tiene un borrador recuperable del último cambio.`:`${recovery.name||'Proyecto'} tuvo cambios recientes. Recupera su último guardado automático.`;
 }
-async function recoverProjectSession(){let recovery=null;try{recovery=JSON.parse(safeLocalGet(SESSION_RECOVERY_KEY)||'null');}catch{}if(recovery?.projectId)await openProjectById(recovery.projectId);}
+async function recoverProjectSession(){
+  let recovery=null;try{recovery=JSON.parse(safeLocalGet(SESSION_RECOVERY_KEY)||'null');}catch{}
+  if(!recovery?.projectId)return;
+  const draft=parseOrbitRecoveryEnvelope(safeLocalGet(SESSION_RECOVERY_DRAFT_KEY));
+  if(draft?.projectId===recovery.projectId){
+    try{
+      restoreWorkspaceSnapshot(draft.snapshot);state.currentProjectId=draft.projectId;autosaveScheduler?.reset(draft.revision,0);safeLocalSet(ACTIVE_PROJECT_KEY,draft.projectId);setWorkspaceVisibility(false);render();scheduleFluidCanvasFit();await saveActiveProject({revision:draft.revision});toast('Borrador recuperado y protegido');requestAnimationFrame(()=>els.canvas?.focus());return;
+    }catch(error){console.warn('[Orbit recovery]',error);toast('El borrador estaba dañado; abrimos el último guardado','error',3200);}
+  }
+  await openProjectById(recovery.projectId);
+}
 async function migrateLegacyProject(){
   if(safeLocalGet(MIGRATION_KEY))return;
   const raw=safeLocalGet(PREVIOUS_STORAGE_KEY)||safeLocalGet(PREVIOUS_STORAGE_KEY_2)||safeLocalGet(LEGACY_STORAGE_KEY);
@@ -1707,8 +1740,7 @@ function snapshot(){
 function restore(snap){
   state.nodes=hydrateNodes(clone(snap.nodes));state.tokens=clone(snap.tokens||defaultTokens);state.assets=clone(snap.assets||[]);state.components=clone(snap.components||[]);state.globalClasses=clone(snap.globalClasses||[]);state.pages=clone(snap.pages||[]);state.currentPageId=snap.currentPageId||state.pages[0]?.id||'page-home';state.selectedId=snap.selectedId;state.selectedIds=clone(snap.selectedIds||[snap.selectedId].filter(Boolean));state.styleState=snap.styleState||'default';state.projectName=snap.projectName||state.projectName;state.pageMeta=clone(snap.pageMeta||state.pageMeta);state.breakpoints=clone(snap.breakpoints||state.breakpoints);state.breakpointEnabled=clone(snap.breakpointEnabled||state.breakpointEnabled||{desktopXL:true,mobileL:true});state.canvasWidths=clone(snap.canvasWidths||state.canvasWidths);state.exportSettings=clone(snap.exportSettings||state.exportSettings);state.rightPanelWidth=snap.rightPanelWidth||state.rightPanelWidth;state.rightPanelCollapsed=!!snap.rightPanelCollapsed;state.leftPanelWidth=snap.leftPanelWidth||state.leftPanelWidth;state.leftPanelCollapsed=!!snap.leftPanelCollapsed;state.tokenGroupsOpen=clone(snap.tokenGroupsOpen||state.tokenGroupsOpen);state.inspectorMode='advanced';state.inspectorTab=['content','design','layout','responsive','interactions','advanced'].includes(snap.inspectorTab)?snap.inspectorTab:state.inspectorTab;state.directEditEnabled=snap.directEditEnabled!==false;state.responsiveCompareSync=snap.responsiveCompareSync!==false;state.responsiveCompareSelected=snap.responsiveCompareSelected!==false;state.responsiveCompareZoom=clone(snap.responsiveCompareZoom||state.responsiveCompareZoom||{desktop:1,tablet:1,mobile:1});state.responsiveAuditIgnored=clone(snap.responsiveAuditIgnored||[]);els.projectName.value=state.projectName;
 }
-function sameSnapshot(a,b){ return JSON.stringify(a)===JSON.stringify(b); }
-function pushHistory(before){ if(!before)return; const after=snapshot(); if(sameSnapshot(before,after))return; state.history.push(before); state.history=state.history.slice(-80); state.future=[]; }
+function pushHistory(before){if(!before)return;const limit=currentProjectProfile().historyLimit;state.history.push(before);state.history=state.history.slice(-limit);state.future=[];}
 function commit(mutator,selectedId=state.selectedId){ const before=snapshot(); mutator(); if(selectedId!==undefined){state.selectedId=selectedId;state.selectedIds=selectedId?[selectedId]:[];} pushHistory(before); markUnsaved(); render(); }
 function beginTransaction(kind){ if(!state.transaction)state.transaction={kind,before:snapshot()}; }
 function endTransaction(){ if(!state.transaction)return; pushHistory(state.transaction.before); state.transaction=null; markUnsaved(); render(); }
@@ -2238,6 +2270,7 @@ function renderMultiToolbar(){
   }
   scheduleContextualChrome();
 }
+let lastCanvasMarkup='';
 function renderCanvas(){
   syncGoogleFontsStylesheet();
   const width=state.canvasWidths[state.breakpoint];
@@ -2248,7 +2281,9 @@ function renderCanvas(){
   els.stage.classList.toggle('show-guides',state.guides&&state.guidesVisible);
   els.stage.classList.toggle('show-rulers',state.rulers);
   if(els.rulerX)els.rulerX.hidden=!state.rulers;if(els.rulerY)els.rulerY.hidden=!state.rulers;
-  els.canvas.innerHTML=state.nodes.length?state.nodes.map(renderNode).join(''):`<div class="root-empty root-empty-pro"><span class="root-empty-icon">${uiIcon('layout')}</span><strong>Empieza tu página</strong><span>Inserta un elemento o usa una sección preparada. Orbit mantendrá la estructura semántica y la exportación Astro.</span><div class="root-empty-actions"><button type="button" data-empty-add>${uiIcon('plus')} Añadir elemento</button><button type="button" data-empty-section>${uiIcon('layout')} Añadir sección</button></div><small>Atajo: Shift + A</small></div>`;
+  const markup=state.nodes.length?state.nodes.map(renderNode).join(''):`<div class="root-empty root-empty-pro"><span class="root-empty-icon">${uiIcon('layout')}</span><strong>Empieza tu página</strong><span>Inserta un elemento o usa una sección preparada. Orbit mantendrá la estructura semántica y la exportación Astro.</span><div class="root-empty-actions"><button type="button" data-empty-add>${uiIcon('plus')} Añadir elemento</button><button type="button" data-empty-section>${uiIcon('layout')} Añadir sección</button></div><small>Atajo: Shift + A</small></div>`;
+  if(markup!==lastCanvasMarkup){els.canvas.innerHTML=markup;lastCanvasMarkup=markup;runtimePerformance.increment('canvasCommits');}
+  else runtimePerformance.increment('canvasSkips');
   els.size.textContent=`${width} px · ${Math.round(state.zoom*100)}%`;
   els.width.value=width;
   els.zoomLabel.textContent=`${Math.round(state.zoom*100)}%`;
@@ -4351,6 +4386,7 @@ function syncTooltips(){
   });
 }
 function render(){
+  const startedAt=performance.now();
   renderPart('documento',ensureProjectPages);
   if(state.components.length)renderPart('componentes',refreshComponentCounts);
   const pageLabel=document.getElementById('current-page-label');if(pageLabel)pageLabel.textContent=currentPage()?.name||'Page';
@@ -4379,6 +4415,7 @@ function render(){
   themeSystem?.sync();
   measurementTools?.scheduleRender();
   syncTooltips();
+  runtimePerformance.recordRender(performance.now()-startedAt,currentProjectProfile());
 }
 
 function insertionForClick(){
@@ -4441,14 +4478,22 @@ function toast(message,type='info',duration=1800){
   clearTimeout(toast.timer);
   toast.timer=setTimeout(()=>{els.toast.hidden=true;delete els.toast.dataset.type;},duration);
 }
-let saveTimer;
+autosaveScheduler=createOrbitAutosaveScheduler({
+  window,
+  getProfile:currentProjectProfile,
+  save:({revision})=>saveActiveProject({silent:true,revision}),
+  persistRecovery:persistRecoveryDraft,
+  onState(status,detail){
+    if(status==='dirty'){els.saveDot.classList.remove('saved');els.saveLabel.textContent=detail.profile?.tier==='standard'?'Cambios pendientes':'Optimizando proyecto grande…';}
+    else if(status==='saving'){els.saveDot.classList.remove('saved');els.saveLabel.textContent='Guardando automáticamente…';}
+    else if(status==='saved'){els.saveDot.classList.add('saved');els.saveLabel.textContent='Guardado automático';}
+    else if(status==='retrying'){els.saveDot.classList.remove('saved');els.saveLabel.textContent=`Reintentando guardado (${detail.retryCount}/3)…`;}
+    else if(status==='error'){els.saveDot.classList.remove('saved');els.saveLabel.textContent='Cambios protegidos localmente';}
+  }
+});
 function markUnsaved(){
-  els.saveDot.classList.remove('saved');els.saveLabel.textContent='Guardando proyecto…';markProjectSessionDirty();clearTimeout(saveTimer);
+  const revision=autosaveScheduler.markDirty();markProjectSessionDirty(revision);
   scheduleLivePreviewUpdate();
-  saveTimer=setTimeout(async()=>{
-    try{await saveActiveProject();}
-    catch{els.saveLabel.textContent='Sesión temporal';try{safeLocalSet(STORAGE_KEY,JSON.stringify(workspaceSnapshot()));}catch{}}
-  },450);
 }
 
 let dragPayload=null;
@@ -5768,14 +5813,14 @@ document.addEventListener('click',async event=>{
   const deleteCheckpointButton=event.target.closest('[data-delete-checkpoint]');if(deleteCheckpointButton){await deleteProjectCheckpoint(deleteCheckpointButton.dataset.checkpointProject,deleteCheckpointButton.dataset.deleteCheckpoint);return;}
   if(event.target.closest('[data-close-checkpoints]')){closeProjectCheckpoints();return;}
   if(event.target.closest('[data-recover-project]')){await recoverProjectSession();return;}
-  if(event.target.closest('[data-dismiss-recovery]')){safeLocalRemove(SESSION_RECOVERY_KEY);renderRecoveryBanner();return;}
+  if(event.target.closest('[data-dismiss-recovery]')){safeLocalRemove(SESSION_RECOVERY_KEY);safeLocalRemove(SESSION_RECOVERY_DRAFT_KEY);renderRecoveryBanner();return;}
   if(event.target.closest('#repair-project-storage')||event.target.closest('#repair-project-storage-secondary')){await repairWorkspaceStorage();return;}
   if(event.target.closest('#dismiss-workspace-health')){$('#workspace-health-banner').hidden=true;return;}
   const menuButton=event.target.closest('[data-project-menu]');if(menuButton){const id=menuButton.dataset.projectMenu;const panel=document.querySelector(`[data-project-menu-panel="${CSS.escape(id)}"]`);const willOpen=!!panel?.hidden;closeProjectMenus({restore:false});if(willOpen&&panel){panel.hidden=false;menuButton.setAttribute('aria-expanded','true');accessibility?.focus.openLayer(panel,{trigger:menuButton,initialFocus:panel.querySelector('button'),modal:false,onEscape:()=>closeProjectMenus()});}return;}
   if(!event.target.closest('.project-card-menu')&&!event.target.closest('[data-project-menu]'))closeProjectMenus({restore:false});
 });
-document.addEventListener('visibilitychange',()=>{if(document.visibilityState==='hidden'&&state.currentProjectId)saveActiveProject({silent:true}).catch(()=>{});});
-window.addEventListener('pagehide',()=>{if(state.currentProjectId)saveActiveProject({silent:true}).catch(()=>{});});
+document.addEventListener('visibilitychange',()=>{if(document.visibilityState==='hidden'&&state.currentProjectId)void autosaveScheduler.flush('visibility-hidden');});
+window.addEventListener('pagehide',()=>{if(state.currentProjectId)void autosaveScheduler.flush('pagehide');});
 $('#reset-demo').addEventListener('click',()=>{
   if(!confirm('¿Restablecer la demo y borrar los cambios guardados?'))return;
   commit(()=>{state.nodes=hydrateNodes(clone(starter));state.tokens=clone(defaultTokens);state.assets=[];state.components=[];state.globalClasses=[];state.selectedIds=['hero-title'];state.styleState='default';state.projectName='Untitled landing page';state.pageMeta={language:'es',title:'Untitled landing page',description:'Sitio creado con Orbit Astro Visual Builder'};state.breakpoints={desktopXL:1440,desktop:1200,tablet:1024,mobileL:768,mobile:480};state.breakpointEnabled={desktopXL:true,mobileL:true};state.canvasWidths={desktopXL:1440,desktop:1200,tablet:834,mobileL:640,mobile:390};state.pages=[{id:'page-home',name:'Home',slug:'/',nodes:clone(state.nodes),meta:clone(state.pageMeta)}];state.currentPageId='page-home';state.zoom=.85;state.rulers=true;state.guides=true;state.guidesVisible=true;state.guidesLocked=false;state.snap=true;state.customGuides=[];state.guideUnitVersion=2;state.rightPanelWidth=360;state.rightPanelCollapsed=false;state.leftPanelWidth=380;state.leftPanelCollapsed=false;state.tokenGroupsOpen={colors:true,typography:false,spacing:false,radius:false,shadows:false};state.inspectorMode='essentials';state.inspectorTab='content';state.directEditEnabled=true;state.canvasMinimapVisible=true;},'hero-title');
@@ -5796,7 +5841,7 @@ function loadSaved(){
 window.addEventListener('error',event=>{console.error('[Orbit runtime]',event.error||event.message);toast('Orbit encontró un error inesperado. Puedes seguir trabajando o deshacer el último cambio.','error',3500);});
 window.addEventListener('unhandledrejection',event=>{console.error('[Orbit promise]',event.reason);toast('Una operación no pudo completarse. Revisa la consola si necesitas el detalle.','error',3500);});
 
-window.__ORBIT_QA__={openProjectDashboard,createWorkspaceProject,generatedElementsCss,generatedGlobalClassesCss,generatedStyles,generatedAstro,generatedPreviewHtml,safeInlineScriptJson,livePreviewPayload,isLivePreviewOpen,projectFiles,projectDbList,projectDbListRaw,projectDbPut,normalizeProjectRecord,repairWorkspaceStorage,renderProjectDashboard,workspaceSnapshot,normalizeOrbitImport,primarySharedStyleClass,setSharedStyleMode,directStyle,render,setSelection,loadOrbitDocument(data,selectedId=''){
+window.__ORBIT_QA__={openProjectDashboard,createWorkspaceProject,generatedElementsCss,generatedGlobalClassesCss,generatedStyles,generatedAstro,generatedPreviewHtml,safeInlineScriptJson,livePreviewPayload,isLivePreviewOpen,projectFiles,projectDbList,projectDbListRaw,projectDbPut,normalizeProjectRecord,repairWorkspaceStorage,renderProjectDashboard,workspaceSnapshot,currentProjectProfile,runtimePerformanceSnapshot:()=>runtimePerformance.snapshot(),recoveryDraft:()=>parseOrbitRecoveryEnvelope(safeLocalGet(SESSION_RECOVERY_DRAFT_KEY)),normalizeOrbitImport,primarySharedStyleClass,setSharedStyleMode,directStyle,render,setSelection,loadOrbitDocument(data,selectedId=''){
   const result=normalizeOrbitImport(data);const doc=result.document;state.nodes=hydrateNodes(clone(doc.nodes));state.tokens=doc.tokens||clone(defaultTokens);ensureTokenGroups();state.assets=doc.assets||[];state.components=(doc.components||[]).map(normalizeComponentDefinition);state.globalClasses=doc.globalClasses||[];state.projectName=doc.projectName||'QA project';state.pageMeta=doc.pageMeta||state.pageMeta;state.pages=[{id:'page-qa',name:'QA',slug:'/',nodes:clone(state.nodes),meta:clone(state.pageMeta)}];state.currentPageId='page-qa';setSelection(selectedId&&find(state.nodes,selectedId)?selectedId:state.nodes[0]?.id||null);render();return result.report;
 }};
 setWorkspaceVisibility(true);
