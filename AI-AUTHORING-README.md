@@ -1,13 +1,13 @@
 # Orbit AI Authoring Kit
 
-Este kit permite pedir a GPT, Claude u otra IA que convierta una captura de diseño en un Orbit JSON v12 importable.
+Este kit permite pedir a GPT, Claude u otra IA que convierta una captura de diseño en un Orbit JSON v13 importable.
 
 Si deseas enviar un único archivo, utiliza `ORBIT-AI-MASTER-AUTHORING.md`. Contiene el contrato, el prompt, las reglas de fidelidad, clases compartidas, imágenes e iconos SVG en un solo documento.
 
 ## Archivos
 
 1. `docs/orbit-json-authoring-guide.md` — explica cómo piensa y construye una página para Orbit.
-2. `schemas/orbit-json-v12.schema.json` — define exactamente qué JSON es válido.
+2. `schemas/orbit-json-v13.schema.json` — define exactamente qué JSON es válido.
 3. `examples/landing-page-ai.orbit.json` — ejemplo completo con tokens, clases compartidas y overrides, listo para importar.
 4. `prompts/screenshot-to-orbit-json.md` — prompt maestro, correcciones y manejo de imágenes.
 

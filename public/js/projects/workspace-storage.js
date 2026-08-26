@@ -121,7 +121,7 @@ function createWorkspaceStorage({
     return {
       ...base,
       ...source,
-      version: 12,
+      version: normalizeOrbitDocumentVersion(source.version),
       projectName: typeof source.projectName === 'string' && source.projectName.trim() ? source.projectName : name,
       pageMeta: isRecord(currentPage.meta) ? currentPage.meta : clone(meta),
       pages,

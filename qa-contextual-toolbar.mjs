@@ -5,11 +5,15 @@ import { mkdtempSync, mkdirSync, readFileSync, rmSync, writeFileSync } from 'nod
 import { dirname, join } from 'node:path';
 import { fileURLToPath, pathToFileURL } from 'node:url';
 import { tmpdir } from 'node:os';
+import { resolveChromePath } from './scripts/lib/chrome-path.js';
 
 const here = dirname(fileURLToPath(import.meta.url));
-const chromePath = '/Applications/Google Chrome.app/Contents/MacOS/Google Chrome';
+const chromePath = resolveChromePath();
 const profile = mkdtempSync(join(tmpdir(), 'orbit-contextual-qa-'));
-const evidenceDir = join(here, 'qa-evidence');
+const updateEvidence = process.argv.includes('--update-evidence');
+const evidenceDir = updateEvidence
+  ? join(here, 'qa-evidence')
+  : mkdtempSync(join(tmpdir(), 'orbit-qa-evidence-'));
 mkdirSync(evidenceDir, { recursive: true });
 
 const portServer = createServer();
@@ -33,6 +37,8 @@ const chrome = spawn(chromePath, [
   'about:blank',
 ], { stdio: ['ignore', 'ignore', 'pipe'] });
 chrome.stderr.resume();
+let chromeSpawnError = null;
+chrome.once('error', error => { chromeSpawnError = error; });
 
 async function json(path, options) {
   const response = await fetch(`http://127.0.0.1:${port}${path}`, options);
@@ -42,6 +48,7 @@ async function json(path, options) {
 
 async function waitForTarget() {
   for (let attempt = 0; attempt < 100; attempt += 1) {
+    if (chromeSpawnError) throw new Error(`No se pudo iniciar Chrome: ${chromeSpawnError.message}`);
     try {
       const targets = await json('/json/list');
       const page = targets.find(target => target.type === 'page');
@@ -687,4 +694,5 @@ try {
   ws.close();
   chrome.kill('SIGTERM');
   rmSync(profile, { recursive: true, force: true, maxRetries: 5, retryDelay: 80 });
+  if (!updateEvidence) rmSync(evidenceDir, { recursive: true, force: true, maxRetries: 5, retryDelay: 80 });
 }

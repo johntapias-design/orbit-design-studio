@@ -734,7 +734,7 @@ Repite la comparación hasta que las diferencias restantes provengan solamente d
 El usuario puede adjuntar la imagen, este documento y escribir únicamente:
 
 ```text
-Sigue completamente ORBIT-AI-MASTER-AUTHORING.md y maqueta la imagen adjunta en Orbit JSON v12.
+Sigue completamente ORBIT-AI-MASTER-AUTHORING.md y maqueta la imagen adjunta en Orbit JSON v13.
 
 PROJECT_NAME: [nombre]
 PAGE_NAME: [página]

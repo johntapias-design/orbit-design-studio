@@ -1,12 +1,20 @@
 {
   "name": "orbit-design-studio",
-  "version": "0.24.0-alpha",
+  "version": "0.25.0-alpha",
   "description": "Constructor visual de sitios enfocado en Astro con arquitectura modular y soporte IA.",
   "type": "module",
   "scripts": {
     "dev": "node scripts/dev-server.js",
-    "build": "node scripts/build-standalone.js && zip -9 Orbit-Netlify.zip index.html",
-    "test": "node qa-contextual-toolbar.mjs"
+    "build": "node scripts/build-standalone.js && zip -X -9 -FS Orbit-Netlify.zip index.html",
+    "test": "npm run test:baseline && npm run test:unit && npm run test:qa",
+    "test:baseline": "node scripts/verify-baseline.js",
+    "test:unit": "node --test test/*.test.mjs",
+    "test:qa": "node qa-contextual-toolbar.mjs",
+    "test:evidence": "node qa-contextual-toolbar.mjs --update-evidence",
+    "verify": "npm run build && npm test"
+  },
+  "engines": {
+    "node": ">=26 <27"
   },
   "keywords": [
     "astro",

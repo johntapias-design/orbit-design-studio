@@ -2,6 +2,14 @@
 
 Resultado: **aprobado**, sin errores de JavaScript ni de consola.
 
+Baseline v0.25:
+
+- Build standalone reproducible desde el manifest modular.
+- Versión `0.25.0-alpha` sincronizada entre paquete, runtime e interfaz.
+- Pruebas unitarias para resolución multiplataforma de Chrome y Scroll Entrance FX.
+- QA compatible con macOS y Ubuntu/GitHub Actions.
+- Orbit JSON v13 como formato actual y compatibilidad de lectura con v12.
+
 | Resolución | Barra global | Barra de selección | Lienzo borde a borde | Reajuste de paneles | Overflow global |
 | --- | --- | --- | --- | --- | --- |
 | 1024 × 768 | Correcta | Correcta | Correcto | Correcto | No |

@@ -763,7 +763,7 @@ function slug(value='item'){ return String(value).toLowerCase().normalize('NFD')
 function workspaceSnapshot(){
   syncCurrentPageRecord();
   return {
-    version:12,projectName:state.projectName,pageMeta:clone(state.pageMeta),nodes:clone(state.nodes),tokens:clone(state.tokens),assets:clone(state.assets),components:clone(state.components),globalClasses:clone(state.globalClasses),pages:clone(state.pages),currentPageId:state.currentPageId,
+    version:currentOrbitDocumentVersion(),projectName:state.projectName,pageMeta:clone(state.pageMeta),nodes:clone(state.nodes),tokens:clone(state.tokens),assets:clone(state.assets),components:clone(state.components),globalClasses:clone(state.globalClasses),pages:clone(state.pages),currentPageId:state.currentPageId,
     breakpoints:clone(state.breakpoints),breakpointEnabled:clone(state.breakpointEnabled),canvasWidths:clone(state.canvasWidths),responsiveCompareSync:state.responsiveCompareSync,responsiveCompareSelected:state.responsiveCompareSelected,responsiveCompareZoom:clone(state.responsiveCompareZoom),responsiveAuditIgnored:clone(state.responsiveAuditIgnored),selectedId:state.selectedId,selectedIds:clone(selectedIds()),zoom:state.zoom,breakpoint:state.breakpoint,styleState:state.styleState,tab:state.tab,grid:state.grid,rulers:state.rulers,guides:state.guides,guidesVisible:state.guidesVisible,guidesLocked:state.guidesLocked,guideUnitVersion:2,snap:state.snap,customGuides:clone(state.customGuides),
     exportSettings:clone(state.exportSettings),elementFavorites:clone(state.elementFavorites),elementRecent:clone(state.elementRecent),rightPanelWidth:state.rightPanelWidth,rightPanelCollapsed:state.rightPanelCollapsed,leftPanelWidth:state.leftPanelWidth,leftPanelCollapsed:state.leftPanelCollapsed,tokenGroupsOpen:clone(state.tokenGroupsOpen),inspectorMode:state.inspectorMode,inspectorTab:state.inspectorTab,directEditEnabled:state.directEditEnabled,openSections:clone(state.openSections),collapsed:clone(state.collapsed),assetSearch:state.assetSearch,assetFilter:state.assetFilter
   };
@@ -779,7 +779,7 @@ function restoreWorkspaceSnapshot(saved){
 function defaultProjectSnapshot(mode='starter',name='Untitled project'){
   const nodes=mode==='blank'?[]:hydrateNodes(clone(starter));
   const meta={language:'es',title:name,description:'Sitio creado con Orbit Design Studio'};
-  return {version:12,projectName:name,pageMeta:clone(meta),nodes:clone(nodes),tokens:clone(defaultTokens),assets:[],components:[],globalClasses:[],pages:[{id:'page-home',name:'Home',slug:'/',nodes:clone(nodes),meta:clone(meta)}],currentPageId:'page-home',breakpoints:{desktopXL:1440,desktop:1200,tablet:1024,mobileL:768,mobile:480},breakpointEnabled:{desktopXL:true,mobileL:true},canvasWidths:{desktopXL:1440,desktop:1200,tablet:834,mobileL:640,mobile:390},selectedId:nodes[0]?.id||null,selectedIds:nodes[0]?.id?[nodes[0].id]:[],zoom:.85,breakpoint:'desktop',styleState:'default',tab:'pages',grid:false,rulers:true,guides:true,guidesVisible:true,guidesLocked:false,guideUnitVersion:2,snap:true,customGuides:[],exportSettings:{componentize:true,astroImage:true,splitCss:true,minify:false},elementFavorites:['section','container','heading','text','button','image'],elementRecent:[],rightPanelWidth:360,rightPanelCollapsed:false,leftPanelWidth:380,leftPanelCollapsed:false,tokenGroupsOpen:{colors:true,typography:false,spacing:false,radius:false,shadows:false},inspectorMode:'advanced',inspectorTab:'content',directEditEnabled:true,assetSearch:'',assetFilter:'all',responsiveCompareSync:true,responsiveCompareSelected:true,responsiveCompareZoom:{desktop:1,tablet:1,mobile:1},responsiveAuditIgnored:[]};
+  return {version:currentOrbitDocumentVersion(),projectName:name,pageMeta:clone(meta),nodes:clone(nodes),tokens:clone(defaultTokens),assets:[],components:[],globalClasses:[],pages:[{id:'page-home',name:'Home',slug:'/',nodes:clone(nodes),meta:clone(meta)}],currentPageId:'page-home',breakpoints:{desktopXL:1440,desktop:1200,tablet:1024,mobileL:768,mobile:480},breakpointEnabled:{desktopXL:true,mobileL:true},canvasWidths:{desktopXL:1440,desktop:1200,tablet:834,mobileL:640,mobile:390},selectedId:nodes[0]?.id||null,selectedIds:nodes[0]?.id?[nodes[0].id]:[],zoom:.85,breakpoint:'desktop',styleState:'default',tab:'pages',grid:false,rulers:true,guides:true,guidesVisible:true,guidesLocked:false,guideUnitVersion:2,snap:true,customGuides:[],exportSettings:{componentize:true,astroImage:true,splitCss:true,minify:false},elementFavorites:['section','container','heading','text','button','image'],elementRecent:[],rightPanelWidth:360,rightPanelCollapsed:false,leftPanelWidth:380,leftPanelCollapsed:false,tokenGroupsOpen:{colors:true,typography:false,spacing:false,radius:false,shadows:false},inspectorMode:'advanced',inspectorTab:'content',directEditEnabled:true,assetSearch:'',assetFilter:'all',responsiveCompareSync:true,responsiveCompareSelected:true,responsiveCompareZoom:{desktop:1,tablet:1,mobile:1},responsiveAuditIgnored:[]};
 }
 function projectAccent(record){return record.snapshot?.tokens?.colors?.accent?.value||'#ef5a24';}
 function projectBackground(record){return record.snapshot?.tokens?.colors?.background?.value||'#f5f1e8';}
@@ -935,7 +935,7 @@ async function recoverProjectSession(){let recovery=null;try{recovery=JSON.parse
 async function migrateLegacyProject(){
   if(safeLocalGet(MIGRATION_KEY))return;
   const raw=safeLocalGet(PREVIOUS_STORAGE_KEY)||safeLocalGet(PREVIOUS_STORAGE_KEY_2)||safeLocalGet(LEGACY_STORAGE_KEY);
-  if(raw){try{const saved=JSON.parse(raw);const name=saved.projectName||'Proyecto recuperado';const id=uid('project');const snap={...defaultProjectSnapshot('blank',name),...saved,version:12,breakpoint:saved.breakpoint||'desktop',tab:saved.tab||'pages'};await projectDbPut(projectRecordFromSnapshot(id,name,snap,{}));safeLocalSet(ACTIVE_PROJECT_KEY,id);}catch{}}
+  if(raw){try{const saved=JSON.parse(raw);const name=saved.projectName||'Proyecto recuperado';const id=uid('project');const snap={...defaultProjectSnapshot('blank',name),...saved,version:currentOrbitDocumentVersion(),breakpoint:saved.breakpoint||'desktop',tab:saved.tab||'pages'};await projectDbPut(projectRecordFromSnapshot(id,name,snap,{}));safeLocalSet(ACTIVE_PROJECT_KEY,id);}catch{}}
   safeLocalSet(MIGRATION_KEY,'1');
 }
 async function bootstrapProjectWorkspace(){
@@ -3533,28 +3533,8 @@ function shadowStudioControl(node, s) {
   return field('Shadow Studio Pro', `${presetsHtml}${tokenField('boxShadow', 'shadows', s.boxShadow, `<input data-style-prop="boxShadow" value="${escapeHtml(s.boxShadow || '')}" placeholder="0 20px 50px rgba(...)">`)}`, hasOverride(node, 'boxShadow'));
 }
 
-function scrollFxControl(node) {
-  const current = node.scrollAnim || 'none';
-  const presets = [
-    { id: 'none', title: 'Sin animación' },
-    { id: 'fade-up', title: 'Fade Up ↑' },
-    { id: 'scale-in', title: 'Scale In 🔍' },
-    { id: 'slide-right', title: 'Slide Right →' },
-    { id: 'blur-in', title: 'Blur In ✨' },
-    { id: 'fade-down', title: 'Fade Down ↓' }
-  ];
-  const gridHtml = `<div class="orbit-scroll-fx-grid">${presets.map(p => {
-    const isSelected = current === p.id;
-    return `<button type="button" class="orbit-scroll-card ${isSelected ? 'is-selected' : ''}" data-scroll-anim-preset="${p.id}">
-      <span>${p.title}</span>
-    </button>`;
-  }).join('')}</div>`;
-
-  return field('Scroll Entrance FX Studio', gridHtml);
-}
-
   tabPanels.design+=section('appearance','Apariencia',`${backgroundEditor(node,s)}${(node.type!=='image'&&!isTextual(node))?field('Color',tokenField('color','colors',s.color,colorInput('color',s.color)),hasOverride(node,'color')):''}<div class="field-grid">${field('Radio',tokenField('borderRadius','radius',s.borderRadius,unitInput('borderRadius',s.borderRadius)),hasOverride(node,'borderRadius'))}${field('Opacidad',`<input data-style-prop="opacity" type="number" min="0" max="1" step="0.05" value="${s.opacity??1}">`,hasOverride(node,'opacity'))}</div><div class="field-grid">${field('Ancho de borde',unitInput('borderWidth',s.borderWidth),hasOverride(node,'borderWidth'))}${field('Color de borde',inspectorColorControl('borderColor',s.borderColor||'transparent','Borde'),hasOverride(node,'borderColor'))}</div>${shadowStudioControl(node,s)}${node.type==='image'?field('Ajuste',segmented('objectFit',[['cover','Cubrir'],['contain','Contener']],s.objectFit||'cover'),hasOverride(node,'objectFit')):''}`);
-  tabPanels.interactions+=section('interaction','Interacciones y Animaciones Scroll',`${scrollFxControl(node)}${field('Transform',`<input data-style-prop="transform" value="${escapeHtml(s.transform||'')}" placeholder="translateY(-2px) scale(1.02)">`,hasOverride(node,'transform'))}${field('Transition',`<input data-style-prop="transition" value="${escapeHtml(s.transition||'')}" placeholder="all 200ms ease">`,hasOverride(node,'transition'))}<div class="field-grid">${field('Cursor',selectInput('cursor',[['auto','Auto'],['pointer','Pointer'],['grab','Grab'],['text','Text'],['not-allowed','Not allowed']],s.cursor||'auto'),hasOverride(node,'cursor'))}${field('Pointer events',selectInput('pointerEvents',[['auto','Auto'],['none','None']],s.pointerEvents||'auto'),hasOverride(node,'pointerEvents'))}</div>`);
+  tabPanels.interactions+=section('interaction','Interacciones y Animaciones Scroll',`${renderScrollFxControl(node,field)}${field('Transform',`<input data-style-prop="transform" value="${escapeHtml(s.transform||'')}" placeholder="translateY(-2px) scale(1.02)">`,hasOverride(node,'transform'))}${field('Transition',`<input data-style-prop="transition" value="${escapeHtml(s.transition||'')}" placeholder="all 200ms ease">`,hasOverride(node,'transition'))}<div class="field-grid">${field('Cursor',selectInput('cursor',[['auto','Auto'],['pointer','Pointer'],['grab','Grab'],['text','Text'],['not-allowed','Not allowed']],s.cursor||'auto'),hasOverride(node,'cursor'))}${field('Pointer events',selectInput('pointerEvents',[['auto','Auto'],['none','None']],s.pointerEvents||'auto'),hasOverride(node,'pointerEvents'))}</div>`);
   const accessibility=node.type==='image'?field('Texto alternativo',textInput('alt',node.alt||'')):node.type==='button'?field(semanticTag(node)==='a'?'Destino del enlace':'Tipo de acción',semanticTag(node)==='a'?textInput('href',node.href||'#'):'<p class="hint">Se exportará como button type="button".</p>'):'<p class="hint">La semántica y ARIA se gestionan en el panel HTML semántico.</p>';
   if(state.inspectorMode==='advanced'||['image','button','link','input','textareaField','selectField'].includes(node.type))tabPanels.advanced+=section('accessibility','Accesibilidad',accessibility);
   const stateSwitcher=`<div class="interaction-state-switcher inspector-state-switcher"><span>Estado</span>${[['default','Default'],['hover','Hover'],['focus','Focus'],['active','Active'],['disabled','Disabled']].map(([key,label])=>`<button type="button" data-style-state="${key}" class="${state.styleState===key?'active':''}">${label}</button>`).join('')}</div>`;
@@ -4972,8 +4952,8 @@ function projectFiles(){
     {name:'src/styles/classes.css',data:generatedGlobalClassesCss()},
     {name:'src/styles/elements.css',data:generatedElementsCss()},
     {name:'src/styles/global.css',data:generatedStyles()},
-    {name:'README.md',data:`# ${state.projectName}\n\nProyecto multipágina generado con Orbit Design Studio v0.24 Pro.\n\n## Ejecutar\n\n\`\`\`bash\nnpm install\nnpm run dev\n\`\`\`\n`},
-    {name:'orbit/project.orbit.json',data:JSON.stringify({version:12,projectName:state.projectName,pages:state.pages,tokens:state.tokens,globalClasses:state.globalClasses,components:state.components,assets:state.assets,breakpoints:state.breakpoints,breakpointEnabled:state.breakpointEnabled,canvasWidths:state.canvasWidths},null,2)}
+    {name:'README.md',data:`# ${state.projectName}\n\nProyecto multipágina generado con Orbit Design Studio ${ORBIT_APP.versionLabel} Pro.\n\n## Ejecutar\n\n\`\`\`bash\nnpm install\nnpm run dev\n\`\`\`\n`},
+    {name:'orbit/project.orbit.json',data:JSON.stringify({version:currentOrbitDocumentVersion(),projectName:state.projectName,pages:state.pages,tokens:state.tokens,globalClasses:state.globalClasses,components:state.components,assets:state.assets,breakpoints:state.breakpoints,breakpointEnabled:state.breakpointEnabled,canvasWidths:state.canvasWidths},null,2)}
   ];
   state.pages.forEach(page=>files.push({name:pageFilePath(page),data:generatedPageAstro(page,componentNames)}));
   state.components.forEach(component=>{const data=generatedComponentAstro(component,componentNames);if(data)files.push({name:`src/components/${componentNames.get(component.id)}.astro`,data});});
@@ -5359,8 +5339,9 @@ document.addEventListener('click',event=>{
   if(animPresetBtn){
     const target=selected();if(!target)return;
     const animId=animPresetBtn.dataset.scrollAnimPreset;
+    if(!isOrbitScrollFxPreset(animId))return;
     commit(()=>{
-      state.nodes=update(state.nodes,target.id,item=>({...item,scrollAnim:animId}));
+      state.nodes=updateScrollFxNodes(state.nodes,target.id,animId,update);
     },target.id);
     toast(`Animación ${animId} aplicada`);
     return;

@@ -1,5 +1,26 @@
 # Changelog
 
+## v0.25.0-alpha — Engineering Baseline
+
+### CI y reproducibilidad
+
+- QA multiplataforma con resolución configurable de Chrome mediante `CHROME_PATH`.
+- GitHub Actions usa la versión fijada en `.nvmrc`, controla concurrencia y valida que `index.html` esté compilado.
+- Artefacto de Netlify versionado como `Orbit-Netlify-v0.25`.
+
+### Versionado
+
+- Metadata de aplicación centralizada en `public/js/core/app-metadata.js`.
+- Sincronización automática del título, descripción y badge del standalone durante el build.
+- Orbit JSON v13 establecido como versión actual con lectura compatible de v12.
+
+### Pruebas y modularización
+
+- Quality Gate compuesto por verificación estructural, pruebas unitarias y QA funcional completa.
+- Evidencias de QA aisladas en un directorio temporal salvo actualización explícita.
+- Scroll Entrance FX extraído a `public/js/interactions/scroll-entrance-fx.js` como primer feature slice.
+- Orden de compilación centralizado en `scripts/build-manifest.js` y fallo inmediato ante módulos ausentes.
+
 ## v0.24.0-alpha — Swiper Carousel Pro
 
 ### Componentes

@@ -1,6 +1,6 @@
-# Orbit Design Studio — v0.24 Swiper Carousel Pro
+# Orbit Design Studio — v0.25 Engineering Baseline
 
-Versión standalone profesional de Orbit Design Studio v0.24.
+Versión standalone profesional de Orbit Design Studio v0.25.
 
 [![Netlify Deploy Status](https://api.netlify.com/api/v1/badges/orbit-design-studio/deploy-status)](https://app.netlify.com)
 
@@ -9,6 +9,14 @@ Versión standalone profesional de Orbit Design Studio v0.24.
 Abre `index.html` con doble clic. No requiere instalación, npm ni compilación.
 
 ## Cambios incluidos
+
+- CI multiplataforma con detección de Chrome en macOS, Linux y Windows.
+- Versión del producto centralizada y sincronizada entre runtime, paquete, interfaz y artefactos.
+- Orbit JSON v13 establecido como formato actual, manteniendo compatibilidad con documentos v12.
+- Quality Gate dividido en baseline de ingeniería, pruebas unitarias y QA funcional completa.
+- Pruebas normales sin cambios sobre las evidencias visuales versionadas; actualización explícita mediante `npm run test:evidence`.
+- Primer feature slice extraído del monolito: Scroll Entrance FX vive en `public/js/interactions/scroll-entrance-fx.js`.
+- Manifest único y estricto para el orden de compilación de módulos.
 
 - Componente **Carrusel** basado en Swiper Element con slides editables dentro de Orbit.
 - Controles responsive por breakpoint para cantidad de slides visibles y separación.
@@ -59,4 +67,4 @@ La carpeta `qa-evidence` contiene capturas de las pruebas realizadas en:
 - 3440 × 1440
 - Tema claro a 1600 × 900
 
-No se generó ningún ZIP.
+`npm run build` regenera `index.html` y `Orbit-Netlify.zip`. `npm test` ejecuta el baseline, las pruebas unitarias y la QA visual/funcional.

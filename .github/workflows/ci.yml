@@ -1,5 +1,12 @@
 name: Orbit Design Studio CI & Release Artifacts
 
+permissions:
+  contents: read
+
+concurrency:
+  group: orbit-ci-${{ github.ref }}
+  cancel-in-progress: true
+
 on:
   push:
     branches: [ main ]
@@ -10,27 +17,31 @@ jobs:
   build-and-test:
     name: Build, QA Test Suite & Netlify Package
     runs-on: ubuntu-latest
+    timeout-minutes: 15
 
     steps:
       - name: Checkout Repository
-        uses: actions/checkout@v4
+        uses: actions/checkout@v7
 
-      - name: Setup Node.js v26
-        uses: actions/setup-node@v4
+      - name: Setup Node.js
+        uses: actions/setup-node@v7
         with:
-          node-version: '26'
+          node-version-file: '.nvmrc'
 
       - name: Build Standalone Application & Zip Package
-        run: |
-          npm run build
+        run: npm run build
+
+      - name: Verify Generated Standalone Is Committed
+        run: git diff --exit-code -- index.html
 
       - name: Run Quality Gate Suite (Headless Chrome)
-        run: |
-          npm test
+        env:
+          CHROME_PATH: /usr/bin/google-chrome
+        run: npm test
 
       - name: Upload Orbit-Netlify.zip Artifact
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v7
         with:
-          name: Orbit-Netlify-v0.24
+          name: Orbit-Netlify-v0.25
           path: Orbit-Netlify.zip
           retention-days: 30

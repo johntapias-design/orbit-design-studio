@@ -22,7 +22,7 @@ function notify(key, value, previous, meta = {}) {
 function createOrbitState({ clone, hydrateNodes, starter, defaultTokens }) {
   if (activeState) return activeState;
   const target = {
-    version:12,
+    version:currentOrbitDocumentVersion(),
     projectName:'Untitled landing page',
     nodes:hydrateNodes(clone(starter)),
     tokens:clone(defaultTokens),

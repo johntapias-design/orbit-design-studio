@@ -3,7 +3,7 @@
 Estos prompts están pensados para usarse junto con:
 
 - `docs/orbit-json-authoring-guide.md`
-- `schemas/orbit-json-v12.schema.json`
+- `schemas/orbit-json-v13.schema.json`
 - `examples/landing-page-ai.orbit.json`
 - La captura del diseño que se desea reproducir
 
@@ -22,13 +22,13 @@ Antes de enviar el prompt, reemplaza estos valores:
 ## Prompt maestro — GPT o Claude
 
 ```text
-Actúa como especialista senior en diseño UI, maquetación responsive y generación de Orbit JSON v12.
+Actúa como especialista senior en diseño UI, maquetación responsive y generación de Orbit JSON v13.
 
 Tu tarea es reproducir con la máxima fidelidad visual la captura de diseño adjunta y devolver una página importable en Orbit Design Studio.
 
 Archivos de referencia adjuntos:
 1. orbit-json-authoring-guide.md — reglas de autoría de Orbit.
-2. orbit-json-v12.schema.json — contrato obligatorio de salida.
+2. orbit-json-v13.schema.json — contrato obligatorio de salida.
 3. landing-page-ai.orbit.json — ejemplo de estructura válida.
 4. La captura del diseño que debes reproducir.
 
@@ -50,7 +50,7 @@ Reglas obligatorias:
 - No confundas tokens con clases: los tokens comparten valores; las clases comparten recetas completas de estilo y comportamiento responsive.
 - Antes de entregar, simula este control: si se modifica color, tipografía, padding, margin, gap, borde o tamaño de una clase, todos sus nodos vinculados deben recibir el cambio.
 - Usa exclusivamente los tipos de nodo y propiedades admitidos por la guía y el schema.
-- La raíz debe declarar version 12 y contener una sola página en nodes.
+- La raíz debe declarar version 13 y contener una sola página en nodes.
 - Usa IDs únicos, estables, descriptivos y sin espacios.
 - Define estilos base y ajustes responsive solo cuando sean necesarios. Debe funcionar en desktop, tablet y mobile.
 - Conserva el orden semántico de lectura y usa etiquetas HTML apropiadas.
@@ -61,7 +61,7 @@ Reglas obligatorias:
 - Si el modo es reales, usa únicamente las URLs suministradas en el mapa de imágenes.
 - Si el modo es hibrido, usa las URLs suministradas y completa solamente las imágenes faltantes con Picsum usando seed.
 - Nunca uses rutas locales, blobs, base64, URLs inventadas de marcas ni imágenes incrustadas en CSS.
-- Antes de responder, valida internamente el resultado contra orbit-json-v12.schema.json y corrige cualquier error.
+- Antes de responder, valida internamente el resultado contra orbit-json-v13.schema.json y corrige cualquier error.
 
 Entrega:
 - Devuelve únicamente el JSON completo y válido.
@@ -83,7 +83,7 @@ Prioriza, en este orden:
 5. recorte y relación de aspecto de las imágenes;
 6. adaptación para tablet y mobile.
 
-Mantén IDs, tokens, globalClasses y sus referencias cuando sea posible. No conviertas estilos compartidos en copias locales durante la corrección. Cumple orbit-json-authoring-guide.md y valida contra orbit-json-v12.schema.json.
+Mantén IDs, tokens, globalClasses y sus referencias cuando sea posible. No conviertas estilos compartidos en copias locales durante la corrección. Cumple orbit-json-authoring-guide.md y valida contra orbit-json-v13.schema.json.
 
 Devuelve únicamente el JSON completo corregido, sin Markdown ni explicaciones.
 ```
