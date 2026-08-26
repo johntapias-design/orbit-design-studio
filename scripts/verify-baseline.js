@@ -19,6 +19,7 @@ const indexHtml = read('index.html');
 const metadataSource = read('public/js/core/app-metadata.js');
 const navigationSource = read('public/js/navigation/canvas-navigation.js');
 const qaSource = read('qa-contextual-toolbar.mjs');
+const buildSource = read('scripts/build-standalone.js');
 const workflowSource = read('.github/workflows/ci.yml');
 const packageVersion = packageJson.version;
 const versionMatch = metadataSource.match(/version:\s*'([^']+)'/);
@@ -26,13 +27,15 @@ const labelMatch = metadataSource.match(/versionLabel:\s*'([^']+)'/);
 const documentVersionMatch = metadataSource.match(/documentVersion:\s*(\d+)/);
 
 check('package y runtime comparten versión', versionMatch?.[1] === packageVersion);
-check('release v0.26 visible', labelMatch?.[1] === 'v0.26' && indexHtml.includes('<title>Orbit Design Studio — v0.26</title>') && indexHtml.includes('<span class="version-badge">v0.26</span>'));
+check('release v0.27 visible', labelMatch?.[1] === 'v0.27' && indexHtml.includes('<title>Orbit Design Studio — v0.27</title>') && indexHtml.includes('<span class="version-badge">v0.27</span>'));
 check('Orbit JSON v13 es el formato actual', Number(documentVersionMatch?.[1]) === 13 && navigationSource.includes('currentOrbitDocumentVersion()'));
 check('Node está fijado para CI y desarrollo', read('.nvmrc').trim() === '26' && packageJson.engines?.node === '>=26 <27');
 check('QA usa resolución multiplataforma de Chrome', qaSource.includes('resolveChromePath()') && !qaSource.includes("const chromePath = '/Applications/Google Chrome"));
-check('CI publica artefacto v0.26', workflowSource.includes('Orbit-Netlify-v0.26') && workflowSource.includes("node-version-file: '.nvmrc'"));
+check('CI publica artefacto v0.27', workflowSource.includes('Orbit-Netlify-v0.27') && workflowSource.includes("node-version-file: '.nvmrc'"));
 check('Scroll Entrance FX está fuera del monolito', !navigationSource.includes('function scrollFxControl(') && navigationSource.includes('renderScrollFxControl(node,field)'));
 check('Performance y recuperación están modularizadas', JS_MODULES.includes('reliability/project-reliability.js') && navigationSource.includes('createOrbitAutosaveScheduler'));
+check('Orbit JSON Studio está modularizado', JS_MODULES.includes('json/orbit-json-studio.js') && navigationSource.includes('validateOrbitJsonV13') && navigationSource.includes('createOrbitJsonPreviewHtml'));
+check('Build conserva rutas JSON con signo dólar', buildSource.includes('() => `<!-- Orbit bundled standalone script -->') && indexHtml.includes("'$.nodes'"));
 
 let previousIndex = -1;
 for (const modulePath of JS_MODULES) {

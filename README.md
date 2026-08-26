@@ -1,6 +1,6 @@
-# Orbit Design Studio — v0.26 Performance & Reliability
+# Orbit Design Studio — v0.27 Orbit JSON Studio
 
-Versión standalone profesional de Orbit Design Studio v0.26.
+Versión standalone profesional de Orbit Design Studio v0.27.
 
 [![Netlify Deploy Status](https://api.netlify.com/api/v1/badges/orbit-design-studio/deploy-status)](https://app.netlify.com)
 
@@ -9,6 +9,14 @@ Versión standalone profesional de Orbit Design Studio v0.26.
 Abre `index.html` con doble clic. No requiere instalación, npm ni compilación.
 
 ## Cambios incluidos
+
+- Orbit JSON Studio con flujo visible de detección, migración, validación, reparación y preview.
+- Migración determinista de documentos v12 y formatos legacy al contrato Orbit JSON v13.
+- Errores de sintaxis con línea y columna, y errores estructurales con rutas JSON precisas.
+- Reparación explícita de IDs duplicados, tipos incompatibles, referencias y campos obligatorios.
+- Preview visual aislado mediante sandbox, sin ejecutar scripts del documento importado.
+- Descarga del documento v13 migrado o reparado antes de importarlo en el proyecto.
+- Módulo independiente y comprobable en `public/js/json/orbit-json-studio.js`.
 
 - Perfil adaptativo para proyectos grandes: autosave menos agresivo y memoria de deshacer acotada según nodos y páginas.
 - Cola de autosave coalescida: guarda la revisión más reciente y evita acumulaciones mientras hay una escritura en curso.

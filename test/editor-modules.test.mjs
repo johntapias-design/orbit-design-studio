@@ -10,12 +10,44 @@ function loadScript(relativePath, expose) {
   return context.__orbitTestValue;
 }
 
-test('metadata de v0.26 define Orbit JSON v13 como formato actual', () => {
+test('metadata de v0.27 define Orbit JSON v13 como formato actual', () => {
   const metadata = loadScript('public/js/core/app-metadata.js', 'ORBIT_APP');
-  assert.equal(metadata.version, '0.26.0-alpha');
-  assert.equal(metadata.versionLabel, 'v0.26');
+  assert.equal(metadata.version, '0.27.0-alpha');
+  assert.equal(metadata.versionLabel, 'v0.27');
   assert.equal(metadata.documentVersion, 13);
   assert.deepEqual([...metadata.supportedDocumentVersions], [12, 13]);
+});
+
+test('Orbit JSON Studio migra v12 a v13 con defaults explícitos', () => {
+  const studio = loadScript('public/js/json/orbit-json-studio.js', '({ migrateOrbitJsonToV13, validateOrbitJsonV13 })');
+  const migrated = studio.migrateOrbitJsonToV13({ version: 12, projectName: 'Legacy', nodes: [{ id: 'hero', type: 'section' }] });
+  assert.equal(migrated.fromVersion, 12);
+  assert.equal(migrated.document.version, 13);
+  assert.equal(migrated.document.pageMeta.title, 'Legacy');
+  assert.deepEqual(Object.keys(migrated.document.tokens), ['colors','typography','spacing','radius','shadows']);
+  assert.equal(studio.validateOrbitJsonV13(migrated.document).valid, true);
+});
+
+test('Orbit JSON Studio informa ubicación de sintaxis y rutas inválidas', () => {
+  const studio = loadScript('public/js/json/orbit-json-studio.js', '({ parseOrbitJsonSource, validateOrbitJsonV13 })');
+  const parsed = studio.parseOrbitJsonSource('{\n  "nodes": [}\n');
+  assert.equal(parsed.ok, false);
+  assert.equal(parsed.error.line, 2);
+  const validation = studio.validateOrbitJsonV13({ version: 13, projectName: '', pageMeta: {}, tokens: {}, assets: [], components: [], globalClasses: [], nodes: [{ id: 'same', type: 'section' }, { id: 'same', type: 'unknown' }] });
+  assert.equal(validation.valid, false);
+  assert.ok(validation.errors.some(issue => issue.path === '$.nodes[1].id'));
+  assert.ok(validation.errors.some(issue => issue.code === 'node.type.unsupported'));
+});
+
+test('Orbit JSON Studio repara IDs y genera preview que escapa contenido', () => {
+  const studio = loadScript('public/js/json/orbit-json-studio.js', '({ repairOrbitJsonV13, validateOrbitJsonV13, createOrbitJsonPreviewHtml })');
+  const repaired = studio.repairOrbitJsonV13({ nodes: [{ id: 'same', type: 'heading', content: '<script>alert(1)</script>' }, { id: 'same', type: 'mystery' }] });
+  assert.equal(studio.validateOrbitJsonV13(repaired.document).valid, true);
+  assert.notEqual(repaired.document.nodes[0].id, repaired.document.nodes[1].id);
+  assert.equal(repaired.document.nodes[1].type, 'container');
+  const preview = studio.createOrbitJsonPreviewHtml(repaired.document);
+  assert.doesNotMatch(preview, /<script>alert/);
+  assert.match(preview, /&lt;script&gt;alert/);
 });
 
 test('perfil de proyectos grandes adapta autosave e historial', () => {

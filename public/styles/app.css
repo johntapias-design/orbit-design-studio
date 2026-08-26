@@ -3173,6 +3173,20 @@ html[data-interface-profile="wide"] .document-name input{width:min(250px,24vw)}
   .orbit-json-source-head span:not(.orbit-json-source-badge){max-width:430px}
 }
 
+/* Orbit v0.27 — Orbit JSON Studio */
+.orbit-json-studio-intro{display:grid;grid-template-columns:44px minmax(0,1fr) auto;align-items:center}
+.orbit-json-studio-intro .orbit-json-source-badge{align-self:start}
+.orbit-json-studio-result{display:flex;flex-direction:column;gap:14px;margin-top:16px;padding:15px;border:1px solid rgba(112,187,126,.22);border-radius:14px;background:linear-gradient(180deg,rgba(112,187,126,.055),rgba(14,17,22,.96))}
+.orbit-json-studio-result.is-blocked{border-color:rgba(255,170,76,.28);background:linear-gradient(180deg,rgba(255,170,76,.055),rgba(14,17,22,.96))}
+.orbit-json-studio-result>header{display:flex;align-items:center;gap:11px}.orbit-json-result-icon{width:34px;height:34px;display:grid;place-items:center;flex:none;border-radius:10px;background:rgba(112,187,126,.12);color:#86d595;font-weight:800}.is-blocked .orbit-json-result-icon{background:rgba(255,170,76,.12);color:#ffb55f}
+.orbit-json-studio-result>header strong{display:block;color:#eef3f5;font-size:11px}.orbit-json-studio-result>header p{margin:3px 0 0;color:#87919d;font-size:9px}
+.orbit-json-pipeline{display:grid;grid-template-columns:repeat(4,1fr);gap:6px}.orbit-json-pipeline span{position:relative;padding:8px 6px;border:1px solid #2b323c;border-radius:8px;background:#11151a;color:#6f7985;font-size:8px;text-align:center}.orbit-json-pipeline span.is-done{border-color:rgba(112,187,126,.22);color:#91d39c}.orbit-json-pipeline span.is-error{border-color:rgba(255,170,76,.28);color:#ffc179}
+.orbit-json-studio-grid{display:grid;grid-template-columns:minmax(0,.9fr) minmax(340px,1.1fr);gap:14px;min-height:320px}.orbit-json-studio-summary{min-width:0}.orbit-json-studio-summary .ai-report-stats{grid-template-columns:repeat(2,1fr);margin:0 0 12px}.orbit-json-change-list{max-height:210px;overflow:auto;padding:11px;border:1px solid #292f38;border-radius:10px;background:#0f1318}.orbit-json-change-list>strong{color:#d8dde3;font-size:9px}.orbit-json-change-list ul{display:flex;flex-direction:column;gap:6px;margin:9px 0 0;padding:0;list-style:none}.orbit-json-change-list li{color:#89939f;font-size:8px;line-height:1.4}
+.orbit-json-preview-card{min-width:0;overflow:hidden;border:1px solid #2c333d;border-radius:11px;background:#fff}.orbit-json-preview-card>header{height:38px;display:flex;align-items:center;justify-content:space-between;padding:0 10px;background:#141920}.orbit-json-preview-card>header strong{color:#e7ebef;font-size:9px}.orbit-json-preview-card>header span{color:#74808c;font-size:8px}.orbit-json-preview-card iframe{display:block;width:100%;height:282px;border:0;background:#fff}
+.orbit-json-issue-list{display:flex;flex-direction:column;gap:6px;max-height:240px;margin:0;padding:0;overflow:auto;list-style:none}.orbit-json-issue-list li{display:grid;grid-template-columns:minmax(110px,.45fr) minmax(0,1fr);gap:9px;padding:8px 9px;border:1px solid #2b323b;border-radius:8px;background:#101419}.orbit-json-issue-list code{overflow:hidden;color:#ffbd74;font:600 8px "Geist Mono",ui-monospace,monospace;text-overflow:ellipsis;white-space:nowrap}.orbit-json-issue-list span{color:#a0a9b4;font-size:8.5px;line-height:1.4}
+.orbit-json-result-actions{display:flex;align-items:center;justify-content:flex-end;gap:8px}.orbit-json-result-actions .primary-action,.orbit-json-result-actions .secondary-action{min-width:150px;border-radius:8px}.orbit-json-result-actions button:disabled{opacity:.45;cursor:not-allowed}
+@media(max-width:900px){.orbit-json-studio-grid{grid-template-columns:1fr}.orbit-json-preview-card iframe{height:250px}}
+
 
 /* Orbit Design Studio v0.8.4 — canvas scroll polish */
 .workspace-toolbar{

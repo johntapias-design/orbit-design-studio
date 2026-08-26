@@ -41,17 +41,17 @@ currentHtml = currentHtml
   .replace(/<span class="version-badge">[^<]*<\/span>/, `<span class="version-badge">${versionLabel}</span>`);
 
 // Replace CSS
-currentHtml = currentHtml.replace(/<style>[\s\S]*?<\/style>/, `<style>\n${cssContent}\n</style>`);
+currentHtml = currentHtml.replace(/<style>[\s\S]*?<\/style>/, () => `<style>\n${cssContent}\n</style>`);
 
 // Replace main JS block safely between marker comments
 const scriptMarkerRegex = /<!-- Orbit bundled standalone script -->[\s\S]*?<!-- \/Orbit bundled standalone script -->/;
 if (scriptMarkerRegex.test(currentHtml)) {
   currentHtml = currentHtml.replace(
     scriptMarkerRegex,
-    `<!-- Orbit bundled standalone script -->\n    <script>\n${compiledJs.trim()}\n</script>\n    <!-- /Orbit bundled standalone script -->`
+    () => `<!-- Orbit bundled standalone script -->\n    <script>\n${compiledJs.trim()}\n</script>\n    <!-- /Orbit bundled standalone script -->`
   );
 } else {
-  currentHtml = currentHtml.replace(/<script>\s*\/\* Orbit bundled standalone[\s\S]*?<\/script>/, `<script>\n${compiledJs.trim()}\n</script>`);
+  currentHtml = currentHtml.replace(/<script>\s*\/\* Orbit bundled standalone[\s\S]*?<\/script>/, () => `<script>\n${compiledJs.trim()}\n</script>`);
 }
 
 if (currentHtml !== originalHtml) {

@@ -1,5 +1,27 @@
 # Changelog
 
+## v0.27.0-alpha — Orbit JSON Studio
+
+### Migración y validación
+
+- Detección de documentos v12, v13 y formatos legacy sin versión.
+- Migración v12→v13 con inicialización explícita de metadata, tokens, assets, componentes y clases.
+- Rechazo seguro de versiones futuras o versiones sin ruta compatible.
+- Errores de sintaxis con línea y columna, y validación estructural con rutas JSON.
+
+### Preview y reparación
+
+- Reparación bajo acción explícita; el análisis inicial ya no oculta cambios destructivos.
+- IDs duplicados, tipos incompatibles, referencias de clase y propiedades fuera del contrato se documentan antes de importar.
+- Preview HTML aislado en un iframe sandbox sin scripts ni acceso al editor.
+- Documento v13 migrado o reparado descargable antes de confirmar la importación.
+
+### Arquitectura y QA
+
+- Nuevo módulo DOM-free `public/js/json/orbit-json-studio.js`.
+- Pruebas unitarias para migración, ubicación de errores, reparación determinista y escape del preview.
+- Artefacto CI actualizado a `Orbit-Netlify-v0.27`.
+
 ## v0.26.0-alpha — Performance & Reliability
 
 ### Proyectos grandes

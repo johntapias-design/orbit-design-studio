@@ -83,7 +83,8 @@ ws.addEventListener('message', event => {
     return;
   }
   if (message.method === 'Runtime.exceptionThrown') {
-    runtimeErrors.push(message.params.exceptionDetails.text || 'Runtime exception');
+    const details=message.params.exceptionDetails;
+    runtimeErrors.push(`${details.exception?.description || details.text || 'Runtime exception'}${Number.isFinite(details.lineNumber)?` @${details.lineNumber+1}:${(details.columnNumber||0)+1}`:''}`);
   }
   if (message.method === 'Runtime.consoleAPICalled' && ['error', 'assert'].includes(message.params.type)) {
     runtimeErrors.push(message.params.args.map(item => item.value || item.description || '').join(' '));
@@ -120,7 +121,7 @@ async function poll(expression, label, attempts = 100) {
     if (await evaluate(expression)) return;
     await new Promise(resolve => setTimeout(resolve, 100));
   }
-  throw new Error(`Tiempo agotado: ${label}`);
+  throw new Error(`Tiempo agotado: ${label}${runtimeErrors.length?` · ${runtimeErrors.join(' | ')}`:''}`);
 }
 
 async function setViewport(width, height) {
@@ -617,6 +618,21 @@ try {
     return {classesImported:report.classes===4,assignmentsImported:report.classAssignments>=11,sharedPrimary:titleA.styleClassId===sharedId&&titleB.styleClassId===sharedId,sharedEdit:classAfter.styles.base.fontSize==='37px'&&!titleA.styles.base.fontSize&&!titleB.styles.base.fontSize,bannerVisible:!!banner&&banner.textContent.includes('3 elementos vinculados'),localOverride:localNode.styleEditMode==='local'&&localNode.styles.base.color==='#123456'&&localClass.styles.base.color===initialColor,autoDetection:legacy.report.autoClasses===1&&legacy.report.classAssignments===2,v13AutoComponents:v13Import.document.version===13&&v13Import.report.autoComponents>=1,svgIconImport:svg.document.nodes[0].type==='svg'&&svg.document.nodes[0].svgCode.includes('<svg'),productionSeoExport:layoutContent.includes('og:title')&&layoutContent.includes('schema.org')&&layoutContent.includes('twitter:card'),swiperAbsentWithoutCarousel:!packageContent.dependencies.swiper};
   })()`);
 
+  const orbitJsonStudioSuite=await evaluate(`(()=>{
+    const studio=window.__ORBIT_QA__.orbitJsonStudio;
+    const parsed=studio.parse('{"version":12,"projectName":"Legacy QA","nodes":[{"id":"hero","type":"heading","level":1,"content":"QA"}]}');
+    const migrated=studio.migrate(parsed.value);const migratedValidation=studio.validate(migrated.document);
+    const broken={...migrated.document,nodes:[{id:'same',type:'heading',content:'<script>alert(1)</script>'},{id:'same',type:'mystery'}]};
+    const brokenValidation=studio.validate(broken);const repaired=studio.repair(broken);const repairedValidation=studio.validate(repaired.document);const preview=studio.preview(repaired.document);
+    return {available:!!studio,parsed:parsed.ok,migrated:migrated.fromVersion===12&&migrated.document.version===13,migrationValid:migratedValidation.valid,paths:brokenValidation.errors.some(issue=>issue.path==='$.nodes[1].id'),repairValid:repairedValidation.valid&&repaired.document.nodes[1].type==='container',previewSafe:preview.includes('&lt;script&gt;alert')&&!preview.includes('<script>alert')};
+  })()`);
+  const orbitJsonStudioUi=await evaluate(`(()=>{
+    document.getElementById('import-tools')?.click();document.querySelector('[data-import-tab="orbit-json"]')?.click();
+    const area=document.getElementById('import-orbit-json');area.value=JSON.stringify({version:13,projectName:'Repair UI',pageMeta:{language:'es',title:'Repair UI',description:''},tokens:{colors:{},typography:{},spacing:{},radius:{},shadows:{}},assets:[],components:[],globalClasses:[],nodes:[{id:'same',type:'heading',content:'Preview'},{id:'same',type:'unknown'}]});
+    document.querySelector('[data-analyze-orbit-json]')?.click();const blocked=!!document.querySelector('.orbit-json-studio-result.is-blocked');const paths=document.querySelector('.orbit-json-issue-list')?.textContent.includes('$.nodes[1].id');document.querySelector('[data-repair-orbit-json]')?.click();
+    const frame=document.getElementById('orbit-json-preview');const result={opened:document.getElementById('modal-title')?.textContent==='Importar a Orbit',blocked,paths,preview:!!frame&&frame.getAttribute('sandbox')===''&&frame.srcdoc.includes('Preview'),download:!!document.querySelector('[data-download-orbit-v13]'),commit:!!document.querySelector('[data-commit-orbit-import]')};document.querySelector('[data-close-modal]')?.click();return result;
+  })()`);
+
   await setViewport(1600,900);
   const swiperSuite=await evaluate(`(async()=>{
     const qa=window.__ORBIT_QA__;
@@ -680,6 +696,8 @@ try {
   for (const [key,value] of Object.entries(textDirectEditSuite)) if(!value) failures.push(`text-direct-edit:${key}`);
   for (const [key,value] of Object.entries(backgroundStudioSuite)) if(!value) failures.push(`background-studio:${key}`);
   for (const [key,value] of Object.entries(sharedClassesSuite)) if(!value) failures.push(`shared-classes:${key}`);
+  for (const [key,value] of Object.entries(orbitJsonStudioSuite)) if(!value) failures.push(`orbit-json-studio:${key}`);
+  for (const [key,value] of Object.entries(orbitJsonStudioUi)) if(!value) failures.push(`orbit-json-studio-ui:${key}`);
   for (const [key,value] of Object.entries(swiperSuite)) if(!value) failures.push(`swiper:${key}`);
   if (lightTheme.mode !== 'global' || !lightTheme.visible || !lightTheme.themeTogglePresent || lightTheme.surface === 'rgba(0, 0, 0, 0)') failures.push('theme:light-contextual-toolbar');
   if(!typographyAudit.coherent)failures.push(`typography:scale-${typographyAudit.minimum}`);
@@ -687,7 +705,7 @@ try {
   for(const [key,value] of Object.entries(awardDashboardWide)){if(key==='documentOverflow'){if(value)failures.push('award-wide:overflow');}else if(!value)failures.push(`award-wide:${key}`);}
   if (runtimeErrors.length) failures.push(...runtimeErrors.map(error => `runtime:${error}`));
 
-  const output = { ok: failures.length === 0, failures, runtimeErrors, dashboardState, report, textDirectEditSuite, backgroundStudioSuite, googleFontsSuite, googleFontsCompact, googleFontsWide, tokenCrudSuite, inspectorColorSuite, tokenClearSuite, responsiveSuite, responsiveCompactLayout, zoomSuite, guidesSuite, minimapSuite, codeStudio, sharedClassesSuite, swiperSuite, lightTheme, typographyAudit, awardDashboard, awardDashboardWide, evidenceDir };
+  const output = { ok: failures.length === 0, failures, runtimeErrors, dashboardState, report, textDirectEditSuite, backgroundStudioSuite, googleFontsSuite, googleFontsCompact, googleFontsWide, tokenCrudSuite, inspectorColorSuite, tokenClearSuite, responsiveSuite, responsiveCompactLayout, zoomSuite, guidesSuite, minimapSuite, codeStudio, sharedClassesSuite, orbitJsonStudioSuite, orbitJsonStudioUi, swiperSuite, lightTheme, typographyAudit, awardDashboard, awardDashboardWide, evidenceDir };
   process.stdout.write(`${JSON.stringify(output, null, 2)}\n`);
   if (failures.length) process.exitCode = 1;
 } finally {
