@@ -294,6 +294,55 @@ function createOrbitJsonAiAuthoringPrompt({ provider = 'chatgpt', brief = '', re
     JSON.stringify(createOrbitJsonAiTemplate(), null, 2),
   ].join('\n');
 }
+const ORBIT_JSON_SYSTEM_FONTS = new Set(['inherit','initial','system-ui','sans-serif','serif','monospace','cursive','fantasy','arial','helvetica','georgia','times new roman','courier new','geist','inter','ui-sans-serif','ui-serif','ui-monospace','sfmono-regular']);
+function orbitJsonFontFamilyName(value = '') {
+  return String(value || '').split(',')[0].trim().replace(/^['"]|['"]$/g, '');
+}
+function auditOrbitJsonResources(document) {
+  const images = []; const fontUsages = new Map(); const typography = document?.tokens?.typography || {};
+  const addFont = (value, path, ownerId) => {
+    const raw = String(value || '').trim(); if (!raw) return;
+    const tokenKey = raw.match(/^var\(--typography-([^)]+)\)$/)?.[1]; const token = tokenKey ? typography[tokenKey] : null;
+    const family = orbitJsonFontFamilyName(token?.family || token?.value || raw); if (!family) return;
+    const key = family.toLowerCase(); const ready = ORBIT_JSON_SYSTEM_FONTS.has(key) || token?.source === 'google';
+    if (!fontUsages.has(key)) fontUsages.set(key, { id: orbitJsonSlug(family), family, sourceValue: raw, status: ready ? 'ready' : 'missing', paths: [], ownerIds: [] });
+    const entry = fontUsages.get(key); entry.paths.push(path); if (ownerId && !entry.ownerIds.includes(ownerId)) entry.ownerIds.push(ownerId);
+  };
+  const inspectStyleGroups = (groups, path, ownerId) => Object.entries(orbitJsonIsObject(groups) ? groups : {}).forEach(([group, declarations]) => {
+    if (orbitJsonIsObject(declarations) && declarations.fontFamily !== undefined) addFont(declarations.fontFamily, `${path}.${group}.fontFamily`, ownerId);
+  });
+  (document?.globalClasses || []).forEach((item, index) => { inspectStyleGroups(item.styles, `$.globalClasses[${index}].styles`, item.id); inspectStyleGroups(item.states, `$.globalClasses[${index}].states`, item.id); });
+  (function walk(nodes, path = '$.nodes') { (nodes || []).forEach((node, index) => {
+    if (!orbitJsonIsObject(node)) return; const nodePath = `${path}[${index}]`; const src = String(node.src || '').trim();
+    if (node.type === 'image') images.push({ id: String(node.id || `image-${index + 1}`), target: 'image', name: String(node.name || node.alt || `Imagen ${images.length + 1}`), path: `${nodePath}.src`, src, status: !src || !orbitJsonSafeUrl(src) ? 'missing' : 'ready', embedded: /^data:image\//i.test(src) });
+    const background = orbitJsonIsObject(node.backgroundConfig) ? node.backgroundConfig : null; const backgroundSrc = String(background?.imageSrc || '').trim();
+    if (background && ['image','overlay'].includes(background.mode)) images.push({ id: `${node.id}::background`, target: 'background', name: `${node.name || node.id || 'Elemento'} · fondo`, path: `${nodePath}.backgroundConfig.imageSrc`, src: backgroundSrc, status: !backgroundSrc || !orbitJsonSafeUrl(backgroundSrc) ? 'missing' : 'ready', embedded: /^data:image\//i.test(backgroundSrc) });
+    inspectStyleGroups(node.styles, `${nodePath}.styles`, node.id); inspectStyleGroups(node.states, `${nodePath}.states`, node.id); walk(node.children, `${nodePath}.children`);
+  }); })(document?.nodes);
+  const fonts = [...fontUsages.values()].map(item => ({ ...item, uses: item.paths.length }));
+  const missingImages = images.filter(item => item.status === 'missing'); const missingFonts = fonts.filter(item => item.status === 'missing');
+  return { images, fonts, missingImages, missingFonts, stats: { images: images.length, fonts: fonts.length, missingImages: missingImages.length, missingFonts: missingFonts.length, missing: missingImages.length + missingFonts.length } };
+}
+function replaceOrbitJsonImageResource(input, nodeId, replacement = {}) {
+  const document = orbitJsonClone(input); let replaced = 0; const previousSources = new Set(); const resourceId = String(nodeId); const backgroundTarget = resourceId.endsWith('::background'); const ownerId = backgroundTarget ? resourceId.slice(0, -12) : resourceId;
+  (function walk(nodes) { (nodes || []).forEach(node => { if (!orbitJsonIsObject(node)) return; if (String(node.id) === ownerId && !backgroundTarget && node.type === 'image') { previousSources.add(String(node.src || '')); node.src = String(replacement.src || ''); if (replacement.alt) node.alt = String(replacement.alt); replaced += 1; } if (String(node.id) === ownerId && backgroundTarget) { const config = orbitJsonIsObject(node.backgroundConfig) ? node.backgroundConfig : { mode: 'image' }; previousSources.add(String(config.imageSrc || '')); config.imageSrc = String(replacement.src || ''); node.backgroundConfig = config; if (!orbitJsonIsObject(node.styles)) node.styles = {}; if (!orbitJsonIsObject(node.styles.base)) node.styles.base = {}; const position = String(config.imagePosition || 'center center'), size = String(config.imageSize || 'cover'), repeat = String(config.imageRepeat || 'no-repeat'); node.styles.base.background = `url("${String(replacement.src || '')}") ${position} / ${size} ${repeat}`; replaced += 1; } walk(node.children); }); })(document.nodes);
+  (document.assets || []).forEach(item => { if (previousSources.has(String(item?.src || ''))) { item.src = String(replacement.src || ''); if (replacement.asset?.type) item.type = replacement.asset.type; if (replacement.asset?.size) item.size = replacement.asset.size; } });
+  const asset = replacement.asset;
+  if (replaced && orbitJsonIsObject(asset)) { if (!Array.isArray(document.assets)) document.assets = []; const existing = document.assets.findIndex(item => item.id === asset.id); if (existing >= 0) document.assets[existing] = orbitJsonClone(asset); else document.assets.push(orbitJsonClone(asset)); }
+  return { document, replaced };
+}
+function replaceOrbitJsonFontResource(input, family, replacement = {}) {
+  const document = orbitJsonClone(input); const sourceFamily = String(family || '').toLowerCase(); const nextValue = String(replacement.value || 'system-ui, sans-serif'); let replaced = 0;
+  const replaceGroups = groups => Object.values(orbitJsonIsObject(groups) ? groups : {}).forEach(declarations => {
+    if (!orbitJsonIsObject(declarations) || declarations.fontFamily === undefined) return;
+    const raw = String(declarations.fontFamily); const tokenKey = raw.match(/^var\(--typography-([^)]+)\)$/)?.[1]; const token = tokenKey ? document.tokens?.typography?.[tokenKey] : null; const currentFamily = orbitJsonFontFamilyName(token?.family || token?.value || raw).toLowerCase();
+    if (currentFamily === sourceFamily) { declarations.fontFamily = nextValue; replaced += 1; }
+  });
+  (document.globalClasses || []).forEach(item => { replaceGroups(item.styles); replaceGroups(item.states); });
+  (function walk(nodes) { (nodes || []).forEach(node => { if (!orbitJsonIsObject(node)) return; replaceGroups(node.styles); replaceGroups(node.states); walk(node.children); }); })(document.nodes);
+  if (replacement.tokenKey && orbitJsonIsObject(replacement.token)) { if (!orbitJsonIsObject(document.tokens)) document.tokens = {}; if (!orbitJsonIsObject(document.tokens.typography)) document.tokens.typography = {}; document.tokens.typography[replacement.tokenKey] = orbitJsonClone(replacement.token); }
+  return { document, replaced };
+}
 function auditOrbitJsonImportReadiness(document) {
   const validation = validateOrbitJsonV13(document); const flat = []; let depth = 0;
   (function walk(nodes, level = 1) { (nodes || []).forEach(node => { if (!orbitJsonIsObject(node)) return; flat.push(node); depth = Math.max(depth, level); walk(node.children, level + 1); }); })(document?.nodes);
@@ -316,6 +365,8 @@ function orbitJsonStyle(style = {}) {
 }
 function createOrbitJsonPreviewHtml(document) {
   const tokens = ORBIT_JSON_TOKEN_GROUPS.flatMap(group => Object.entries(document?.tokens?.[group] || {}).map(([key, token]) => `--${orbitJsonSlug(group)}-${orbitJsonSlug(key)}:${String(token?.value || '')};`)).join('');
+  const googleFamilies = Object.values(document?.tokens?.typography || {}).filter(token => token?.source === 'google' && token.family).map(token => `family=${encodeURIComponent(token.family).replace(/%20/g, '+')}:wght@${(Array.isArray(token.weights) && token.weights.length ? token.weights : [400,700]).join(';')}`);
+  const googleFonts = googleFamilies.length ? `<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="stylesheet" href="https://fonts.googleapis.com/css2?${googleFamilies.join('&')}&display=swap">` : '';
   const classes = (document?.globalClasses || []).map(item => `[data-orbit-class~="${orbitJsonEscapeHtml(item.id)}"]{${orbitJsonStyle(item.styles?.base)}}`).join('\n');
   function renderNode(node) {
     const children = (node.children || []).map(renderNode).join(''); const content = orbitJsonEscapeHtml(['heading','text','button'].includes(node.type) ? (node.content || node.name || '') : '');
@@ -329,5 +380,5 @@ function createOrbitJsonPreviewHtml(document) {
     if (node.type === 'button') return `<a${common}>${content || 'Button'}${children}</a>`;
     return `<${tag}${common}>${content}${children}</${tag}>`;
   }
-  return `<!doctype html><html lang="${orbitJsonEscapeHtml(document?.pageMeta?.language || 'es')}"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><style>:root{${tokens}}*{box-sizing:border-box}html,body{margin:0;min-height:100%;font-family:Inter,system-ui,sans-serif}body{background:#fff;color:#151513}section,div,article{min-width:0}img{display:block;max-width:100%}a{display:inline-flex;text-decoration:none}.orbit-svg-placeholder{display:grid;place-items:center;min-height:48px;border:1px dashed #aaa;color:#777;font-size:11px}${classes}</style></head><body>${(document?.nodes || []).map(renderNode).join('')}</body></html>`;
+  return `<!doctype html><html lang="${orbitJsonEscapeHtml(document?.pageMeta?.language || 'es')}"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">${googleFonts}<style>:root{${tokens}}*{box-sizing:border-box}html,body{margin:0;min-height:100%;font-family:Inter,system-ui,sans-serif}body{background:#fff;color:#151513}section,div,article{min-width:0}img{display:block;max-width:100%}a{display:inline-flex;text-decoration:none}.orbit-svg-placeholder{display:grid;place-items:center;min-height:48px;border:1px dashed #aaa;color:#777;font-size:11px}${classes}</style></head><body>${(document?.nodes || []).map(renderNode).join('')}</body></html>`;
 }

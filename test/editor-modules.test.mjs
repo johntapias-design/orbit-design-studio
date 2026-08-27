@@ -144,6 +144,28 @@ test('Reparación automática explica identificadores, propiedades, estilos y re
   assert.equal(result.document.nodes[1].type, 'container');
 });
 
+test('Gestor de recursos detecta y reemplaza imágenes y tipografías faltantes', () => {
+  const studio = loadScript('public/js/json/orbit-json-studio.js', '({ auditOrbitJsonResources, replaceOrbitJsonImageResource, replaceOrbitJsonFontResource })');
+  const document = {
+    version: 13, projectName: 'Resources', pageMeta: { language: 'es', title: 'Resources', description: '' },
+    tokens: { colors: {}, typography: {}, spacing: {}, radius: {}, shadows: {} }, assets: [], components: [], globalClasses: [],
+    nodes: [{ id: 'hero', type: 'section', styles: { base: {} }, children: [
+      { id: 'photo', type: 'image', name: 'Hero photo', src: '', alt: 'Hero', styles: { base: {} } },
+      { id: 'title', type: 'heading', content: 'Hello', styles: { base: { fontFamily: 'Missing Serif, serif' } } },
+    ] }],
+  };
+  const audit = studio.auditOrbitJsonResources(document);
+  assert.equal(audit.stats.missingImages, 1);
+  assert.equal(audit.stats.missingFonts, 1);
+  assert.equal(audit.missingImages[0].path, '$.nodes[0].children[0].src');
+  const image = studio.replaceOrbitJsonImageResource(document, 'photo', { src: 'data:image/webp;base64,AAAA', asset: { id: 'asset-photo', name: 'photo.webp', type: 'image/webp', src: 'data:image/webp;base64,AAAA', alt: 'Hero' } });
+  assert.equal(image.replaced, 1);
+  assert.equal(image.document.assets.length, 1);
+  const font = studio.replaceOrbitJsonFontResource(image.document, 'Missing Serif', { value: 'var(--typography-google-inter)', tokenKey: 'google-inter', token: { name: 'Inter', value: '"Inter", sans-serif', source: 'google', family: 'Inter', weights: [400, 700] } });
+  assert.equal(font.replaced, 1);
+  assert.equal(studio.auditOrbitJsonResources(font.document).stats.missing, 0);
+});
+
 test('AI Import Studio genera contratos para ChatGPT y Claude y elimina estilos incompatibles', () => {
   const studio = loadScript('public/js/json/orbit-json-studio.js', '({ createOrbitJsonAiTemplate, createOrbitJsonAiAuthoringPrompt, auditOrbitJsonImportReadiness, validateOrbitJsonV13, repairOrbitJsonV13 })');
   const template = studio.createOrbitJsonAiTemplate();

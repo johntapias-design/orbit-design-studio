@@ -18,6 +18,13 @@
 - Importación transaccional con restauración completa si la aplicación final falla.
 - Las importaciones directas de archivos JSON pasan por análisis, preview y confirmación.
 
+### Recursos del diseño
+
+- Detección de imágenes sin fuente y tipografías no vinculadas antes de importar.
+- Reemplazo de imágenes desde el mismo informe, con conversión WebP, calidad 82% y reducción automática hasta 2.400 px.
+- Sustitución global de fuentes faltantes por fuentes del sistema o variables de Google Fonts listas para exportar.
+- Optimización opcional de imágenes embebidas con reporte de ahorro, sin alterar el proyecto hasta confirmar la importación.
+
 ### QA
 
 - Pruebas unitarias para contratos ChatGPT/Claude, plantilla, estilos y preparación.
