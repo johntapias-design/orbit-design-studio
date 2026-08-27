@@ -1,6 +1,6 @@
-# Orbit Design Studio — v0.30 AI Design Workflow
+# Orbit Design Studio — v0.31 AI Import Reliability
 
-Versión standalone profesional de Orbit Design Studio v0.30.
+Versión standalone profesional de Orbit Design Studio v0.31.
 
 [![Netlify Deploy Status](https://api.netlify.com/api/v1/badges/orbit-design-studio/deploy-status)](https://app.netlify.com)
 
@@ -9,6 +9,13 @@ Versión standalone profesional de Orbit Design Studio v0.30.
 Abre `index.html` con doble clic. No requiere instalación, npm ni compilación.
 
 ## Cambios incluidos
+
+- Contrato de generación Orbit JSON v13 listo para copiar en ChatGPT o Claude.
+- Plantilla v13 descargable y reglas estrictas para estilos, responsive, contenido y recursos.
+- Control de preparación con puntuación visible antes de confirmar una importación.
+- Límite seguro de tamaño, nodos y profundidad para bloquear documentos problemáticos.
+- Reparación explícita de estilos incompatibles y protección transaccional del proyecto.
+- Todas las entradas JSON pasan ahora por validación y preview antes de modificar el canvas.
 
 - AI Design Workflow accesible desde el rail del editor, con captura visual local y privada por sesión.
 - Contexto compacto y verificable por selección, página o proyecto, incluyendo estructura, tokens y lenguaje visual.

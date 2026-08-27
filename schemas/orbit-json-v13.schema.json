@@ -112,12 +112,42 @@
     "tokens": {
       "type": "object",
       "additionalProperties": false,
+      "required": ["colors", "typography", "spacing", "radius", "shadows"],
       "properties": {
         "colors": { "$ref": "#/$defs/tokenGroup" },
         "typography": { "$ref": "#/$defs/tokenGroup" },
         "spacing": { "$ref": "#/$defs/tokenGroup" },
         "radius": { "$ref": "#/$defs/tokenGroup" },
         "shadows": { "$ref": "#/$defs/tokenGroup" }
+      }
+    },
+    "styleDeclarations": {
+      "type": "object",
+      "propertyNames": {
+        "enum": ["width", "maxWidth", "minWidth", "height", "maxHeight", "minHeight", "aspectRatio", "boxSizing", "paddingTop", "paddingRight", "paddingBottom", "paddingLeft", "marginTop", "marginRight", "marginBottom", "marginLeft", "gap", "columnGap", "rowGap", "display", "direction", "flexWrap", "justifyContent", "justify", "alignItems", "align", "justifyItems", "alignContent", "gridColumns", "gridRows", "gridTemplateColumns", "gridTemplateRows", "gridTemplateAreas", "gridArea", "gridColumn", "gridRow", "gridAutoColumns", "gridAutoRows", "gridAutoFlow", "gridUseMinMax", "gridColumnTracks", "gridRowTracks", "order", "verticalAlign", "alignSelf", "justifySelf", "flexGrow", "flexShrink", "flexBasis", "position", "zIndex", "left", "top", "right", "bottom", "transform", "transition", "cursor", "pointerEvents", "background", "color", "fontFamily", "fontSize", "fontWeight", "lineHeight", "letterSpacing", "textAlign", "fontStyle", "textTransform", "textDecoration", "textShadow", "fontVariationSettings", "whiteSpace", "textWrap", "borderRadius", "borderWidth", "borderColor", "opacity", "boxShadow", "objectFit", "overflow"]
+      },
+      "additionalProperties": { "type": ["string", "number", "boolean"] }
+    },
+    "responsiveStyles": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "base": { "$ref": "#/$defs/styleDeclarations" },
+        "desktopXL": { "$ref": "#/$defs/styleDeclarations" },
+        "desktop": { "$ref": "#/$defs/styleDeclarations" },
+        "tablet": { "$ref": "#/$defs/styleDeclarations" },
+        "mobileL": { "$ref": "#/$defs/styleDeclarations" },
+        "mobile": { "$ref": "#/$defs/styleDeclarations" }
+      }
+    },
+    "interactionStates": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "hover": { "$ref": "#/$defs/styleDeclarations" },
+        "focus": { "$ref": "#/$defs/styleDeclarations" },
+        "active": { "$ref": "#/$defs/styleDeclarations" },
+        "disabled": { "$ref": "#/$defs/styleDeclarations" }
       }
     },
     "asset": {
@@ -168,8 +198,8 @@
       "properties": {
         "id": { "type": "string" },
         "name": { "type": "string" },
-        "styles": { "type": "object" },
-        "states": { "type": "object" },
+        "styles": { "$ref": "#/$defs/responsiveStyles" },
+        "states": { "$ref": "#/$defs/interactionStates" },
         "backgroundConfig": { "type": "object" }
       }
     },
@@ -265,8 +295,8 @@
         "styleEditMode": { "type": "string", "enum": ["shared", "local"] },
         "componentRef": { "type": "string" },
         "componentSource": { "type": "string", "enum": ["master", "instance"] },
-        "styles": { "type": "object" },
-        "states": { "type": "object" },
+        "styles": { "$ref": "#/$defs/responsiveStyles" },
+        "states": { "$ref": "#/$defs/interactionStates" },
         "backgroundConfig": { "$ref": "#/$defs/backgroundConfig" },
         "swiper": { "$ref": "#/$defs/swiper" },
         "children": {

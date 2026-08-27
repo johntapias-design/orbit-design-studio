@@ -4,6 +4,11 @@ const ORBIT_JSON_NODE_TYPES = Object.freeze(['section','container','heading','te
 const ORBIT_JSON_ROOT_KEYS = new Set(['version','projectName','pageMeta','tokens','assets','components','globalClasses','nodes']);
 const ORBIT_JSON_NODE_KEYS = new Set(['id','type','name','content','src','alt','href','svgCode','ariaLabel','level','globalClassIds','styleClassId','styleEditMode','componentRef','componentSource','styles','states','backgroundConfig','swiper','children']);
 const ORBIT_JSON_TOKEN_GROUPS = Object.freeze(['colors','typography','spacing','radius','shadows']);
+const ORBIT_JSON_STYLE_GROUPS = Object.freeze(['base','desktopXL','desktop','tablet','mobileL','mobile']);
+const ORBIT_JSON_STATE_GROUPS = Object.freeze(['hover','focus','active','disabled']);
+const ORBIT_JSON_STYLE_PROPERTIES = Object.freeze(['width','maxWidth','minWidth','height','maxHeight','minHeight','aspectRatio','boxSizing','paddingTop','paddingRight','paddingBottom','paddingLeft','marginTop','marginRight','marginBottom','marginLeft','gap','columnGap','rowGap','display','direction','flexWrap','justifyContent','justify','alignItems','align','justifyItems','alignContent','gridColumns','gridRows','gridTemplateColumns','gridTemplateRows','gridTemplateAreas','gridArea','gridColumn','gridRow','gridAutoColumns','gridAutoRows','gridAutoFlow','gridUseMinMax','gridColumnTracks','gridRowTracks','order','verticalAlign','alignSelf','justifySelf','flexGrow','flexShrink','flexBasis','position','zIndex','left','top','right','bottom','transform','transition','cursor','pointerEvents','background','color','fontFamily','fontSize','fontWeight','lineHeight','letterSpacing','textAlign','fontStyle','textTransform','textDecoration','textShadow','fontVariationSettings','whiteSpace','textWrap','borderRadius','borderWidth','borderColor','opacity','boxShadow','objectFit','overflow']);
+const ORBIT_JSON_STYLE_PROPERTY_SET = new Set(ORBIT_JSON_STYLE_PROPERTIES);
+const ORBIT_JSON_LIMITS = Object.freeze({ sourceBytes: 8 * 1024 * 1024, nodes: 2500, depth: 32, textLength: 20000 });
 
 function orbitJsonClone(value) { return JSON.parse(JSON.stringify(value)); }
 function orbitJsonIsObject(value) { return !!value && typeof value === 'object' && !Array.isArray(value); }
@@ -72,6 +77,20 @@ function validateOrbitJsonV13(document) {
   const errors = []; const warnings = []; const nodeIds = new Set();
   const addError = (code, path, message, repairable = true) => errors.push(orbitJsonIssue('error', code, path, message, repairable));
   const addWarning = (code, path, message, repairable = true) => warnings.push(orbitJsonIssue('warning', code, path, message, repairable));
+  const inspectStyleCollection = (value, path, groups) => {
+    if (value === undefined) return;
+    if (!orbitJsonIsObject(value)) { addError('style.collection.type', path, 'Debe ser un objeto de estilos.'); return; }
+    Object.entries(value).forEach(([group, declarations]) => {
+      const groupPath = `${path}.${group}`;
+      if (!groups.includes(group)) addError('style.group.unsupported', groupPath, `El grupo “${group}” no es compatible.`);
+      if (!orbitJsonIsObject(declarations)) { addError('style.group.type', groupPath, 'El grupo debe ser un objeto.'); return; }
+      Object.entries(declarations).forEach(([property, styleValue]) => {
+        const propertyPath = `${groupPath}.${property}`;
+        if (!ORBIT_JSON_STYLE_PROPERTY_SET.has(property)) addError('style.property.unsupported', propertyPath, `La propiedad “${property}” no es editable en Orbit.`);
+        if (styleValue === null || (typeof styleValue !== 'string' && typeof styleValue !== 'number' && typeof styleValue !== 'boolean')) addError('style.value.type', propertyPath, 'El valor debe ser texto, número o booleano.');
+      });
+    });
+  };
   if (!orbitJsonIsObject(document)) return { valid: false, repairable: false, errors: [orbitJsonIssue('error','root.type','$','La raíz debe ser un objeto.',false)], warnings, stats: { nodes: 0 } };
   if (document.version !== ORBIT_JSON_VERSION) addError('version.const', '$.version', 'La versión debe ser 13.');
   if (!String(document.projectName || '').trim()) addError('projectName.required', '$.projectName', 'projectName es obligatorio.');
@@ -89,19 +108,24 @@ function validateOrbitJsonV13(document) {
   else if (!document.nodes.length) addError('nodes.empty', '$.nodes', 'El documento necesita al menos un nodo.');
 
   let nodeCount = 0;
-  function inspectNode(node, path) {
+  function inspectNode(node, path, depth = 1) {
     nodeCount += 1;
+    if (nodeCount > ORBIT_JSON_LIMITS.nodes) { if (nodeCount === ORBIT_JSON_LIMITS.nodes + 1) addError('nodes.limit', '$.nodes', `El documento supera el límite seguro de ${ORBIT_JSON_LIMITS.nodes} nodos.`, false); return; }
+    if (depth > ORBIT_JSON_LIMITS.depth) { addError('nodes.depth', path, `La estructura supera ${ORBIT_JSON_LIMITS.depth} niveles de profundidad.`, false); return; }
     if (!orbitJsonIsObject(node)) { addError('node.type', path, 'El nodo debe ser un objeto.'); return; }
     const id = String(node.id || '');
     if (!id) addError('node.id.required', `${path}.id`, 'El nodo necesita un ID.');
     else if (nodeIds.has(id)) addError('node.id.duplicate', `${path}.id`, `El ID “${id}” está duplicado.`);
     else nodeIds.add(id);
     if (!ORBIT_JSON_NODE_TYPES.includes(node.type)) addError('node.type.unsupported', `${path}.type`, `El tipo “${node.type || 'vacío'}” no es compatible.`);
-    if (node.styles !== undefined && !orbitJsonIsObject(node.styles)) addError('node.styles.type', `${path}.styles`, 'styles debe ser un objeto.');
-    if (node.states !== undefined && !orbitJsonIsObject(node.states)) addError('node.states.type', `${path}.states`, 'states debe ser un objeto.');
+    inspectStyleCollection(node.styles, `${path}.styles`, ORBIT_JSON_STYLE_GROUPS);
+    inspectStyleCollection(node.states, `${path}.states`, ORBIT_JSON_STATE_GROUPS);
     Object.keys(node).filter(key => !ORBIT_JSON_NODE_KEYS.has(key)).forEach(key => addError('node.additional', `${path}.${key}`, `La propiedad “${key}” no pertenece al contrato de nodo v13.`));
     if (node.children !== undefined && !Array.isArray(node.children)) addError('node.children.type', `${path}.children`, 'children debe ser un arreglo.');
-    else (node.children || []).forEach((child, index) => inspectNode(child, `${path}.children[${index}]`));
+    else (node.children || []).forEach((child, index) => inspectNode(child, `${path}.children[${index}]`, depth + 1));
+    if (['heading','text','button'].includes(node.type) && !String(node.content || '').trim()) addWarning('node.content.empty', `${path}.content`, `${node.type} necesita contenido visible.`);
+    if (String(node.content || '').length > ORBIT_JSON_LIMITS.textLength) addError('node.content.limit', `${path}.content`, `El contenido supera ${ORBIT_JSON_LIMITS.textLength} caracteres.`);
+    if (node.type === 'image' && !String(node.src || '').trim()) addWarning('image.src', `${path}.src`, 'La imagen no tiene una fuente; Orbit conservará un marcador para reemplazarla.');
     if (node.type === 'image' && !String(node.alt || '').trim()) addWarning('image.alt', `${path}.alt`, 'La imagen necesita texto alternativo.');
   }
   (document.nodes || []).forEach((node, index) => inspectNode(node, `$.nodes[${index}]`));
@@ -113,6 +137,10 @@ function validateOrbitJsonV13(document) {
     else if (!id) addError('class.id.required', `${path}.id`, 'La clase necesita un ID.');
     else if (classIds.has(id)) addError('class.id.duplicate', `${path}.id`, `El ID de clase “${id}” está duplicado.`);
     else classIds.add(id);
+    if (orbitJsonIsObject(item)) {
+      inspectStyleCollection(item.styles, `${path}.styles`, ORBIT_JSON_STYLE_GROUPS);
+      inspectStyleCollection(item.states, `${path}.states`, ORBIT_JSON_STATE_GROUPS);
+    }
   });
   function inspectReferences(nodes, path = '$.nodes') { (nodes || []).forEach((node, index) => {
     if (!orbitJsonIsObject(node)) return; const nodePath = `${path}[${index}]`;
@@ -120,15 +148,28 @@ function validateOrbitJsonV13(document) {
     inspectReferences(node.children, `${nodePath}.children`);
   }); }
   inspectReferences(document.nodes);
+  (document.nodes || []).forEach((node, index) => { if (orbitJsonIsObject(node) && node.type !== 'section') addWarning('root.section', `$.nodes[${index}].type`, 'Para una página completa se recomienda usar section como nodo raíz.'); });
   return { valid: errors.length === 0, repairable: errors.every(issue => issue.repairable), errors, warnings, issues: [...errors, ...warnings], stats: { nodes: nodeCount, classes: classIds.size, errors: errors.length, warnings: warnings.length } };
 }
 
 function repairOrbitJsonV13(input) {
   const source = orbitJsonIsObject(input) ? orbitJsonClone(input) : {};
-  const actions = []; const usedNodeIds = new Set(); const usedClassIds = new Set();
+  const actions = []; const usedNodeIds = new Set(); const usedClassIds = new Set(); let removedStyles = 0;
   const uniqueId = (candidate, prefix, index, used) => {
     const base = orbitJsonSlug(candidate || `${prefix}-${index + 1}`); let id = base; let suffix = 2;
     while (used.has(id)) id = `${base}-${suffix++}`; used.add(id); return id;
+  };
+  const repairStyleCollection = (raw, groups) => {
+    const output = {};
+    Object.entries(orbitJsonIsObject(raw) ? raw : {}).forEach(([group, declarations]) => {
+      if (!groups.includes(group) || !orbitJsonIsObject(declarations)) { removedStyles += 1; return; }
+      output[group] = {};
+      Object.entries(declarations).forEach(([property, value]) => {
+        if (!ORBIT_JSON_STYLE_PROPERTY_SET.has(property) || value === null || (typeof value !== 'string' && typeof value !== 'number' && typeof value !== 'boolean')) { removedStyles += 1; return; }
+        output[group][property] = value;
+      });
+    });
+    return output;
   };
   const document = {
     version: ORBIT_JSON_VERSION,
@@ -149,7 +190,9 @@ function repairOrbitJsonV13(input) {
   });
   document.globalClasses = (Array.isArray(source.globalClasses) ? source.globalClasses : []).filter(orbitJsonIsObject).map((item, index) => {
     const id = uniqueId(item.id, 'class', index, usedClassIds); if (id !== item.id) actions.push(`ID de clase reparado: ${item.id || '(vacío)'} → ${id}.`);
-    return { id, name: orbitJsonSlug(item.name || id), styles: orbitJsonIsObject(item.styles) ? item.styles : { base: {} }, ...(orbitJsonIsObject(item.states) ? { states: item.states } : {}), ...(orbitJsonIsObject(item.backgroundConfig) ? { backgroundConfig: item.backgroundConfig } : {}) };
+    const styles = repairStyleCollection(item.styles, ORBIT_JSON_STYLE_GROUPS); if (!styles.base) styles.base = {};
+    const states = repairStyleCollection(item.states, ORBIT_JSON_STATE_GROUPS);
+    return { id, name: orbitJsonSlug(item.name || id), styles, ...(Object.keys(states).length ? { states } : {}), ...(orbitJsonIsObject(item.backgroundConfig) ? { backgroundConfig: item.backgroundConfig } : {}) };
   });
   const validClassIds = new Set(document.globalClasses.map(item => item.id));
   function repairNode(raw, index = 0) {
@@ -159,8 +202,9 @@ function repairOrbitJsonV13(input) {
     const node = {};
     for (const key of ORBIT_JSON_NODE_KEYS) if (item[key] !== undefined) node[key] = orbitJsonClone(item[key]);
     node.id = id; node.type = type;
-    node.styles = orbitJsonIsObject(item.styles) ? item.styles : { base: {} }; node.styles.base = orbitJsonIsObject(node.styles.base) ? node.styles.base : {};
-    if (node.states !== undefined && !orbitJsonIsObject(node.states)) node.states = {};
+    node.styles = repairStyleCollection(item.styles, ORBIT_JSON_STYLE_GROUPS); if (!node.styles.base) node.styles.base = {};
+    const states = repairStyleCollection(item.states, ORBIT_JSON_STATE_GROUPS); if (Object.keys(states).length) node.states = states; else delete node.states;
+    if (node.content !== undefined) node.content = String(node.content).slice(0, ORBIT_JSON_LIMITS.textLength);
     const classIds = [...new Set((Array.isArray(item.globalClassIds) ? item.globalClassIds : []).map(String).filter(classId => validClassIds.has(classId)))];
     if (classIds.length) node.globalClassIds = classIds; else delete node.globalClassIds;
     if (!classIds.includes(String(node.styleClassId || ''))) delete node.styleClassId;
@@ -172,12 +216,62 @@ function repairOrbitJsonV13(input) {
   if (!document.nodes.length) { document.nodes = [{ id: 'recovered-section', type: 'section', name: 'Recovered Section', styles: { base: {} } }]; actions.push('Se creó una sección vacía porque el documento no contenía nodos válidos.'); }
   document.assets = (Array.isArray(source.assets) ? source.assets : []).filter(orbitJsonIsObject).map((asset, index) => ({ id: orbitJsonSlug(asset.id || `asset-${index + 1}`), name: String(asset.name || `Asset ${index + 1}`), type: ['image','svg','icon'].includes(asset.type) ? asset.type : 'image', src: String(asset.src || ''), alt: String(asset.alt || '') }));
   document.components = (Array.isArray(source.components) ? source.components : []).filter(orbitJsonIsObject).map((component, index) => ({ id: orbitJsonSlug(component.id || `component-${index + 1}`), name: String(component.name || `Component ${index + 1}`), masterId: String(component.masterId || ''), instances: Math.max(0, Number(component.instances) || 0), variants: Array.isArray(component.variants) ? component.variants : [], props: Array.isArray(component.props) ? component.props : [] }));
+  if (removedStyles) actions.push(`${removedStyles} estilos incompatibles fueron omitidos para proteger la importación.`);
   return { document, actions, changed: JSON.stringify(document) !== JSON.stringify(input) };
 }
 
 function orbitJsonEscapeHtml(value = '') { return String(value).replace(/[&<>'"]/g, character => ({ '&':'&amp;','<':'&lt;','>':'&gt;',"'":'&#039;','"':'&quot;' })[character]); }
 function orbitJsonSafeUrl(value = '') { const url = String(value || '').trim(); return /^(https?:|data:image\/|blob:|\/|\.\/|\.\.\/)/i.test(url) ? url : ''; }
 function orbitJsonCssName(value = '') { return String(value).replace(/[A-Z]/g, letter => `-${letter.toLowerCase()}`); }
+function createOrbitJsonAiTemplate() {
+  return {
+    version: ORBIT_JSON_VERSION,
+    projectName: 'Nombre del proyecto',
+    pageMeta: { language: 'es', title: 'Título SEO', description: 'Descripción breve de la página.' },
+    tokens: { colors: {}, typography: {}, spacing: {}, radius: {}, shadows: {} },
+    assets: [], components: [], globalClasses: [],
+    nodes: [{ id: 'hero', type: 'section', name: 'Hero', styles: { base: { width: '100%', paddingTop: '80px', paddingRight: '40px', paddingBottom: '80px', paddingLeft: '40px' }, mobile: { paddingTop: '48px', paddingRight: '20px', paddingBottom: '48px', paddingLeft: '20px' } }, children: [{ id: 'hero-title', type: 'heading', level: 1, content: 'Título principal', styles: { base: { fontSize: '64px', lineHeight: 1.05 }, mobile: { fontSize: '40px' } } }] }],
+  };
+}
+function createOrbitJsonAiAuthoringPrompt({ provider = 'chatgpt', brief = '', reference = '' } = {}) {
+  const providerName = provider === 'claude' ? 'Claude' : 'ChatGPT';
+  const styleList = ORBIT_JSON_STYLE_PROPERTIES.join(', ');
+  return [
+    `INSTRUCCIONES OFICIALES ORBIT PARA ${providerName.toUpperCase()}`,
+    'Convierte el diseño de referencia en un documento Orbit JSON v13 editable. Prioriza fidelidad visual, estructura clara y facilidad de ajuste manual.',
+    `OBJETIVO: ${String(brief || 'Reconstruir fielmente el diseño adjunto como una página web responsive.').trim()}`,
+    `REFERENCIA: ${String(reference || 'La imagen o diseño adjunto en esta conversación.').trim()}`,
+    '',
+    'ENTREGA OBLIGATORIA:',
+    '- Devuelve exclusivamente un objeto JSON válido. No uses Markdown, comentarios ni texto antes o después.',
+    '- La raíz debe contener exactamente: version, projectName, pageMeta, tokens, assets, components, globalClasses y nodes.',
+    '- version debe ser 13. nodes debe contener al menos una sección.',
+    `- Tipos de nodo permitidos: ${ORBIT_JSON_NODE_TYPES.join(', ')}.`,
+    '- Cada nodo necesita id único, type y styles.base. Usa level de 1 a 6 para headings.',
+    `- Grupos responsive permitidos: ${ORBIT_JSON_STYLE_GROUPS.join(', ')}.`,
+    `- Propiedades visuales permitidas: ${styleList}.`,
+    '- Usa únicamente valores CSS válidos como texto, número o booleano; nunca objetos dentro de una propiedad visual.',
+    '- Añade tablet y mobile cuando cambien columnas, espacios, tamaños o alineación.',
+    '- No inventes rutas de imágenes. Si falta un recurso, deja src vacío, escribe un alt descriptivo y conserva el espacio visual.',
+    '- Mantén un único heading level 1 y contenido visible en headings, textos y botones.',
+    '- No uses propiedades adicionales aunque parezcan útiles: Orbit rechazará las que estén fuera del contrato.',
+    '',
+    'PLANTILLA MÍNIMA VÁLIDA:',
+    JSON.stringify(createOrbitJsonAiTemplate(), null, 2),
+  ].join('\n');
+}
+function auditOrbitJsonImportReadiness(document) {
+  const validation = validateOrbitJsonV13(document); const flat = []; let depth = 0;
+  (function walk(nodes, level = 1) { (nodes || []).forEach(node => { if (!orbitJsonIsObject(node)) return; flat.push(node); depth = Math.max(depth, level); walk(node.children, level + 1); }); })(document?.nodes);
+  const sections = flat.filter(node => node.type === 'section').length;
+  const responsive = flat.filter(node => ORBIT_JSON_STYLE_GROUPS.slice(1).some(group => Object.keys(node.styles?.[group] || {}).length)).length;
+  const unstyled = flat.filter(node => !Object.keys(node.styles?.base || {}).length).length;
+  const missingContent = flat.filter(node => ['heading','text','button'].includes(node.type) && !String(node.content || '').trim()).length;
+  const missingAssets = flat.filter(node => node.type === 'image' && !String(node.src || '').trim()).length;
+  const deductions = validation.errors.length * 25 + validation.warnings.length * 4 + Math.min(20, unstyled * 2) + Math.min(12, missingAssets * 3);
+  const score = Math.max(0, Math.min(100, 100 - deductions));
+  return { ready: validation.valid, status: !validation.valid ? 'blocked' : score >= 85 ? 'ready' : 'review', score, validation, stats: { nodes: flat.length, sections, responsive, unstyled, missingContent, missingAssets, depth } };
+}
 function orbitJsonStyle(style = {}) {
   return Object.entries(orbitJsonIsObject(style) ? style : {}).map(([property, value]) => {
     const names = { direction:'flex-direction', justify:'justify-content', align:'align-items', gridColumns:'grid-template-columns' };

@@ -153,7 +153,7 @@ function auditOrbitVisualDesign(project = {}) {
   };
 }
 
-function createOrbitAiPrompt({ context = {}, capture = null, audit = null, brief = '', task = 'rebuild' } = {}) {
+function createOrbitAiPrompt({ context = {}, capture = null, audit = null, brief = '', task = 'rebuild', provider = 'chatgpt' } = {}) {
   const taskLabels = {
     rebuild: 'Reconstruir fielmente la referencia visual como Orbit JSON v13.',
     improve: 'Mejorar el alcance indicado conservando el lenguaje visual y la estructura útil existente.',
@@ -162,10 +162,14 @@ function createOrbitAiPrompt({ context = {}, capture = null, audit = null, brief
   };
   const compactAudit = audit ? audit.issues.slice(0, 14).map(issue => ({ severity: issue.severity, category: issue.category, nodeId: issue.nodeId, title: issue.title, suggestion: issue.suggestion })) : [];
   const compactCapture = capture ? normalizeOrbitAiCapture(capture) : null;
+  const contract = typeof createOrbitJsonAiAuthoringPrompt === 'function'
+    ? createOrbitJsonAiAuthoringPrompt({ provider, brief, reference: compactCapture ? `${compactCapture.name}, ${compactCapture.width || '?'}x${compactCapture.height || '?'} px.` : 'La referencia adjunta en la conversación.' })
+    : 'Genera exclusivamente un objeto Orbit JSON version 13 válido, editable y responsive.';
   return [
-    'Actúa como diseñador de producto senior y especialista en Orbit Design Studio.',
+    contract,
+    '',
+    'CONTEXTO ESPECÍFICO DE ESTA TAREA:',
     taskLabels[task] || taskLabels.improve,
-    'Genera una salida Orbit JSON v13 editable, responsive y accesible.',
     '',
     `BRIEF: ${String(brief || 'Mantén la intención y mejora jerarquía, consistencia y responsive.').trim()}`,
     `ALCANCE: ${context.scope || 'page'}`,
@@ -175,13 +179,10 @@ function createOrbitAiPrompt({ context = {}, capture = null, audit = null, brief
     JSON.stringify(context, null, 2),
     compactAudit.length ? `\nHALLAZGOS DEL AUDITOR:\n${JSON.stringify(compactAudit, null, 2)}` : '',
     '',
-    'REGLAS DE ENTREGA:',
-    '- Devuelve exclusivamente un objeto JSON válido, sin Markdown ni comentarios.',
-    '- Usa version 13 y conserva IDs existentes cuando modifiques nodos.',
+    'REGLAS ADICIONALES:',
+    '- Conserva IDs existentes cuando modifiques nodos.',
     '- Reutiliza tokens, clases globales y componentes del contexto antes de crear nuevos.',
-    '- Incluye estilos base, tablet y mobile cuando el comportamiento cambie.',
     '- Mantén semántica, accesibilidad, alt de imágenes y un único H1.',
-    '- No inventes URLs de imágenes: usa placeholders descriptivos cuando falte el recurso.',
     '- El resultado debe poder validarse e importarse directamente en Orbit JSON Studio.',
   ].filter(Boolean).join('\n');
 }

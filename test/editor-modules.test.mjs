@@ -10,10 +10,10 @@ function loadScript(relativePath, expose) {
   return context.__orbitTestValue;
 }
 
-test('metadata de v0.30 conserva Orbit JSON v13 como formato actual', () => {
+test('metadata de v0.31 conserva Orbit JSON v13 como formato actual', () => {
   const metadata = loadScript('public/js/core/app-metadata.js', 'ORBIT_APP');
-  assert.equal(metadata.version, '0.30.0-alpha');
-  assert.equal(metadata.versionLabel, 'v0.30');
+  assert.equal(metadata.version, '0.31.0-alpha');
+  assert.equal(metadata.versionLabel, 'v0.31');
   assert.equal(metadata.documentVersion, 13);
   assert.deepEqual([...metadata.supportedDocumentVersions], [12, 13]);
 });
@@ -120,6 +120,23 @@ test('Orbit JSON Studio repara IDs y genera preview que escapa contenido', () =>
   const preview = studio.createOrbitJsonPreviewHtml(repaired.document);
   assert.doesNotMatch(preview, /<script>alert/);
   assert.match(preview, /&lt;script&gt;alert/);
+});
+
+test('AI Import Studio genera contratos para ChatGPT y Claude y elimina estilos incompatibles', () => {
+  const studio = loadScript('public/js/json/orbit-json-studio.js', '({ createOrbitJsonAiTemplate, createOrbitJsonAiAuthoringPrompt, auditOrbitJsonImportReadiness, validateOrbitJsonV13, repairOrbitJsonV13 })');
+  const template = studio.createOrbitJsonAiTemplate();
+  assert.equal(studio.validateOrbitJsonV13(template).valid, true);
+  const chatgpt = studio.createOrbitJsonAiAuthoringPrompt({ provider: 'chatgpt', brief: 'Reconstruir la landing' });
+  const claude = studio.createOrbitJsonAiAuthoringPrompt({ provider: 'claude', brief: 'Reconstruir la landing' });
+  assert.match(chatgpt, /CHATGPT/);
+  assert.match(claude, /CLAUDE/);
+  assert.match(chatgpt, /exclusivamente un objeto JSON válido/);
+  template.nodes[0].styles.base.filter = 'blur(2px)';
+  const invalid = studio.validateOrbitJsonV13(template);
+  assert.ok(invalid.errors.some(issue => issue.code === 'style.property.unsupported'));
+  const repaired = studio.repairOrbitJsonV13(template);
+  assert.equal(repaired.document.nodes[0].styles.base.filter, undefined);
+  assert.equal(studio.auditOrbitJsonImportReadiness(repaired.document).ready, true);
 });
 
 test('perfil de proyectos grandes adapta autosave e historial', () => {

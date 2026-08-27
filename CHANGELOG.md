@@ -1,5 +1,27 @@
 # Changelog
 
+## v0.31.0-alpha — AI Import Reliability
+
+### Contrato para ChatGPT y Claude
+
+- Instrucciones oficiales copiables con estructura raíz, nodos, estilos y responsive permitidos.
+- Plantilla Orbit JSON v13 descargable para iniciar generaciones compatibles.
+- Flujo local y explícito: Orbit no envía diseños ni contenido a servicios externos.
+
+### Validación y protección
+
+- Validación estricta de grupos responsive, estados y propiedades visuales editables.
+- Límites de 8 MB, 2.500 nodos y 32 niveles para evitar importaciones peligrosas.
+- Reparación de estilos incompatibles, IDs, tipos y referencias antes del preview.
+- Importación transaccional con restauración completa si la aplicación final falla.
+- Las importaciones directas de archivos JSON pasan por análisis, preview y confirmación.
+
+### QA
+
+- Pruebas unitarias para contratos ChatGPT/Claude, plantilla, estilos y preparación.
+- QA funcional que verifica bloqueo sin mutación, reparación, preview y puntuación.
+- Artefacto CI actualizado a `Orbit-Netlify-v0.31`.
+
 ## v0.30.0-alpha — AI Design Workflow
 
 ### Captura a Orbit

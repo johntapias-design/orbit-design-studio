@@ -3,8 +3,8 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width" />
-    <meta name="description" content="Orbit Design Studio v0.30 — AI Design Workflow, editor visual profesional para Astro con arquitectura modular, QA automatizada y exportación standalone." />
-    <title>Orbit Design Studio — v0.30</title>
+    <meta name="description" content="Orbit Design Studio v0.31 — AI Import Reliability, editor visual profesional para Astro con arquitectura modular, QA automatizada y exportación standalone." />
+    <title>Orbit Design Studio — v0.31</title>
     <script>
       try {
         const stored = JSON.parse(localStorage.getItem('orbit:preferences:v1') || 'null');
@@ -3149,6 +3149,11 @@ html[data-interface-profile="wide"] .document-name input{width:min(250px,24vw)}
 .orbit-json-source-head strong{color:#f3f5f8;font-size:12px}
 .orbit-json-source-head span{color:#818a97;font-size:9.5px;line-height:1.45}
 .orbit-json-source-badge{flex:none;padding:5px 8px;border:1px solid rgba(239,90,36,.25);border-radius:999px;background:rgba(239,90,36,.09);color:#ff8d68!important;font:700 8px "Geist Mono",ui-monospace,monospace!important;letter-spacing:.08em}
+.orbit-ai-contract{display:grid;gap:12px;margin-top:14px;padding:14px;border:1px solid rgba(141,92,255,.24);border-radius:13px;background:linear-gradient(135deg,rgba(141,92,255,.08),#10141a)}
+.orbit-ai-contract>header{display:flex;align-items:flex-start;justify-content:space-between;gap:14px}.orbit-ai-contract>header>div{display:grid;gap:3px}.orbit-ai-contract>header strong{color:#eef1f5;font-size:11px}.orbit-ai-contract>header span{color:#838d9a;font-size:8.5px;line-height:1.45}
+.orbit-ai-contract-status{flex:none;padding:5px 8px;border:1px solid #303744;border-radius:999px;background:#151a21;color:#8d97a4!important;font:650 7.5px "Geist Mono",ui-monospace,monospace!important}
+.orbit-ai-contract-fields{display:grid;grid-template-columns:180px minmax(0,1fr);gap:10px}.orbit-ai-contract-fields label{display:grid;align-content:start;gap:6px}.orbit-ai-contract-fields label>span{color:#a0a9b5;font-size:8.5px;font-weight:700}.orbit-ai-contract-fields select,.orbit-ai-contract-fields textarea{width:100%;min-height:36px;padding:8px 10px;border:1px solid #303743;border-radius:8px;outline:0;background:#0e1217;color:#e5e9ee;font-size:9px}.orbit-ai-contract-fields textarea{resize:vertical;line-height:1.45}.orbit-ai-contract-fields select:focus,.orbit-ai-contract-fields textarea:focus{border-color:#8d5cff}
+.orbit-ai-contract-actions{display:flex;justify-content:flex-end;gap:8px}.orbit-ai-contract-actions .primary-action,.orbit-ai-contract-actions .secondary-action{min-width:160px;border-radius:8px}
 .orbit-json-dropzone{min-height:78px;display:grid;grid-template-columns:42px minmax(0,1fr) auto;align-items:center;gap:12px;padding:13px 14px;border:1px dashed #3a424e;border-radius:13px;background:linear-gradient(180deg,#11151b,#0e1116);cursor:pointer;transition:border-color .16s ease,background .16s ease,box-shadow .16s ease}
 .orbit-json-dropzone:hover,.orbit-json-dropzone.is-dragging{border-color:rgba(239,90,36,.62);background:linear-gradient(180deg,rgba(239,90,36,.065),#101318);box-shadow:0 0 0 3px rgba(239,90,36,.07)}
 .orbit-json-dropzone.is-loaded{border-style:solid;border-color:rgba(112,187,126,.35);background:linear-gradient(180deg,rgba(112,187,126,.055),#101419)}
@@ -3200,12 +3205,13 @@ html[data-interface-profile="wide"] .document-name input{width:min(250px,24vw)}
 .orbit-json-studio-result.is-blocked{border-color:rgba(255,170,76,.28);background:linear-gradient(180deg,rgba(255,170,76,.055),rgba(14,17,22,.96))}
 .orbit-json-studio-result>header{display:flex;align-items:center;gap:11px}.orbit-json-result-icon{width:34px;height:34px;display:grid;place-items:center;flex:none;border-radius:10px;background:rgba(112,187,126,.12);color:#86d595;font-weight:800}.is-blocked .orbit-json-result-icon{background:rgba(255,170,76,.12);color:#ffb55f}
 .orbit-json-studio-result>header strong{display:block;color:#eef3f5;font-size:11px}.orbit-json-studio-result>header p{margin:3px 0 0;color:#87919d;font-size:9px}
+.orbit-json-readiness{margin-left:auto;display:grid;place-items:center;min-width:58px;height:30px;padding:0 8px;border:1px solid rgba(112,187,126,.28);border-radius:8px;background:rgba(112,187,126,.08);color:#8ed49a;font:800 9px "Geist Mono",ui-monospace,monospace}.orbit-json-readiness.is-review{border-color:rgba(255,170,76,.3);background:rgba(255,170,76,.08);color:#ffc179}
 .orbit-json-pipeline{display:grid;grid-template-columns:repeat(4,1fr);gap:6px}.orbit-json-pipeline span{position:relative;padding:8px 6px;border:1px solid #2b323c;border-radius:8px;background:#11151a;color:#6f7985;font-size:8px;text-align:center}.orbit-json-pipeline span.is-done{border-color:rgba(112,187,126,.22);color:#91d39c}.orbit-json-pipeline span.is-error{border-color:rgba(255,170,76,.28);color:#ffc179}
 .orbit-json-studio-grid{display:grid;grid-template-columns:minmax(0,.9fr) minmax(340px,1.1fr);gap:14px;min-height:320px}.orbit-json-studio-summary{min-width:0}.orbit-json-studio-summary .ai-report-stats{grid-template-columns:repeat(2,1fr);margin:0 0 12px}.orbit-json-change-list{max-height:210px;overflow:auto;padding:11px;border:1px solid #292f38;border-radius:10px;background:#0f1318}.orbit-json-change-list>strong{color:#d8dde3;font-size:9px}.orbit-json-change-list ul{display:flex;flex-direction:column;gap:6px;margin:9px 0 0;padding:0;list-style:none}.orbit-json-change-list li{color:#89939f;font-size:8px;line-height:1.4}
 .orbit-json-preview-card{min-width:0;overflow:hidden;border:1px solid #2c333d;border-radius:11px;background:#fff}.orbit-json-preview-card>header{height:38px;display:flex;align-items:center;justify-content:space-between;padding:0 10px;background:#141920}.orbit-json-preview-card>header strong{color:#e7ebef;font-size:9px}.orbit-json-preview-card>header span{color:#74808c;font-size:8px}.orbit-json-preview-card iframe{display:block;width:100%;height:282px;border:0;background:#fff}
 .orbit-json-issue-list{display:flex;flex-direction:column;gap:6px;max-height:240px;margin:0;padding:0;overflow:auto;list-style:none}.orbit-json-issue-list li{display:grid;grid-template-columns:minmax(110px,.45fr) minmax(0,1fr);gap:9px;padding:8px 9px;border:1px solid #2b323b;border-radius:8px;background:#101419}.orbit-json-issue-list code{overflow:hidden;color:#ffbd74;font:600 8px "Geist Mono",ui-monospace,monospace;text-overflow:ellipsis;white-space:nowrap}.orbit-json-issue-list span{color:#a0a9b4;font-size:8.5px;line-height:1.4}
 .orbit-json-result-actions{display:flex;align-items:center;justify-content:flex-end;gap:8px}.orbit-json-result-actions .primary-action,.orbit-json-result-actions .secondary-action{min-width:150px;border-radius:8px}.orbit-json-result-actions button:disabled{opacity:.45;cursor:not-allowed}
-@media(max-width:900px){.orbit-json-studio-grid{grid-template-columns:1fr}.orbit-json-preview-card iframe{height:250px}}
+@media(max-width:900px){.orbit-json-studio-grid{grid-template-columns:1fr}.orbit-json-preview-card iframe{height:250px}.orbit-ai-contract-fields{grid-template-columns:1fr}.orbit-ai-contract-actions{flex-wrap:wrap}.orbit-ai-contract-actions button{flex:1 1 180px}}
 
 
 /* Orbit Design Studio v0.8.4 — canvas scroll polish */
@@ -6119,7 +6125,7 @@ swiper-container[data-pagination-style="hidden"]::part(pagination) { display: no
         <div class="brand">
           <span class="brand-mark"><span></span><span></span><span></span></span>
           <div class="brand-copy"><strong>Orbit</strong><small>DESIGN STUDIO · ASTRO</small></div>
-          <span class="version-badge">v0.30</span>
+          <span class="version-badge">v0.31</span>
         </div>
 
         <div class="document-name">
@@ -6356,7 +6362,7 @@ swiper-container[data-pagination-style="hidden"]::part(pagination) { display: no
     </main>
     <!-- Orbit bundled standalone script -->
     <script>
-/* Orbit 0.30.0-alpha bundled standalone — generated, do not edit directly. */
+/* Orbit 0.31.0-alpha bundled standalone — generated, do not edit directly. */
 
 /* public/js/core/app-metadata.js */
 /**
@@ -6366,9 +6372,9 @@ swiper-container[data-pagination-style="hidden"]::part(pagination) { display: no
  */
 const ORBIT_APP = Object.freeze({
   name: 'Orbit Design Studio',
-  version: '0.30.0-alpha',
-  versionLabel: 'v0.30',
-  releaseName: 'AI Design Workflow',
+  version: '0.31.0-alpha',
+  versionLabel: 'v0.31',
+  releaseName: 'AI Import Reliability',
   documentVersion: 13,
   supportedDocumentVersions: Object.freeze([12, 13]),
 });
@@ -8344,6 +8350,11 @@ const ORBIT_JSON_NODE_TYPES = Object.freeze(['section','container','heading','te
 const ORBIT_JSON_ROOT_KEYS = new Set(['version','projectName','pageMeta','tokens','assets','components','globalClasses','nodes']);
 const ORBIT_JSON_NODE_KEYS = new Set(['id','type','name','content','src','alt','href','svgCode','ariaLabel','level','globalClassIds','styleClassId','styleEditMode','componentRef','componentSource','styles','states','backgroundConfig','swiper','children']);
 const ORBIT_JSON_TOKEN_GROUPS = Object.freeze(['colors','typography','spacing','radius','shadows']);
+const ORBIT_JSON_STYLE_GROUPS = Object.freeze(['base','desktopXL','desktop','tablet','mobileL','mobile']);
+const ORBIT_JSON_STATE_GROUPS = Object.freeze(['hover','focus','active','disabled']);
+const ORBIT_JSON_STYLE_PROPERTIES = Object.freeze(['width','maxWidth','minWidth','height','maxHeight','minHeight','aspectRatio','boxSizing','paddingTop','paddingRight','paddingBottom','paddingLeft','marginTop','marginRight','marginBottom','marginLeft','gap','columnGap','rowGap','display','direction','flexWrap','justifyContent','justify','alignItems','align','justifyItems','alignContent','gridColumns','gridRows','gridTemplateColumns','gridTemplateRows','gridTemplateAreas','gridArea','gridColumn','gridRow','gridAutoColumns','gridAutoRows','gridAutoFlow','gridUseMinMax','gridColumnTracks','gridRowTracks','order','verticalAlign','alignSelf','justifySelf','flexGrow','flexShrink','flexBasis','position','zIndex','left','top','right','bottom','transform','transition','cursor','pointerEvents','background','color','fontFamily','fontSize','fontWeight','lineHeight','letterSpacing','textAlign','fontStyle','textTransform','textDecoration','textShadow','fontVariationSettings','whiteSpace','textWrap','borderRadius','borderWidth','borderColor','opacity','boxShadow','objectFit','overflow']);
+const ORBIT_JSON_STYLE_PROPERTY_SET = new Set(ORBIT_JSON_STYLE_PROPERTIES);
+const ORBIT_JSON_LIMITS = Object.freeze({ sourceBytes: 8 * 1024 * 1024, nodes: 2500, depth: 32, textLength: 20000 });
 
 function orbitJsonClone(value) { return JSON.parse(JSON.stringify(value)); }
 function orbitJsonIsObject(value) { return !!value && typeof value === 'object' && !Array.isArray(value); }
@@ -8412,6 +8423,20 @@ function validateOrbitJsonV13(document) {
   const errors = []; const warnings = []; const nodeIds = new Set();
   const addError = (code, path, message, repairable = true) => errors.push(orbitJsonIssue('error', code, path, message, repairable));
   const addWarning = (code, path, message, repairable = true) => warnings.push(orbitJsonIssue('warning', code, path, message, repairable));
+  const inspectStyleCollection = (value, path, groups) => {
+    if (value === undefined) return;
+    if (!orbitJsonIsObject(value)) { addError('style.collection.type', path, 'Debe ser un objeto de estilos.'); return; }
+    Object.entries(value).forEach(([group, declarations]) => {
+      const groupPath = `${path}.${group}`;
+      if (!groups.includes(group)) addError('style.group.unsupported', groupPath, `El grupo “${group}” no es compatible.`);
+      if (!orbitJsonIsObject(declarations)) { addError('style.group.type', groupPath, 'El grupo debe ser un objeto.'); return; }
+      Object.entries(declarations).forEach(([property, styleValue]) => {
+        const propertyPath = `${groupPath}.${property}`;
+        if (!ORBIT_JSON_STYLE_PROPERTY_SET.has(property)) addError('style.property.unsupported', propertyPath, `La propiedad “${property}” no es editable en Orbit.`);
+        if (styleValue === null || (typeof styleValue !== 'string' && typeof styleValue !== 'number' && typeof styleValue !== 'boolean')) addError('style.value.type', propertyPath, 'El valor debe ser texto, número o booleano.');
+      });
+    });
+  };
   if (!orbitJsonIsObject(document)) return { valid: false, repairable: false, errors: [orbitJsonIssue('error','root.type','$','La raíz debe ser un objeto.',false)], warnings, stats: { nodes: 0 } };
   if (document.version !== ORBIT_JSON_VERSION) addError('version.const', '$.version', 'La versión debe ser 13.');
   if (!String(document.projectName || '').trim()) addError('projectName.required', '$.projectName', 'projectName es obligatorio.');
@@ -8429,19 +8454,24 @@ function validateOrbitJsonV13(document) {
   else if (!document.nodes.length) addError('nodes.empty', '$.nodes', 'El documento necesita al menos un nodo.');
 
   let nodeCount = 0;
-  function inspectNode(node, path) {
+  function inspectNode(node, path, depth = 1) {
     nodeCount += 1;
+    if (nodeCount > ORBIT_JSON_LIMITS.nodes) { if (nodeCount === ORBIT_JSON_LIMITS.nodes + 1) addError('nodes.limit', '$.nodes', `El documento supera el límite seguro de ${ORBIT_JSON_LIMITS.nodes} nodos.`, false); return; }
+    if (depth > ORBIT_JSON_LIMITS.depth) { addError('nodes.depth', path, `La estructura supera ${ORBIT_JSON_LIMITS.depth} niveles de profundidad.`, false); return; }
     if (!orbitJsonIsObject(node)) { addError('node.type', path, 'El nodo debe ser un objeto.'); return; }
     const id = String(node.id || '');
     if (!id) addError('node.id.required', `${path}.id`, 'El nodo necesita un ID.');
     else if (nodeIds.has(id)) addError('node.id.duplicate', `${path}.id`, `El ID “${id}” está duplicado.`);
     else nodeIds.add(id);
     if (!ORBIT_JSON_NODE_TYPES.includes(node.type)) addError('node.type.unsupported', `${path}.type`, `El tipo “${node.type || 'vacío'}” no es compatible.`);
-    if (node.styles !== undefined && !orbitJsonIsObject(node.styles)) addError('node.styles.type', `${path}.styles`, 'styles debe ser un objeto.');
-    if (node.states !== undefined && !orbitJsonIsObject(node.states)) addError('node.states.type', `${path}.states`, 'states debe ser un objeto.');
+    inspectStyleCollection(node.styles, `${path}.styles`, ORBIT_JSON_STYLE_GROUPS);
+    inspectStyleCollection(node.states, `${path}.states`, ORBIT_JSON_STATE_GROUPS);
     Object.keys(node).filter(key => !ORBIT_JSON_NODE_KEYS.has(key)).forEach(key => addError('node.additional', `${path}.${key}`, `La propiedad “${key}” no pertenece al contrato de nodo v13.`));
     if (node.children !== undefined && !Array.isArray(node.children)) addError('node.children.type', `${path}.children`, 'children debe ser un arreglo.');
-    else (node.children || []).forEach((child, index) => inspectNode(child, `${path}.children[${index}]`));
+    else (node.children || []).forEach((child, index) => inspectNode(child, `${path}.children[${index}]`, depth + 1));
+    if (['heading','text','button'].includes(node.type) && !String(node.content || '').trim()) addWarning('node.content.empty', `${path}.content`, `${node.type} necesita contenido visible.`);
+    if (String(node.content || '').length > ORBIT_JSON_LIMITS.textLength) addError('node.content.limit', `${path}.content`, `El contenido supera ${ORBIT_JSON_LIMITS.textLength} caracteres.`);
+    if (node.type === 'image' && !String(node.src || '').trim()) addWarning('image.src', `${path}.src`, 'La imagen no tiene una fuente; Orbit conservará un marcador para reemplazarla.');
     if (node.type === 'image' && !String(node.alt || '').trim()) addWarning('image.alt', `${path}.alt`, 'La imagen necesita texto alternativo.');
   }
   (document.nodes || []).forEach((node, index) => inspectNode(node, `$.nodes[${index}]`));
@@ -8453,6 +8483,10 @@ function validateOrbitJsonV13(document) {
     else if (!id) addError('class.id.required', `${path}.id`, 'La clase necesita un ID.');
     else if (classIds.has(id)) addError('class.id.duplicate', `${path}.id`, `El ID de clase “${id}” está duplicado.`);
     else classIds.add(id);
+    if (orbitJsonIsObject(item)) {
+      inspectStyleCollection(item.styles, `${path}.styles`, ORBIT_JSON_STYLE_GROUPS);
+      inspectStyleCollection(item.states, `${path}.states`, ORBIT_JSON_STATE_GROUPS);
+    }
   });
   function inspectReferences(nodes, path = '$.nodes') { (nodes || []).forEach((node, index) => {
     if (!orbitJsonIsObject(node)) return; const nodePath = `${path}[${index}]`;
@@ -8460,15 +8494,28 @@ function validateOrbitJsonV13(document) {
     inspectReferences(node.children, `${nodePath}.children`);
   }); }
   inspectReferences(document.nodes);
+  (document.nodes || []).forEach((node, index) => { if (orbitJsonIsObject(node) && node.type !== 'section') addWarning('root.section', `$.nodes[${index}].type`, 'Para una página completa se recomienda usar section como nodo raíz.'); });
   return { valid: errors.length === 0, repairable: errors.every(issue => issue.repairable), errors, warnings, issues: [...errors, ...warnings], stats: { nodes: nodeCount, classes: classIds.size, errors: errors.length, warnings: warnings.length } };
 }
 
 function repairOrbitJsonV13(input) {
   const source = orbitJsonIsObject(input) ? orbitJsonClone(input) : {};
-  const actions = []; const usedNodeIds = new Set(); const usedClassIds = new Set();
+  const actions = []; const usedNodeIds = new Set(); const usedClassIds = new Set(); let removedStyles = 0;
   const uniqueId = (candidate, prefix, index, used) => {
     const base = orbitJsonSlug(candidate || `${prefix}-${index + 1}`); let id = base; let suffix = 2;
     while (used.has(id)) id = `${base}-${suffix++}`; used.add(id); return id;
+  };
+  const repairStyleCollection = (raw, groups) => {
+    const output = {};
+    Object.entries(orbitJsonIsObject(raw) ? raw : {}).forEach(([group, declarations]) => {
+      if (!groups.includes(group) || !orbitJsonIsObject(declarations)) { removedStyles += 1; return; }
+      output[group] = {};
+      Object.entries(declarations).forEach(([property, value]) => {
+        if (!ORBIT_JSON_STYLE_PROPERTY_SET.has(property) || value === null || (typeof value !== 'string' && typeof value !== 'number' && typeof value !== 'boolean')) { removedStyles += 1; return; }
+        output[group][property] = value;
+      });
+    });
+    return output;
   };
   const document = {
     version: ORBIT_JSON_VERSION,
@@ -8489,7 +8536,9 @@ function repairOrbitJsonV13(input) {
   });
   document.globalClasses = (Array.isArray(source.globalClasses) ? source.globalClasses : []).filter(orbitJsonIsObject).map((item, index) => {
     const id = uniqueId(item.id, 'class', index, usedClassIds); if (id !== item.id) actions.push(`ID de clase reparado: ${item.id || '(vacío)'} → ${id}.`);
-    return { id, name: orbitJsonSlug(item.name || id), styles: orbitJsonIsObject(item.styles) ? item.styles : { base: {} }, ...(orbitJsonIsObject(item.states) ? { states: item.states } : {}), ...(orbitJsonIsObject(item.backgroundConfig) ? { backgroundConfig: item.backgroundConfig } : {}) };
+    const styles = repairStyleCollection(item.styles, ORBIT_JSON_STYLE_GROUPS); if (!styles.base) styles.base = {};
+    const states = repairStyleCollection(item.states, ORBIT_JSON_STATE_GROUPS);
+    return { id, name: orbitJsonSlug(item.name || id), styles, ...(Object.keys(states).length ? { states } : {}), ...(orbitJsonIsObject(item.backgroundConfig) ? { backgroundConfig: item.backgroundConfig } : {}) };
   });
   const validClassIds = new Set(document.globalClasses.map(item => item.id));
   function repairNode(raw, index = 0) {
@@ -8499,8 +8548,9 @@ function repairOrbitJsonV13(input) {
     const node = {};
     for (const key of ORBIT_JSON_NODE_KEYS) if (item[key] !== undefined) node[key] = orbitJsonClone(item[key]);
     node.id = id; node.type = type;
-    node.styles = orbitJsonIsObject(item.styles) ? item.styles : { base: {} }; node.styles.base = orbitJsonIsObject(node.styles.base) ? node.styles.base : {};
-    if (node.states !== undefined && !orbitJsonIsObject(node.states)) node.states = {};
+    node.styles = repairStyleCollection(item.styles, ORBIT_JSON_STYLE_GROUPS); if (!node.styles.base) node.styles.base = {};
+    const states = repairStyleCollection(item.states, ORBIT_JSON_STATE_GROUPS); if (Object.keys(states).length) node.states = states; else delete node.states;
+    if (node.content !== undefined) node.content = String(node.content).slice(0, ORBIT_JSON_LIMITS.textLength);
     const classIds = [...new Set((Array.isArray(item.globalClassIds) ? item.globalClassIds : []).map(String).filter(classId => validClassIds.has(classId)))];
     if (classIds.length) node.globalClassIds = classIds; else delete node.globalClassIds;
     if (!classIds.includes(String(node.styleClassId || ''))) delete node.styleClassId;
@@ -8512,12 +8562,62 @@ function repairOrbitJsonV13(input) {
   if (!document.nodes.length) { document.nodes = [{ id: 'recovered-section', type: 'section', name: 'Recovered Section', styles: { base: {} } }]; actions.push('Se creó una sección vacía porque el documento no contenía nodos válidos.'); }
   document.assets = (Array.isArray(source.assets) ? source.assets : []).filter(orbitJsonIsObject).map((asset, index) => ({ id: orbitJsonSlug(asset.id || `asset-${index + 1}`), name: String(asset.name || `Asset ${index + 1}`), type: ['image','svg','icon'].includes(asset.type) ? asset.type : 'image', src: String(asset.src || ''), alt: String(asset.alt || '') }));
   document.components = (Array.isArray(source.components) ? source.components : []).filter(orbitJsonIsObject).map((component, index) => ({ id: orbitJsonSlug(component.id || `component-${index + 1}`), name: String(component.name || `Component ${index + 1}`), masterId: String(component.masterId || ''), instances: Math.max(0, Number(component.instances) || 0), variants: Array.isArray(component.variants) ? component.variants : [], props: Array.isArray(component.props) ? component.props : [] }));
+  if (removedStyles) actions.push(`${removedStyles} estilos incompatibles fueron omitidos para proteger la importación.`);
   return { document, actions, changed: JSON.stringify(document) !== JSON.stringify(input) };
 }
 
 function orbitJsonEscapeHtml(value = '') { return String(value).replace(/[&<>'"]/g, character => ({ '&':'&amp;','<':'&lt;','>':'&gt;',"'":'&#039;','"':'&quot;' })[character]); }
 function orbitJsonSafeUrl(value = '') { const url = String(value || '').trim(); return /^(https?:|data:image\/|blob:|\/|\.\/|\.\.\/)/i.test(url) ? url : ''; }
 function orbitJsonCssName(value = '') { return String(value).replace(/[A-Z]/g, letter => `-${letter.toLowerCase()}`); }
+function createOrbitJsonAiTemplate() {
+  return {
+    version: ORBIT_JSON_VERSION,
+    projectName: 'Nombre del proyecto',
+    pageMeta: { language: 'es', title: 'Título SEO', description: 'Descripción breve de la página.' },
+    tokens: { colors: {}, typography: {}, spacing: {}, radius: {}, shadows: {} },
+    assets: [], components: [], globalClasses: [],
+    nodes: [{ id: 'hero', type: 'section', name: 'Hero', styles: { base: { width: '100%', paddingTop: '80px', paddingRight: '40px', paddingBottom: '80px', paddingLeft: '40px' }, mobile: { paddingTop: '48px', paddingRight: '20px', paddingBottom: '48px', paddingLeft: '20px' } }, children: [{ id: 'hero-title', type: 'heading', level: 1, content: 'Título principal', styles: { base: { fontSize: '64px', lineHeight: 1.05 }, mobile: { fontSize: '40px' } } }] }],
+  };
+}
+function createOrbitJsonAiAuthoringPrompt({ provider = 'chatgpt', brief = '', reference = '' } = {}) {
+  const providerName = provider === 'claude' ? 'Claude' : 'ChatGPT';
+  const styleList = ORBIT_JSON_STYLE_PROPERTIES.join(', ');
+  return [
+    `INSTRUCCIONES OFICIALES ORBIT PARA ${providerName.toUpperCase()}`,
+    'Convierte el diseño de referencia en un documento Orbit JSON v13 editable. Prioriza fidelidad visual, estructura clara y facilidad de ajuste manual.',
+    `OBJETIVO: ${String(brief || 'Reconstruir fielmente el diseño adjunto como una página web responsive.').trim()}`,
+    `REFERENCIA: ${String(reference || 'La imagen o diseño adjunto en esta conversación.').trim()}`,
+    '',
+    'ENTREGA OBLIGATORIA:',
+    '- Devuelve exclusivamente un objeto JSON válido. No uses Markdown, comentarios ni texto antes o después.',
+    '- La raíz debe contener exactamente: version, projectName, pageMeta, tokens, assets, components, globalClasses y nodes.',
+    '- version debe ser 13. nodes debe contener al menos una sección.',
+    `- Tipos de nodo permitidos: ${ORBIT_JSON_NODE_TYPES.join(', ')}.`,
+    '- Cada nodo necesita id único, type y styles.base. Usa level de 1 a 6 para headings.',
+    `- Grupos responsive permitidos: ${ORBIT_JSON_STYLE_GROUPS.join(', ')}.`,
+    `- Propiedades visuales permitidas: ${styleList}.`,
+    '- Usa únicamente valores CSS válidos como texto, número o booleano; nunca objetos dentro de una propiedad visual.',
+    '- Añade tablet y mobile cuando cambien columnas, espacios, tamaños o alineación.',
+    '- No inventes rutas de imágenes. Si falta un recurso, deja src vacío, escribe un alt descriptivo y conserva el espacio visual.',
+    '- Mantén un único heading level 1 y contenido visible en headings, textos y botones.',
+    '- No uses propiedades adicionales aunque parezcan útiles: Orbit rechazará las que estén fuera del contrato.',
+    '',
+    'PLANTILLA MÍNIMA VÁLIDA:',
+    JSON.stringify(createOrbitJsonAiTemplate(), null, 2),
+  ].join('\n');
+}
+function auditOrbitJsonImportReadiness(document) {
+  const validation = validateOrbitJsonV13(document); const flat = []; let depth = 0;
+  (function walk(nodes, level = 1) { (nodes || []).forEach(node => { if (!orbitJsonIsObject(node)) return; flat.push(node); depth = Math.max(depth, level); walk(node.children, level + 1); }); })(document?.nodes);
+  const sections = flat.filter(node => node.type === 'section').length;
+  const responsive = flat.filter(node => ORBIT_JSON_STYLE_GROUPS.slice(1).some(group => Object.keys(node.styles?.[group] || {}).length)).length;
+  const unstyled = flat.filter(node => !Object.keys(node.styles?.base || {}).length).length;
+  const missingContent = flat.filter(node => ['heading','text','button'].includes(node.type) && !String(node.content || '').trim()).length;
+  const missingAssets = flat.filter(node => node.type === 'image' && !String(node.src || '').trim()).length;
+  const deductions = validation.errors.length * 25 + validation.warnings.length * 4 + Math.min(20, unstyled * 2) + Math.min(12, missingAssets * 3);
+  const score = Math.max(0, Math.min(100, 100 - deductions));
+  return { ready: validation.valid, status: !validation.valid ? 'blocked' : score >= 85 ? 'ready' : 'review', score, validation, stats: { nodes: flat.length, sections, responsive, unstyled, missingContent, missingAssets, depth } };
+}
 function orbitJsonStyle(style = {}) {
   return Object.entries(orbitJsonIsObject(style) ? style : {}).map(([property, value]) => {
     const names = { direction:'flex-direction', justify:'justify-content', align:'align-items', gridColumns:'grid-template-columns' };
@@ -8701,7 +8801,7 @@ function auditOrbitVisualDesign(project = {}) {
   };
 }
 
-function createOrbitAiPrompt({ context = {}, capture = null, audit = null, brief = '', task = 'rebuild' } = {}) {
+function createOrbitAiPrompt({ context = {}, capture = null, audit = null, brief = '', task = 'rebuild', provider = 'chatgpt' } = {}) {
   const taskLabels = {
     rebuild: 'Reconstruir fielmente la referencia visual como Orbit JSON v13.',
     improve: 'Mejorar el alcance indicado conservando el lenguaje visual y la estructura útil existente.',
@@ -8710,10 +8810,14 @@ function createOrbitAiPrompt({ context = {}, capture = null, audit = null, brief
   };
   const compactAudit = audit ? audit.issues.slice(0, 14).map(issue => ({ severity: issue.severity, category: issue.category, nodeId: issue.nodeId, title: issue.title, suggestion: issue.suggestion })) : [];
   const compactCapture = capture ? normalizeOrbitAiCapture(capture) : null;
+  const contract = typeof createOrbitJsonAiAuthoringPrompt === 'function'
+    ? createOrbitJsonAiAuthoringPrompt({ provider, brief, reference: compactCapture ? `${compactCapture.name}, ${compactCapture.width || '?'}x${compactCapture.height || '?'} px.` : 'La referencia adjunta en la conversación.' })
+    : 'Genera exclusivamente un objeto Orbit JSON version 13 válido, editable y responsive.';
   return [
-    'Actúa como diseñador de producto senior y especialista en Orbit Design Studio.',
+    contract,
+    '',
+    'CONTEXTO ESPECÍFICO DE ESTA TAREA:',
     taskLabels[task] || taskLabels.improve,
-    'Genera una salida Orbit JSON v13 editable, responsive y accesible.',
     '',
     `BRIEF: ${String(brief || 'Mantén la intención y mejora jerarquía, consistencia y responsive.').trim()}`,
     `ALCANCE: ${context.scope || 'page'}`,
@@ -8723,13 +8827,10 @@ function createOrbitAiPrompt({ context = {}, capture = null, audit = null, brief
     JSON.stringify(context, null, 2),
     compactAudit.length ? `\nHALLAZGOS DEL AUDITOR:\n${JSON.stringify(compactAudit, null, 2)}` : '',
     '',
-    'REGLAS DE ENTREGA:',
-    '- Devuelve exclusivamente un objeto JSON válido, sin Markdown ni comentarios.',
-    '- Usa version 13 y conserva IDs existentes cuando modifiques nodos.',
+    'REGLAS ADICIONALES:',
+    '- Conserva IDs existentes cuando modifiques nodos.',
     '- Reutiliza tokens, clases globales y componentes del contexto antes de crear nuevos.',
-    '- Incluye estilos base, tablet y mobile cuando el comportamiento cambie.',
     '- Mantén semántica, accesibilidad, alt de imágenes y un único H1.',
-    '- No inventes URLs de imágenes: usa placeholders descriptivos cuando falte el recurso.',
     '- El resultado debe poder validarse e importarse directamente en Orbit JSON Studio.',
   ].filter(Boolean).join('\n');
 }
@@ -13468,7 +13569,7 @@ function validateAiWorkflowResponse(){
 }
 
 function orbitJsonStudioMarkup(){
-  return `<div class="import-copy ai-import-copy orbit-json-studio-intro"><span class="ai-import-icon">${uiIcon('sparkles')}</span><div><h3>Orbit JSON Studio</h3><p>Migra a v13, valida cada ruta y repara solo después de tu revisión.</p></div><span class="orbit-json-source-badge">v13</span></div><section class="orbit-json-source"><div class="orbit-json-source-head"><div><strong>Fuente del documento</strong><span>Admite Orbit JSON v12, v13 y documentos legacy.</span></div><span class="orbit-json-source-badge">JSON</span></div><label class="orbit-json-dropzone" data-orbit-json-dropzone><input id="orbit-json-file" type="file" accept=".json,application/json" hidden><span class="orbit-json-file-icon">${uiIcon('page')}</span><span class="orbit-json-file-copy"><strong data-orbit-file-title>Cargar archivo JSON</strong><small data-orbit-file-name>Selecciona o arrastra un archivo .json</small></span><span class="orbit-json-file-action" data-orbit-file-action>Seleccionar archivo</span></label><div class="orbit-json-file-status" data-orbit-file-status hidden><span class="orbit-json-status-dot"></span><div><strong data-orbit-status-title>Archivo listo</strong><small data-orbit-status-detail></small></div><button type="button" data-clear-orbit-json-file aria-label="Quitar archivo" title="Quitar archivo">${uiIcon('trash')}</button></div><div class="orbit-json-divider"><span>o pega el contenido</span></div><label class="orbit-json-editor-label"><span>Documento JSON</span><textarea id="import-orbit-json" class="code-area orbit-json-editor" rows="14" spellcheck="false" placeholder='{ "version": 13, "nodes": [ ... ] }'></textarea></label></section><div class="import-actions ai-import-actions"><select id="orbit-import-mode"><option value="replace">Reemplazar página actual</option><option value="append">Insertar en la página actual</option><option value="new-page">Crear nueva página</option></select><button class="primary-action" type="button" data-analyze-orbit-json>${uiIcon('sparkles')} Validar y previsualizar</button></div><div id="orbit-import-report" aria-live="polite"></div>`;
+  return `<div class="import-copy ai-import-copy orbit-json-studio-intro"><span class="ai-import-icon">${uiIcon('sparkles')}</span><div><h3>AI Import Studio</h3><p>Genera con un contrato verificable, valida cada ruta y protege el proyecto antes de importar.</p></div><span class="orbit-json-source-badge">v13</span></div><section class="orbit-ai-contract"><header><div><strong>01 · Preparar instrucciones para la IA</strong><span>Copia el contrato, adjunta tu diseño en la IA elegida y solicita el Orbit JSON.</span></div><span class="orbit-ai-contract-status">Sin conexión externa</span></header><div class="orbit-ai-contract-fields"><label><span>IA</span><select data-orbit-ai-provider><option value="chatgpt">ChatGPT</option><option value="claude">Claude</option></select></label><label><span>Objetivo del diseño</span><textarea data-orbit-ai-brief rows="3" placeholder="Ejemplo: reconstruir esta landing con alta fidelidad y adaptar tablet y móvil."></textarea></label></div><div class="orbit-ai-contract-actions"><button type="button" class="secondary-action" data-download-orbit-ai-template>Descargar plantilla v13</button><button type="button" class="primary-action" data-copy-orbit-ai-prompt>${uiIcon('copy')} Copiar instrucciones</button></div></section><section class="orbit-json-source"><div class="orbit-json-source-head"><div><strong>02 · Validar la respuesta</strong><span>Admite Orbit JSON v12, v13 y documentos legacy. Nada se aplica hasta tu confirmación.</span></div><span class="orbit-json-source-badge">JSON</span></div><label class="orbit-json-dropzone" data-orbit-json-dropzone><input id="orbit-json-file" type="file" accept=".json,application/json" hidden><span class="orbit-json-file-icon">${uiIcon('page')}</span><span class="orbit-json-file-copy"><strong data-orbit-file-title>Cargar archivo JSON</strong><small data-orbit-file-name>Selecciona o arrastra un archivo .json</small></span><span class="orbit-json-file-action" data-orbit-file-action>Seleccionar archivo</span></label><div class="orbit-json-file-status" data-orbit-file-status hidden><span class="orbit-json-status-dot"></span><div><strong data-orbit-status-title>Archivo listo</strong><small data-orbit-status-detail></small></div><button type="button" data-clear-orbit-json-file aria-label="Quitar archivo" title="Quitar archivo">${uiIcon('trash')}</button></div><div class="orbit-json-divider"><span>o pega el contenido</span></div><label class="orbit-json-editor-label"><span>Documento JSON</span><textarea id="import-orbit-json" class="code-area orbit-json-editor" rows="14" spellcheck="false" placeholder='{ "version": 13, "nodes": [ ... ] }'></textarea></label></section><div class="import-actions ai-import-actions"><select id="orbit-import-mode"><option value="replace">Reemplazar página actual</option><option value="append">Insertar en la página actual</option><option value="new-page">Crear nueva página</option></select><button class="primary-action" type="button" data-analyze-orbit-json>${uiIcon('sparkles')} Validar y previsualizar</button></div><div id="orbit-import-report" aria-live="polite"></div>`;
 }
 
 function showImportHub(mode=state.importMode){
@@ -13647,7 +13748,7 @@ function normalizeOrbitImport(data){
   const classAssignments=flat.reduce((sum,node)=>sum+(node.globalClassIds||[]).length,0);
   return {document:{...source,version:13,nodes:hydrateNodes(nodes),tokens:source.tokens||null,assets:Array.isArray(source.assets)?source.assets:[],components:importedComponents,globalClasses,pages},report:{nodes:flat.length,sections:flat.filter(node=>node.type==='section').length,images:flat.filter(node=>node.type==='image').length,components:importedComponents.length,classes:globalClasses.length,classAssignments,autoClasses,autoComponents,tokens:source.tokens?Object.values(source.tokens).reduce((sum,group)=>sum+Object.keys(group||{}).length,0):0,repairedIds,unsupported,warnings}};
 }
-const supportedOrbitStyleProps=new Set(['width','maxWidth','minWidth','height','maxHeight','minHeight','aspectRatio','boxSizing','paddingTop','paddingRight','paddingBottom','paddingLeft','marginTop','marginRight','marginBottom','marginLeft','gap','columnGap','rowGap','display','direction','flexWrap','justifyContent','justify','alignItems','align','justifyItems','alignContent','gridColumns','gridRows','gridTemplateColumns','gridTemplateRows','gridTemplateAreas','gridArea','gridColumn','gridRow','gridAutoColumns','gridAutoRows','gridAutoFlow','gridUseMinMax','gridColumnTracks','gridRowTracks','order','verticalAlign','alignSelf','justifySelf','flexGrow','flexShrink','flexBasis','position','zIndex','left','top','right','bottom','transform','transition','cursor','pointerEvents','background','color','fontFamily','fontSize','fontWeight','lineHeight','letterSpacing','textAlign','fontStyle','textTransform','textDecoration','textShadow','fontVariationSettings','whiteSpace','textWrap','borderRadius','borderWidth','borderColor','opacity','boxShadow','objectFit','overflow']);
+const supportedOrbitStyleProps=new Set(ORBIT_JSON_STYLE_PROPERTIES);
 function clearOrbitImportReport(){
   state.pendingImport=null;
   const report=$('#orbit-import-report');
@@ -13675,17 +13776,17 @@ function updateOrbitFileUi({name='',size=0,valid=true,message=''}={}){
   if(statusDetail)statusDetail.textContent=message||(name?`${name}${size?` · ${Math.max(1,Math.round(size/1024))} KB`:''}`:'');
 }
 async function loadOrbitJsonFile(file){
-  if(!file)return;
+  if(!file)return false;
   const name=String(file.name||'documento.json');
   if(file.size>8*1024*1024){
     updateOrbitFileUi({name,size:file.size,valid:false,message:'El archivo supera el límite de 8 MB.'});
     renderOrbitImportError('Selecciona un archivo JSON menor de 8 MB.');
-    return;
+    return false;
   }
   if(!/\.json$/i.test(name)&&file.type!=='application/json'){
     updateOrbitFileUi({name,size:file.size,valid:false,message:'El archivo debe tener extensión .json.'});
     renderOrbitImportError('El formato seleccionado no es compatible. Usa un archivo .json.');
-    return;
+    return false;
   }
   try{
     const raw=await file.text();
@@ -13695,12 +13796,14 @@ async function loadOrbitJsonFile(file){
     clearOrbitImportReport();
     updateOrbitFileUi({name,size:file.size,valid:true,message:`${name} · ${Math.max(1,Math.round(file.size/1024))} KB · listo para analizar`});
     toast('Archivo JSON cargado');
+    return true;
   }catch(error){
     const area=$('#import-orbit-json');
     if(area)area.value=await file.text().catch(()=> '');
     clearOrbitImportReport();
     updateOrbitFileUi({name,size:file.size,valid:false,message:'El contenido no es un JSON válido.'});
     renderOrbitImportError(error.message,'El archivo contiene JSON inválido');
+    return false;
   }
 }
 function clearOrbitJsonFile(){
@@ -13711,6 +13814,17 @@ function clearOrbitJsonFile(){
   clearOrbitImportReport();
   updateOrbitFileUi();
   area?.focus();
+}
+async function copyOrbitAiAuthoringPrompt(){
+  const provider=els.modalContent.querySelector('[data-orbit-ai-provider]')?.value||'chatgpt';
+  const brief=els.modalContent.querySelector('[data-orbit-ai-brief]')?.value||'';
+  const prompt=createOrbitJsonAiAuthoringPrompt({provider,brief});
+  try{await navigator.clipboard.writeText(prompt);}catch{const helper=document.createElement('textarea');helper.value=prompt;helper.style.position='fixed';helper.style.opacity='0';document.body.appendChild(helper);helper.select();document.execCommand('copy');helper.remove();}
+  toast(`Instrucciones para ${provider==='claude'?'Claude':'ChatGPT'} copiadas`);
+}
+function downloadOrbitAiTemplate(){
+  downloadText('orbit-json-v13-template.json',JSON.stringify(createOrbitJsonAiTemplate(),null,2),'application/json');
+  toast('Plantilla Orbit JSON v13 descargada');
 }
 
 function orbitJsonIssueRows(issues=[]){
@@ -13723,14 +13837,15 @@ function renderOrbitJsonValidation(migration,validation){
 }
 function renderOrbitJsonStudioReady(pending){
   const target=$('#orbit-import-report');if(!target)return;
-  const {studio,report}=pending;const versionLabel=studio.migration.fromVersion==='legacy'?'Legacy':`v${studio.migration.fromVersion}`;
+  const {studio,report}=pending;const versionLabel=studio.migration.fromVersion==='legacy'?'Legacy':`v${studio.migration.fromVersion}`;const readiness=studio.readiness;
   const notes=[...studio.migration.actions,...studio.repair.actions,...studio.validation.warnings.map(issue=>`${issue.path}: ${issue.message}`),...report.warnings];
-  target.innerHTML=`<section class="orbit-json-studio-result"><header><span class="orbit-json-result-icon">✓</span><div><strong>Documento listo para importar</strong><p>${versionLabel} → v13${studio.repaired?' · reparado':''} · preview aislado</p></div></header><div class="orbit-json-pipeline"><span class="is-done">Detectado</span><span class="is-done">Migrado</span><span class="is-done">Validado</span><span class="is-done">Preview</span></div><div class="orbit-json-studio-grid"><div class="orbit-json-studio-summary"><div class="ai-report-stats"><div><strong>${report.nodes}</strong><span>Nodos</span></div><div><strong>${report.sections}</strong><span>Secciones</span></div><div><strong>${report.tokens}</strong><span>Tokens</span></div><div><strong>${report.classes}</strong><span>Clases</span></div></div>${notes.length?`<div class="orbit-json-change-list"><strong>${notes.length} cambios y revisiones</strong><ul>${notes.slice(0,10).map(note=>`<li>${escapeHtml(note)}</li>`).join('')}</ul></div>`:'<div class="ai-report-success">✓ El documento cumple el contrato v13 sin reparaciones.</div>'}</div><div class="orbit-json-preview-card"><header><strong>Preview seguro</strong><span>Sandbox · sin scripts</span></header><iframe id="orbit-json-preview" title="Vista previa de Orbit JSON" sandbox=""></iframe></div></div><div class="orbit-json-result-actions"><button type="button" class="secondary-action" data-download-orbit-v13>Descargar JSON v13</button><button class="primary-action ai-import-commit" type="button" data-commit-orbit-import>Importar en Orbit</button></div></section>`;
+  target.innerHTML=`<section class="orbit-json-studio-result"><header><span class="orbit-json-result-icon">✓</span><div><strong>Documento listo para importar</strong><p>${versionLabel} → v13${studio.repaired?' · reparado':''} · preview aislado</p></div><span class="orbit-json-readiness is-${readiness.status}">${readiness.score}/100</span></header><div class="orbit-json-pipeline"><span class="is-done">Detectado</span><span class="is-done">Migrado</span><span class="is-done">Validado</span><span class="is-done">Preview</span></div><div class="orbit-json-studio-grid"><div class="orbit-json-studio-summary"><div class="ai-report-stats"><div><strong>${report.nodes}</strong><span>Nodos</span></div><div><strong>${report.sections}</strong><span>Secciones</span></div><div><strong>${readiness.stats.responsive}</strong><span>Responsive</span></div><div><strong>${readiness.stats.missingAssets}</strong><span>Recursos pendientes</span></div></div>${notes.length?`<div class="orbit-json-change-list"><strong>${notes.length} cambios y revisiones</strong><ul>${notes.slice(0,10).map(note=>`<li>${escapeHtml(note)}</li>`).join('')}</ul></div>`:'<div class="ai-report-success">✓ El documento cumple el contrato v13 sin reparaciones.</div>'}</div><div class="orbit-json-preview-card"><header><strong>Preview seguro</strong><span>Sandbox · sin scripts</span></header><iframe id="orbit-json-preview" title="Vista previa de Orbit JSON" sandbox=""></iframe></div></div><div class="orbit-json-result-actions"><button type="button" class="secondary-action" data-download-orbit-v13>Descargar JSON v13</button><button class="primary-action ai-import-commit" type="button" data-commit-orbit-import>Importar en Orbit</button></div></section>`;
   const frame=$('#orbit-json-preview');if(frame)frame.srcdoc=studio.previewHtml;
 }
 function analyzeOrbitJsonSource({repair=false}={}){
   const raw=$('#import-orbit-json')?.value?.trim()||'';
   if(!raw){renderOrbitImportError('Pega un documento JSON o carga un archivo .json antes de analizar.','Falta el documento JSON');return;}
+  if(new Blob([raw]).size>ORBIT_JSON_LIMITS.sourceBytes){state.pendingImport=null;renderOrbitImportError('El documento supera el límite seguro de 8 MB. Reduce el contenido o los datos embebidos.','Documento demasiado grande');return;}
   try{
     const parsed=parseOrbitJsonSource(raw);
     if(!parsed.ok){state.pendingImport=null;renderOrbitImportError(`${parsed.error.message} · línea ${parsed.error.line}, columna ${parsed.error.column}`,'JSON con error de sintaxis');return;}
@@ -13738,8 +13853,9 @@ function analyzeOrbitJsonSource({repair=false}={}){
     if(validation.errors.length&&!repair){state.pendingImport={type:'orbit-json-validation',migration,validation};renderOrbitJsonValidation(migration,validation);return;}
     if(repair){repairResult=repairOrbitJsonV13(candidate);candidate=repairResult.document;validation=validateOrbitJsonV13(candidate);}
     if(validation.errors.length){state.pendingImport=null;renderOrbitImportError(validation.errors.map(issue=>`${issue.path}: ${issue.message}`).join(' · '),'El documento no se pudo reparar');return;}
+    const readiness=auditOrbitJsonImportReadiness(candidate);if(!readiness.ready){state.pendingImport=null;renderOrbitImportError('El documento no supera el control de preparación para importar.','Importación bloqueada');return;}
     const result=normalizeOrbitImport(candidate);const previewHtml=createOrbitJsonPreviewHtml(result.document);
-    state.pendingImport={type:'orbit-ai',...result,mode:$('#orbit-import-mode')?.value||'replace',studio:{migration,validation,repair:repairResult,repaired:repair&&repairResult.changed,previewHtml}};
+    state.pendingImport={type:'orbit-ai',...result,mode:$('#orbit-import-mode')?.value||'replace',studio:{migration,validation,repair:repairResult,repaired:repair&&repairResult.changed,readiness,previewHtml}};
     renderOrbitJsonStudioReady(state.pendingImport);
   }catch(error){state.pendingImport=null;renderOrbitImportError(error.message,'El JSON no es válido');}
 }
@@ -13761,14 +13877,18 @@ function prepareImportedSharedClasses(doc,mode){
   return {nodes:rewrite(doc.nodes),classes};
 }
 function commitOrbitAiImport(){
-  const pending=state.pendingImport;if(pending?.type!=='orbit-ai')return;const doc=pending.document,mode=pending.mode;const before=snapshot();const prepared=prepareImportedSharedClasses(doc,mode);const importedNodes=prepared.nodes;
-  if(mode==='append'){state.nodes=hydrateNodes([...state.nodes,...clone(importedNodes)]);state.selectedId=importedNodes[0]?.id||state.selectedId;state.selectedIds=state.selectedId?[state.selectedId]:[];}
-  else if(mode==='new-page'){
-    syncCurrentPageRecord();const id=uid('page');const name=doc.projectName||`AI page ${state.pages.length+1}`;state.pages.push({id,name,slug:`/${slug(name)}`,nodes:hydrateNodes(clone(importedNodes)),meta:clone(doc.pageMeta||{language:'es',title:name,description:''})});state.currentPageId=id;state.nodes=hydrateNodes(clone(importedNodes));state.pageMeta=clone(doc.pageMeta||{language:'es',title:name,description:''});state.selectedId=state.nodes[0]?.id||null;state.selectedIds=state.selectedId?[state.selectedId]:[];
-  }else{state.nodes=hydrateNodes(clone(importedNodes));state.pageMeta=clone(doc.pageMeta||state.pageMeta);state.selectedId=state.nodes[0]?.id||null;state.selectedIds=state.selectedId?[state.selectedId]:[];}
-  state.globalClasses=prepared.classes;
-  if(doc.tokens){state.tokens=clone(doc.tokens);ensureTokenGroups();}if(doc.assets?.length)state.assets=clone(doc.assets);if(doc.components?.length)state.components=clone(doc.components).map(normalizeComponentDefinition);if(doc.projectName)state.projectName=doc.projectName;
-  syncCurrentPageRecord();pushHistory(before);markUnsaved();closeModal();render();els.projectName.value=state.projectName;toast(`Importación completada · ${pending.report.nodes} nodos`);
+  const pending=state.pendingImport;if(pending?.type!=='orbit-ai')return;const doc=pending.document,mode=pending.mode;const before=snapshot();
+  try{
+    const finalValidation=validateOrbitJsonV13(doc);if(!finalValidation.valid)throw new Error('El documento cambió después de validarse. Vuelve a analizarlo.');
+    const prepared=prepareImportedSharedClasses(doc,mode);const importedNodes=prepared.nodes;if(!importedNodes.length)throw new Error('No hay elementos seguros para importar.');
+    if(mode==='append'){state.nodes=hydrateNodes([...state.nodes,...clone(importedNodes)]);state.selectedId=importedNodes[0]?.id||state.selectedId;state.selectedIds=state.selectedId?[state.selectedId]:[];}
+    else if(mode==='new-page'){
+      syncCurrentPageRecord();const id=uid('page');const name=doc.projectName||`AI page ${state.pages.length+1}`;state.pages.push({id,name,slug:`/${slug(name)}`,nodes:hydrateNodes(clone(importedNodes)),meta:clone(doc.pageMeta||{language:'es',title:name,description:''})});state.currentPageId=id;state.nodes=hydrateNodes(clone(importedNodes));state.pageMeta=clone(doc.pageMeta||{language:'es',title:name,description:''});state.selectedId=state.nodes[0]?.id||null;state.selectedIds=state.selectedId?[state.selectedId]:[];
+    }else{state.nodes=hydrateNodes(clone(importedNodes));state.pageMeta=clone(doc.pageMeta||state.pageMeta);state.selectedId=state.nodes[0]?.id||null;state.selectedIds=state.selectedId?[state.selectedId]:[];}
+    state.globalClasses=prepared.classes;
+    if(doc.tokens){state.tokens=clone(doc.tokens);ensureTokenGroups();}if(doc.assets?.length)state.assets=clone(doc.assets);if(doc.components?.length)state.components=clone(doc.components).map(normalizeComponentDefinition);if(doc.projectName)state.projectName=doc.projectName;
+    syncCurrentPageRecord();pushHistory(before);markUnsaved();closeModal();render();els.projectName.value=state.projectName;toast(`Importación completada · ${pending.report.nodes} nodos`);
+  }catch(error){restore(before);render();renderOrbitImportError(error.message,'Orbit protegió el proyecto');toast('La importación fue cancelada sin aplicar cambios','error',3500);}
 }
 
 
@@ -15143,6 +15263,8 @@ document.addEventListener('click',event=>{
   if(event.target.closest('[data-analyze-design-system]')){const css=$('#import-design-css')?.value||'';const items=analyzeDesignSystem(css);if(!items.length){toast('No se detectaron variables CSS');return;}state.pendingImport={type:'tokens',items};const host=$('#import-analysis');if(host)host.innerHTML=designSystemPreview(items);return;}
   if(event.target.closest('[data-commit-design-system]')){commitDesignSystem();return;}
   if(event.target.closest('[data-import-html-css]')){try{const before=snapshot();const count=importHtmlCss($('#import-html-source')?.value||'',$('#import-css-source')?.value||'',$('#code-import-mode')?.value||'replace');pushHistory(before);markUnsaved();render();closeModal();toast(`${count} elementos importados`);}catch(error){toast(error.message);}return;}
+  if(event.target.closest('[data-copy-orbit-ai-prompt]')){void copyOrbitAiAuthoringPrompt();return;}
+  if(event.target.closest('[data-download-orbit-ai-template]')){downloadOrbitAiTemplate();return;}
   if(event.target.closest('[data-clear-orbit-json-file]')){clearOrbitJsonFile();return;}
   if(event.target.closest('[data-analyze-orbit-json]')){analyzeOrbitJsonSource();return;}
   if(event.target.closest('[data-repair-orbit-json]')){analyzeOrbitJsonSource({repair:true});return;}
@@ -15463,12 +15585,9 @@ els.assetReplaceUpload?.addEventListener('change',async event=>{const file=event
 svgUploadInput.addEventListener('change',async event=>{ const file=event.target.files?.[0]; if(!file||selected()?.type!=='svg')return; const markup=await file.text(); commit(()=>directNodeProp('svgCode',markup)); event.target.value=''; });
 els.jsonUpload.addEventListener('change',async event=>{
   const file=event.target.files[0]; if(!file)return;
-  try{
-    const result=normalizeOrbitImport(JSON.parse(await file.text()));const data=result.document;const before=snapshot();
-    state.nodes=hydrateNodes(data.nodes);state.tokens=data.tokens||clone(defaultTokens);ensureTokenGroups();state.assets=data.assets||[];state.components=data.components||[];state.globalClasses=data.globalClasses||[];state.pageMeta=data.pageMeta||state.pageMeta;state.projectName=data.projectName||file.name.replace(/\.json$/,'');
-    if(data.pages?.length){state.pages=clone(data.pages);state.currentPageId=data.currentPageId||state.pages[0].id;const page=state.pages.find(item=>item.id===state.currentPageId)||state.pages[0];state.nodes=hydrateNodes(clone(page.nodes||[]));state.pageMeta=clone(page.meta||state.pageMeta);}else{state.pages=[{id:'page-home',name:'Home',slug:'/',nodes:clone(state.nodes),meta:clone(state.pageMeta)}];state.currentPageId='page-home';}
-    state.selectedId=state.nodes[0]?.id||null;state.selectedIds=state.selectedId?[state.selectedId]:[];pushHistory(before);markUnsaved();render();els.projectName.value=state.projectName;toast(`Proyecto importado · ${result.report.nodes} nodos`);
-  }catch(error){toast(`No se pudo importar: ${error.message}`);} finally{event.target.value='';}
+  try{showImportHub('orbit-json');if(await loadOrbitJsonFile(file))analyzeOrbitJsonSource();}
+  catch(error){renderOrbitImportError(error.message,'No se pudo preparar la importación');}
+  finally{event.target.value='';}
 });
 
 initCoreControls({
@@ -15533,7 +15652,7 @@ function loadSaved(){
 window.addEventListener('error',event=>{console.error('[Orbit runtime]',event.error||event.message);toast('Orbit encontró un error inesperado. Puedes seguir trabajando o deshacer el último cambio.','error',3500);});
 window.addEventListener('unhandledrejection',event=>{console.error('[Orbit promise]',event.reason);toast('Una operación no pudo completarse. Revisa la consola si necesitas el detalle.','error',3500);});
 
-window.__ORBIT_QA__={openProjectDashboard,createWorkspaceProject,generatedElementsCss,generatedGlobalClassesCss,generatedStyles,generatedAstro,generatedPreviewHtml,safeInlineScriptJson,livePreviewPayload,isLivePreviewOpen,projectFiles,productionExportAudit,showProductionExport,productionExportSettings(value){if(value)state.exportSettings=normalizeOrbitProductionExportSettings(value,state.projectName);return clone(state.exportSettings);},projectDbList,projectDbListRaw,projectDbPut,normalizeProjectRecord,repairWorkspaceStorage,renderProjectDashboard,workspaceSnapshot,currentProjectProfile,runtimePerformanceSnapshot:()=>runtimePerformance.snapshot(),recoveryDraft:()=>parseOrbitRecoveryEnvelope(safeLocalGet(SESSION_RECOVERY_DRAFT_KEY)),orbitJsonStudio:{parse:parseOrbitJsonSource,migrate:migrateOrbitJsonToV13,validate:validateOrbitJsonV13,repair:repairOrbitJsonV13,preview:createOrbitJsonPreviewHtml},aiDesignWorkflow:{context:createOrbitAiContext,audit:auditOrbitVisualDesign,prompt:createOrbitAiPrompt,localSection:createOrbitContextualSection,extract:extractOrbitJsonFromAiResponse,open:showAiDesignWorkflow},normalizeOrbitImport,primarySharedStyleClass,setSharedStyleMode,directStyle,render,setSelection,loadOrbitDocument(data,selectedId=''){
+window.__ORBIT_QA__={openProjectDashboard,createWorkspaceProject,generatedElementsCss,generatedGlobalClassesCss,generatedStyles,generatedAstro,generatedPreviewHtml,safeInlineScriptJson,livePreviewPayload,isLivePreviewOpen,projectFiles,productionExportAudit,showProductionExport,productionExportSettings(value){if(value)state.exportSettings=normalizeOrbitProductionExportSettings(value,state.projectName);return clone(state.exportSettings);},projectDbList,projectDbListRaw,projectDbPut,normalizeProjectRecord,repairWorkspaceStorage,renderProjectDashboard,workspaceSnapshot,currentProjectProfile,runtimePerformanceSnapshot:()=>runtimePerformance.snapshot(),recoveryDraft:()=>parseOrbitRecoveryEnvelope(safeLocalGet(SESSION_RECOVERY_DRAFT_KEY)),orbitJsonStudio:{parse:parseOrbitJsonSource,migrate:migrateOrbitJsonToV13,validate:validateOrbitJsonV13,repair:repairOrbitJsonV13,preview:createOrbitJsonPreviewHtml,template:createOrbitJsonAiTemplate,prompt:createOrbitJsonAiAuthoringPrompt,readiness:auditOrbitJsonImportReadiness},aiDesignWorkflow:{context:createOrbitAiContext,audit:auditOrbitVisualDesign,prompt:createOrbitAiPrompt,localSection:createOrbitContextualSection,extract:extractOrbitJsonFromAiResponse,open:showAiDesignWorkflow},normalizeOrbitImport,primarySharedStyleClass,setSharedStyleMode,directStyle,render,setSelection,loadOrbitDocument(data,selectedId=''){
   const result=normalizeOrbitImport(data);const doc=result.document;state.nodes=hydrateNodes(clone(doc.nodes));state.tokens=doc.tokens||clone(defaultTokens);ensureTokenGroups();state.assets=doc.assets||[];state.components=(doc.components||[]).map(normalizeComponentDefinition);state.globalClasses=doc.globalClasses||[];state.projectName=doc.projectName||'QA project';state.pageMeta=doc.pageMeta||state.pageMeta;state.pages=[{id:'page-qa',name:'QA',slug:'/',nodes:clone(state.nodes),meta:clone(state.pageMeta)}];state.currentPageId='page-qa';setSelection(selectedId&&find(state.nodes,selectedId)?selectedId:state.nodes[0]?.id||null);render();return result.report;
 }};
 setWorkspaceVisibility(true);
