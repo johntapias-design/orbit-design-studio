@@ -122,6 +122,28 @@ test('Orbit JSON Studio repara IDs y genera preview que escapa contenido', () =>
   assert.match(preview, /&lt;script&gt;alert/);
 });
 
+test('Reparación automática explica identificadores, propiedades, estilos y referencias', () => {
+  const studio = loadScript('public/js/json/orbit-json-studio.js', '({ repairOrbitJsonV13, validateOrbitJsonV13 })');
+  const result = studio.repairOrbitJsonV13({
+    version: 13, projectName: 'Repair report', pageMeta: { language: 'es', title: 'Repair report', description: '' },
+    tokens: { colors: {}, typography: {}, spacing: {}, radius: {}, shadows: {} }, assets: [], components: [],
+    globalClasses: [{ id: 'brand', name: 'Brand', styles: { base: { color: '#f05a24' } } }],
+    obsoleteRoot: true,
+    nodes: [
+      { id: 'same', type: 'heading', content: '', styles: { base: { filter: 'blur(2px)', color: '#fff' } }, globalClassIds: ['missing-class'], obsoleteNode: true },
+      { id: 'same', type: 'mystery', styles: 'broken', children: 'broken' },
+    ],
+  });
+  assert.equal(studio.validateOrbitJsonV13(result.document).valid, true);
+  assert.ok(result.summary.total >= 8);
+  for (const category of ['identifiers', 'properties', 'styles', 'references', 'content', 'structure']) assert.ok(result.summary[category] >= 1, category);
+  assert.ok(result.repairs.every(item => item.code && item.path && item.message));
+  assert.ok(result.repairs.some(item => item.path === '$.nodes[0].styles.base.filter' && item.category === 'styles'));
+  assert.ok(result.repairs.some(item => item.path === '$.nodes[0].globalClassIds' && item.category === 'references'));
+  assert.equal(result.document.nodes[0].content, 'Título pendiente');
+  assert.equal(result.document.nodes[1].type, 'container');
+});
+
 test('AI Import Studio genera contratos para ChatGPT y Claude y elimina estilos incompatibles', () => {
   const studio = loadScript('public/js/json/orbit-json-studio.js', '({ createOrbitJsonAiTemplate, createOrbitJsonAiAuthoringPrompt, auditOrbitJsonImportReadiness, validateOrbitJsonV13, repairOrbitJsonV13 })');
   const template = studio.createOrbitJsonAiTemplate();

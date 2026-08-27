@@ -13,6 +13,8 @@
 - Validación estricta de grupos responsive, estados y propiedades visuales editables.
 - Límites de 8 MB, 2.500 nodos y 32 niveles para evitar importaciones peligrosas.
 - Reparación de estilos incompatibles, IDs, tipos y referencias antes del preview.
+- Informe de reparación automática por identificadores, propiedades, estilos, referencias, contenido y estructura, con la ruta exacta de cada corrección.
+- Contenido y texto alternativo provisionales para elementos incompletos, siempre sobre una copia revisable antes de importar.
 - Importación transaccional con restauración completa si la aplicación final falla.
 - Las importaciones directas de archivos JSON pasan por análisis, preview y confirmación.
 

@@ -18,6 +18,7 @@ const packageJson = JSON.parse(read('package.json'));
 const indexHtml = read('index.html');
 const metadataSource = read('public/js/core/app-metadata.js');
 const navigationSource = read('public/js/navigation/canvas-navigation.js');
+const jsonStudioSource = read('public/js/json/orbit-json-studio.js');
 const qaSource = read('qa-contextual-toolbar.mjs');
 const buildSource = read('scripts/build-standalone.js');
 const workflowSource = read('.github/workflows/ci.yml');
@@ -37,6 +38,7 @@ check('Performance y recuperación están modularizadas', JS_MODULES.includes('r
 check('Orbit JSON Studio está modularizado', JS_MODULES.includes('json/orbit-json-studio.js') && navigationSource.includes('validateOrbitJsonV13') && navigationSource.includes('createOrbitJsonPreviewHtml'));
 check('Core Design System Bridge importa .core sin alterar el canvas', JS_MODULES.includes('import/core-design-system-bridge.js') && navigationSource.includes('parseCoreDesignSystemSource') && navigationSource.includes("accept=\".core,.json,.css"));
 check('AI Import Reliability usa contrato estricto', navigationSource.includes('createOrbitJsonAiAuthoringPrompt') && navigationSource.includes('auditOrbitJsonImportReadiness') && navigationSource.includes('ORBIT_JSON_LIMITS.sourceBytes'));
+check('Reparación JSON explica cada corrección antes de importar', jsonStudioSource.includes('repairs.push({ category, code, path, message') && navigationSource.includes('orbitJsonRepairReport') && navigationSource.includes('Tu proyecto todavía no ha cambiado'));
 check('biblioteca de secciones retirada de la navegación', !indexHtml.includes('data-tab="sections"') && navigationSource.includes("if(state.tab==='sections')state.tab='elements'"));
 check('AI Design Workflow está modularizado', JS_MODULES.includes('ai/ai-design-workflow.js') && navigationSource.includes('createOrbitAiContext') && navigationSource.includes('auditOrbitVisualDesign') && navigationSource.includes('showAiDesignWorkflow'));
 check('Production Export está modularizado', JS_MODULES.includes('export/production-export.js') && navigationSource.includes('auditOrbitProductionExport') && navigationSource.includes('createOrbitLighthouseConfig'));

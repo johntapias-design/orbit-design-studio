@@ -154,18 +154,27 @@ function validateOrbitJsonV13(document) {
 
 function repairOrbitJsonV13(input) {
   const source = orbitJsonIsObject(input) ? orbitJsonClone(input) : {};
-  const actions = []; const usedNodeIds = new Set(); const usedClassIds = new Set(); let removedStyles = 0;
+  const actions = []; const repairs = []; const usedNodeIds = new Set(); const usedClassIds = new Set(); const usedAssetIds = new Set(); const usedComponentIds = new Set();
+  const summary = { total: 0, identifiers: 0, properties: 0, styles: 0, references: 0, content: 0, structure: 0 };
+  const recordRepair = (category, code, path, message, before, after) => {
+    summary.total += 1; summary[category] = (summary[category] || 0) + 1;
+    repairs.push({ category, code, path, message, ...(before !== undefined ? { before } : {}), ...(after !== undefined ? { after } : {}) });
+    actions.push(message);
+  };
   const uniqueId = (candidate, prefix, index, used) => {
     const base = orbitJsonSlug(candidate || `${prefix}-${index + 1}`); let id = base; let suffix = 2;
     while (used.has(id)) id = `${base}-${suffix++}`; used.add(id); return id;
   };
-  const repairStyleCollection = (raw, groups) => {
+  const repairStyleCollection = (raw, groups, path) => {
     const output = {};
+    if (raw !== undefined && !orbitJsonIsObject(raw)) recordRepair('styles', 'style.collection.reset', path, `Se reinició la colección de estilos en ${path} porque no era válida.`, raw, {});
     Object.entries(orbitJsonIsObject(raw) ? raw : {}).forEach(([group, declarations]) => {
-      if (!groups.includes(group) || !orbitJsonIsObject(declarations)) { removedStyles += 1; return; }
+      if (!groups.includes(group)) { recordRepair('styles', 'style.group.removed', `${path}.${group}`, `Se eliminó el grupo de estilos “${group}” porque Orbit no lo reconoce.`, declarations); return; }
+      if (!orbitJsonIsObject(declarations)) { recordRepair('styles', 'style.group.reset', `${path}.${group}`, `Se reinició el grupo “${group}” porque sus estilos no eran válidos.`, declarations, {}); return; }
       output[group] = {};
       Object.entries(declarations).forEach(([property, value]) => {
-        if (!ORBIT_JSON_STYLE_PROPERTY_SET.has(property) || value === null || (typeof value !== 'string' && typeof value !== 'number' && typeof value !== 'boolean')) { removedStyles += 1; return; }
+        if (!ORBIT_JSON_STYLE_PROPERTY_SET.has(property)) { recordRepair('styles', 'style.property.removed', `${path}.${group}.${property}`, `Se eliminó “${property}” porque no es una propiedad editable en Orbit.`, value); return; }
+        if (value === null || (typeof value !== 'string' && typeof value !== 'number' && typeof value !== 'boolean')) { recordRepair('styles', 'style.value.removed', `${path}.${group}.${property}`, `Se eliminó el valor inválido de “${property}” para proteger el diseño.`, value); return; }
         output[group][property] = value;
       });
     });
@@ -183,41 +192,66 @@ function repairOrbitJsonV13(input) {
     },
     tokens: {}, assets: [], components: [], globalClasses: [], nodes: [],
   };
+  Object.keys(source).filter(key => !ORBIT_JSON_ROOT_KEYS.has(key)).forEach(key => recordRepair('properties', 'root.property.removed', `$.${key}`, `Se eliminó la propiedad raíz “${key}” porque no pertenece a Orbit JSON v13.`, source[key]));
   ORBIT_JSON_TOKEN_GROUPS.forEach(group => {
     const rawGroup = orbitJsonIsObject(source.tokens?.[group]) ? source.tokens[group] : {};
     document.tokens[group] = {};
-    Object.entries(rawGroup).forEach(([key, token]) => { if (orbitJsonIsObject(token) && token.value !== undefined) document.tokens[group][orbitJsonSlug(key)] = { ...token, name: String(token.name || key), value: String(token.value) }; });
+    Object.entries(rawGroup).forEach(([key, token]) => {
+      const path = `$.tokens.${group}.${key}`;
+      if (!orbitJsonIsObject(token) || token.value === undefined) { recordRepair('properties', 'token.removed', path, `Se omitió el token “${key}” porque no tenía un valor utilizable.`, token); return; }
+      const safeKey = orbitJsonSlug(key);
+      if (safeKey !== key) recordRepair('identifiers', 'token.id.normalized', path, `Se normalizó el identificador del token “${key}” a “${safeKey}”.`, key, safeKey);
+      document.tokens[group][safeKey] = { ...token, name: String(token.name || key), value: String(token.value) };
+    });
   });
-  document.globalClasses = (Array.isArray(source.globalClasses) ? source.globalClasses : []).filter(orbitJsonIsObject).map((item, index) => {
-    const id = uniqueId(item.id, 'class', index, usedClassIds); if (id !== item.id) actions.push(`ID de clase reparado: ${item.id || '(vacío)'} → ${id}.`);
-    const styles = repairStyleCollection(item.styles, ORBIT_JSON_STYLE_GROUPS); if (!styles.base) styles.base = {};
-    const states = repairStyleCollection(item.states, ORBIT_JSON_STATE_GROUPS);
-    return { id, name: orbitJsonSlug(item.name || id), styles, ...(Object.keys(states).length ? { states } : {}), ...(orbitJsonIsObject(item.backgroundConfig) ? { backgroundConfig: item.backgroundConfig } : {}) };
-  });
+  document.globalClasses = (Array.isArray(source.globalClasses) ? source.globalClasses : []).reduce((output, item, index) => {
+    const path = `$.globalClasses[${index}]`;
+    if (!orbitJsonIsObject(item)) { recordRepair('structure', 'class.removed', path, `Se omitió una clase vacía o dañada en la posición ${index + 1}.`, item); return output; }
+    const id = uniqueId(item.id, 'class', index, usedClassIds); if (id !== item.id) recordRepair('identifiers', 'class.id.repaired', `${path}.id`, `Se reparó el ID de clase: “${item.id || 'vacío'}” → “${id}”.`, item.id, id);
+    const styles = repairStyleCollection(item.styles, ORBIT_JSON_STYLE_GROUPS, `${path}.styles`); if (!styles.base) { styles.base = {}; recordRepair('styles', 'class.styles.base.added', `${path}.styles.base`, `Se añadió el estilo base que faltaba en la clase “${id}”.`, undefined, {}); }
+    const states = repairStyleCollection(item.states, ORBIT_JSON_STATE_GROUPS, `${path}.states`);
+    output.push({ id, name: orbitJsonSlug(item.name || id), styles, ...(Object.keys(states).length ? { states } : {}), ...(orbitJsonIsObject(item.backgroundConfig) ? { backgroundConfig: item.backgroundConfig } : {}) });
+    return output;
+  }, []);
   const validClassIds = new Set(document.globalClasses.map(item => item.id));
-  function repairNode(raw, index = 0) {
-    const item = orbitJsonIsObject(raw) ? raw : {}; const type = ORBIT_JSON_NODE_TYPES.includes(item.type) ? item.type : 'container';
-    if (type !== item.type) actions.push(`Tipo ${item.type || '(vacío)'} convertido a container.`);
-    const id = uniqueId(item.id, type, index, usedNodeIds); if (id !== item.id) actions.push(`ID de nodo reparado: ${item.id || '(vacío)'} → ${id}.`);
+  function repairNode(raw, index = 0, path = `$.nodes[${index}]`) {
+    const item = orbitJsonIsObject(raw) ? raw : {};
+    if (!orbitJsonIsObject(raw)) recordRepair('structure', 'node.object.rebuilt', path, `Se reconstruyó el elemento ${index + 1} porque no era un nodo válido.`, raw, {});
+    const type = ORBIT_JSON_NODE_TYPES.includes(item.type) ? item.type : 'container';
+    if (type !== item.type) recordRepair('properties', 'node.type.repaired', `${path}.type`, `Se convirtió el tipo “${item.type || 'vacío'}” a “container”, que sí es editable.`, item.type, type);
+    const id = uniqueId(item.id, type, index, usedNodeIds); if (id !== item.id) recordRepair('identifiers', 'node.id.repaired', `${path}.id`, `Se reparó el ID del nodo: “${item.id || 'vacío'}” → “${id}”.`, item.id, id);
     const node = {};
     for (const key of ORBIT_JSON_NODE_KEYS) if (item[key] !== undefined) node[key] = orbitJsonClone(item[key]);
+    Object.keys(item).filter(key => !ORBIT_JSON_NODE_KEYS.has(key)).forEach(key => recordRepair('properties', 'node.property.removed', `${path}.${key}`, `Se eliminó “${key}” porque no pertenece a un nodo Orbit v13.`, item[key]));
     node.id = id; node.type = type;
-    node.styles = repairStyleCollection(item.styles, ORBIT_JSON_STYLE_GROUPS); if (!node.styles.base) node.styles.base = {};
-    const states = repairStyleCollection(item.states, ORBIT_JSON_STATE_GROUPS); if (Object.keys(states).length) node.states = states; else delete node.states;
-    if (node.content !== undefined) node.content = String(node.content).slice(0, ORBIT_JSON_LIMITS.textLength);
+    node.styles = repairStyleCollection(item.styles, ORBIT_JSON_STYLE_GROUPS, `${path}.styles`); if (!node.styles.base) { node.styles.base = {}; recordRepair('styles', 'node.styles.base.added', `${path}.styles.base`, `Se añadió styles.base al nodo “${id}” para que sus estilos puedan editarse.`, undefined, {}); }
+    const states = repairStyleCollection(item.states, ORBIT_JSON_STATE_GROUPS, `${path}.states`); if (Object.keys(states).length) node.states = states; else delete node.states;
+    if (node.content !== undefined) { const repairedContent = String(node.content).slice(0, ORBIT_JSON_LIMITS.textLength); if (repairedContent !== node.content) recordRepair('content', 'node.content.normalized', `${path}.content`, `Se convirtió o recortó el contenido del nodo “${id}” a texto seguro.`, node.content, repairedContent); node.content = repairedContent; }
+    if (['heading','text','button'].includes(type) && !String(node.content || '').trim()) { const fallback = type === 'heading' ? 'Título pendiente' : type === 'button' ? 'Botón' : 'Texto pendiente'; node.content = fallback; recordRepair('content', 'node.content.added', `${path}.content`, `Se añadió contenido provisional al ${type} “${id}”.`, item.content, fallback); }
+    if (type === 'image' && !String(node.alt || '').trim()) { const fallback = String(item.name || 'Imagen pendiente'); node.alt = fallback; recordRepair('content', 'image.alt.added', `${path}.alt`, `Se añadió texto alternativo a la imagen “${id}”.`, item.alt, fallback); }
     const classIds = [...new Set((Array.isArray(item.globalClassIds) ? item.globalClassIds : []).map(String).filter(classId => validClassIds.has(classId)))];
+    const rejectedClassIds = [...new Set((Array.isArray(item.globalClassIds) ? item.globalClassIds : []).map(String).filter(classId => !validClassIds.has(classId)))];
+    if (rejectedClassIds.length) recordRepair('references', 'class.references.removed', `${path}.globalClassIds`, `Se quitaron referencias a clases inexistentes: ${rejectedClassIds.join(', ')}.`, rejectedClassIds, classIds);
     if (classIds.length) node.globalClassIds = classIds; else delete node.globalClassIds;
-    if (!classIds.includes(String(node.styleClassId || ''))) delete node.styleClassId;
-    node.children = (Array.isArray(item.children) ? item.children : []).map(repairNode);
+    if (node.styleClassId && !classIds.includes(String(node.styleClassId))) { recordRepair('references', 'class.active-reference.removed', `${path}.styleClassId`, `Se quitó la clase activa “${node.styleClassId}” porque no está vinculada al nodo “${id}”.`, node.styleClassId); delete node.styleClassId; }
+    if (item.children !== undefined && !Array.isArray(item.children)) recordRepair('structure', 'node.children.reset', `${path}.children`, `Se reinició children en “${id}” porque no era una lista válida.`, item.children, []);
+    node.children = (Array.isArray(item.children) ? item.children : []).map((child, childIndex) => repairNode(child, childIndex, `${path}.children[${childIndex}]`));
     if (!node.children.length) delete node.children;
     return node;
   }
-  document.nodes = (Array.isArray(source.nodes) ? source.nodes : []).map(repairNode);
-  if (!document.nodes.length) { document.nodes = [{ id: 'recovered-section', type: 'section', name: 'Recovered Section', styles: { base: {} } }]; actions.push('Se creó una sección vacía porque el documento no contenía nodos válidos.'); }
-  document.assets = (Array.isArray(source.assets) ? source.assets : []).filter(orbitJsonIsObject).map((asset, index) => ({ id: orbitJsonSlug(asset.id || `asset-${index + 1}`), name: String(asset.name || `Asset ${index + 1}`), type: ['image','svg','icon'].includes(asset.type) ? asset.type : 'image', src: String(asset.src || ''), alt: String(asset.alt || '') }));
-  document.components = (Array.isArray(source.components) ? source.components : []).filter(orbitJsonIsObject).map((component, index) => ({ id: orbitJsonSlug(component.id || `component-${index + 1}`), name: String(component.name || `Component ${index + 1}`), masterId: String(component.masterId || ''), instances: Math.max(0, Number(component.instances) || 0), variants: Array.isArray(component.variants) ? component.variants : [], props: Array.isArray(component.props) ? component.props : [] }));
-  if (removedStyles) actions.push(`${removedStyles} estilos incompatibles fueron omitidos para proteger la importación.`);
-  return { document, actions, changed: JSON.stringify(document) !== JSON.stringify(input) };
+  document.nodes = (Array.isArray(source.nodes) ? source.nodes : []).map((node, index) => repairNode(node, index, `$.nodes[${index}]`));
+  if (!document.nodes.length) { document.nodes = [{ id: 'recovered-section', type: 'section', name: 'Sección recuperada', styles: { base: {} } }]; recordRepair('structure', 'nodes.fallback.created', '$.nodes', 'Se creó una sección vacía porque el documento no contenía nodos utilizables.', source.nodes, document.nodes); }
+  document.assets = (Array.isArray(source.assets) ? source.assets : []).reduce((output, asset, index) => {
+    const path = `$.assets[${index}]`; if (!orbitJsonIsObject(asset)) { recordRepair('structure', 'asset.removed', path, `Se omitió el recurso ${index + 1} porque estaba dañado.`, asset); return output; }
+    const id = uniqueId(asset.id, 'asset', index, usedAssetIds); if (id !== asset.id) recordRepair('identifiers', 'asset.id.repaired', `${path}.id`, `Se reparó el ID del recurso: “${asset.id || 'vacío'}” → “${id}”.`, asset.id, id);
+    output.push({ id, name: String(asset.name || `Recurso ${index + 1}`), type: ['image','svg','icon'].includes(asset.type) ? asset.type : 'image', src: String(asset.src || ''), alt: String(asset.alt || '') }); return output;
+  }, []);
+  document.components = (Array.isArray(source.components) ? source.components : []).reduce((output, component, index) => {
+    const path = `$.components[${index}]`; if (!orbitJsonIsObject(component)) { recordRepair('structure', 'component.removed', path, `Se omitió el componente ${index + 1} porque estaba dañado.`, component); return output; }
+    const id = uniqueId(component.id, 'component', index, usedComponentIds); if (id !== component.id) recordRepair('identifiers', 'component.id.repaired', `${path}.id`, `Se reparó el ID del componente: “${component.id || 'vacío'}” → “${id}”.`, component.id, id);
+    output.push({ id, name: String(component.name || `Componente ${index + 1}`), masterId: String(component.masterId || ''), instances: Math.max(0, Number(component.instances) || 0), variants: Array.isArray(component.variants) ? component.variants : [], props: Array.isArray(component.props) ? component.props : [] }); return output;
+  }, []);
+  return { document, actions, repairs, summary, changed: JSON.stringify(document) !== JSON.stringify(input) };
 }
 
 function orbitJsonEscapeHtml(value = '') { return String(value).replace(/[&<>'"]/g, character => ({ '&':'&amp;','<':'&lt;','>':'&gt;',"'":'&#039;','"':'&quot;' })[character]); }
