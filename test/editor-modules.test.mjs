@@ -5,7 +5,7 @@ import vm from 'node:vm';
 
 function loadScript(relativePath, expose) {
   const source = readFileSync(new URL(`../${relativePath}`, import.meta.url), 'utf8');
-  const context = vm.createContext({ Blob, URL });
+  const context = vm.createContext({ Blob, URL, TextEncoder });
   vm.runInContext(`${source}\nglobalThis.__orbitTestValue = ${expose};`, context);
   return context.__orbitTestValue;
 }
@@ -137,6 +137,43 @@ test('AI Import Studio genera contratos para ChatGPT y Claude y elimina estilos 
   const repaired = studio.repairOrbitJsonV13(template);
   assert.equal(repaired.document.nodes[0].styles.base.filter, undefined);
   assert.equal(studio.auditOrbitJsonImportReadiness(repaired.document).ready, true);
+});
+
+test('Core Design System Bridge importa colores, escalas, fuentes y variables desde JSON', () => {
+  const bridge = loadScript('public/js/import/core-design-system-bridge.js', '({ parseCoreDesignSystemSource })');
+  const preset = {
+    name: 'Brand System', app_version: '2.0.1',
+    preferences: { root_font_size: 16, min_screen_width: 320, max_screen_width: 1440, is_rem: true },
+    modulesData: {
+      COLOR_SYSTEM: { groups: [{ id: 'brand', name: 'Brand', colors: [{ id: 'primary', name: 'brand-primary', value: '#ef5a24' }] }] },
+      FLUID_TYPOGRAPHY: { groups: [{ id: 'type', name: 'Type', min: { fontSize: 16, scaleRatio: 1.125 }, max: { fontSize: 18, scaleRatio: 1.333 }, steps: 's,m,l', namingConvention: 'text', baseScaleIndex: 1 }] },
+      FLUID_SPACING: { groups: [{ id: 'space', name: 'Space', min: { size: 16, scaleRatio: 1.25 }, max: { size: 24, scaleRatio: 1.333 }, steps: 's,m,l', namingConvention: 'space', baseScaleIndex: 1 }] },
+      FONTS: { fonts: [{ id: 'inter', enable: true, customVariable: 'font-body', family: 'Inter' }] },
+      STYLESHEETS: { groups: [{ id: 'custom', name: 'Custom', isActive: true, css: ':root{--radius-card:18px;}' }] },
+    },
+    styleSheetData: { designStyles: [{ id: 'design', name: 'Design', cssObjects: [{ id: 'root', selector: ':root', declarations: [{ id: 'shadow', property: '--shadow-card', value: '0 16px 40px rgba(0,0,0,.2)' }] }] }] },
+  };
+  const result = bridge.parseCoreDesignSystemSource(JSON.stringify(preset), { filename: 'brand.json' });
+  assert.equal(result.ok, true);
+  assert.equal(result.projectName, 'Brand System');
+  assert.ok(result.items.some(item => item.cssVar === '--brand-primary' && item.category === 'colors'));
+  assert.ok(result.items.some(item => item.cssVar === '--text-m' && item.value.startsWith('clamp(')));
+  assert.ok(result.items.some(item => item.cssVar === '--space-m' && item.category === 'spacing'));
+  assert.ok(result.items.some(item => item.cssVar === '--font-body' && item.value === 'Inter'));
+  assert.ok(result.items.some(item => item.cssVar === '--radius-card' && item.category === 'radius'));
+  assert.ok(result.items.some(item => item.cssVar === '--shadow-card' && item.category === 'shadows'));
+});
+
+test('Core Design System Bridge descomprime archivos .core reales y rechaza JSON ajeno', () => {
+  const bridge = loadScript('public/js/import/core-design-system-bridge.js', '({ parseCoreDesignSystemSource })');
+  const fixture = '4Rs9CCxBgAswUygXMAbgHjgnYAChGCAWIng1cKhhiABgIPoBGkH8AMAx9xmACiARIBMgOtwMOAFjFIAoVgOmMTgAJWNIQTQapBREdMs7JTCvc0AEsg1OSloY0haFGCdoADtUASEQYDDtDORvXmLLBVYYR3uhKyVANUolcdFgUGgoUFRCLDE3AIJilkAgEDRsQgBiCDIEIFlAD7EBIRQIFeoAbQBgDWAFQAq2BSMUdUz0RJhFVgAxVOBlUwJhID1AsCJOWDAAklxLOmIRwWcme3NRlETnBDIuX0MjUWwMIRwCNUhcOgQzAEBqomBFZyE4UEQgCSQrtBtAGvxyiwAtABUtMD2kN0BB+QFwfApMZBOHNSACSHBECSlG0SAUKYojPQFlIwVD/TiTdz9OXWIDYQFOIACOHKgsIGEgUqcu7BXQUaAywApqApRybiMgUGoUWADAUikCIEW9BPYpmnVGBFRsKCHVO5cAwAHDY80tbGtcTiQK4GgtQqMrMGguI0YbgDyhSuMupFs3brFmjgBRfIohjVowfehAvTqBFwgHmBlMNwk+KDFKGKFY6DFZKLYFwE0nM6MquACbS4kKMwFIIlBCeEAtGAkpJWSsSQgI2RlPEE4YigpsMaBUIAppOXI5FEHNBKJLcGOZEFsLQBopNZJquTF9RVwYoTCQFvJ120MPH/w3Jl1fCFNMZkjBUVcGAw0ECpZ9h0y8U1BvZi5RHJt+dlS6Vf9pwi/BTfsCMjD6SzoaCVAxNMlhayLiLDlEIAE8RqtJahJDCyQIoWJQIKImZHCmHCAQkG4sRhJBKSi5DScyo0hka6FmbllhKVoac0Y6GktPhhomRoEHyWaNBiNC7FAyH50O4SUsEGEYxDDgInllOQk0GKodtgTwBzUQwwaTAJNOJ0agCxMxCUknUIAAihmgD44AYApyYoU8klRACigJaD6qKUs+WkAjGAwqQEYYGi5XXHMMdZI5oQJYczoaalLgCMwAXDCiSmYCQUw1IukxmnIBA1JwJSh2cdgluFtqBL5jYRFINjBHLihgU7da8wa6OEsTjQa5YjMUmWFfR+AEWUbgTE8RYCslHSAwfhSPDNwQoBu0AFMbkkqoFCAAIAA=';
+  const compressed = Buffer.from(fixture, 'base64').toString('utf16le');
+  const result = bridge.parseCoreDesignSystemSource(compressed, { filename: 'fixture.core' });
+  assert.equal(result.ok, true);
+  assert.equal(result.format, 'core');
+  assert.equal(result.projectName, 'Core Fixture');
+  assert.ok(result.items.length >= 10);
+  assert.equal(bridge.parseCoreDesignSystemSource('{"version":13,"nodes":[]}').ok, false);
 });
 
 test('perfil de proyectos grandes adapta autosave e historial', () => {

@@ -1167,17 +1167,35 @@ input,textarea,select,code,pre,.width-control,.zoom-control,.scope-pill,.element
   font-size:10px;
 }
 .file-action{display:inline-flex;align-items:center;justify-content:center;cursor:pointer}
+.core-bridge-copy{position:relative;padding:2px 0 0 44px}
+.core-bridge-copy:before{content:"C";position:absolute;left:0;top:0;width:32px;height:32px;display:grid;place-items:center;border:1px solid rgba(239,90,36,.35);border-radius:9px;background:rgba(239,90,36,.09);color:#ef5a24;font:750 13px "Geist Mono",monospace}
+.core-bridge-kicker{display:block;margin-bottom:5px;color:#ef5a24;font:650 7px "Geist Mono",monospace;letter-spacing:1.15px}
+.core-file-dropzone{min-height:82px;display:grid;grid-template-columns:38px minmax(0,1fr) auto;align-items:center;gap:12px;padding:14px;border:1px dashed #3a404a;border-radius:11px;background:#111419;cursor:pointer;transition:border-color .15s,background .15s,transform .15s}
+.core-file-dropzone:hover,.core-file-dropzone.is-dragging{border-color:#ef5a24;background:rgba(239,90,36,.055);transform:translateY(-1px)}
+.core-file-icon{width:38px;height:38px;display:grid;place-items:center;border-radius:10px;background:#272c34;color:#ef5a24;font:750 14px "Geist Mono",monospace}
+.core-file-dropzone>span:nth-of-type(2){min-width:0}
+.core-file-dropzone strong,.core-file-dropzone small{display:block}
+.core-file-dropzone strong{color:#e3e6eb;font-size:11px}.core-file-dropzone small{margin-top:4px;color:#777e89;font-size:8px;line-height:1.4}
+.core-file-action{min-height:34px;display:inline-flex;align-items:center;padding:0 12px;border:1px solid #353a43;border-radius:7px;background:#20242a;color:#cbd0d7;font-size:9px;font-weight:650;white-space:nowrap}
 .import-analysis{display:flex;flex-direction:column;gap:12px;padding-top:5px}
+.core-import-summary{display:grid;grid-template-columns:auto minmax(0,1fr) auto;align-items:center;gap:11px;padding:12px 13px;border:1px solid rgba(239,90,36,.24);border-radius:10px;background:rgba(239,90,36,.055)}
+.core-import-badge{display:grid;place-items:center;min-width:42px;height:29px;border-radius:7px;background:#ef5a24;color:#17191d;font:750 9px "Geist Mono",monospace}
+.core-import-summary strong,.core-import-summary small{display:block}.core-import-summary strong{color:#f0f2f5;font-size:11px}.core-import-summary small{margin-top:3px;color:#858c96;font-size:8px;line-height:1.4}
+.core-import-ready{color:#76d79b;font-size:9px;font-weight:700}
+.core-import-warnings,.core-import-error{display:flex;flex-direction:column;gap:5px;padding:11px 13px;border:1px solid rgba(247,189,88,.22);border-radius:9px;background:rgba(247,189,88,.055);color:#aeb3bb;font-size:9px;line-height:1.45}
+.core-import-warnings strong{color:#f7bd58}.core-import-error{border-color:rgba(255,91,91,.28);background:rgba(255,91,91,.07)}.core-import-error strong{color:#ff8585}.core-import-error span{color:#adb2ba}
 .import-result-head{display:flex;align-items:center;justify-content:space-between;padding:11px 13px;border:1px solid #343943;border-radius:9px;background:#202329}
 .import-result-head strong{font-size:12px}.import-result-head span{color:#ef5a24;font-size:10px}
 .import-token-group{overflow:hidden;border:1px solid #2e3239;border-radius:9px;background:#15171b}
 .import-token-group h3{display:flex;align-items:center;justify-content:space-between;margin:0;padding:10px 12px;border-bottom:1px solid #2a2e35;color:#cfd2d7;font-size:10px;text-transform:uppercase;letter-spacing:.06em}
+.import-token-group h3 label{display:flex;align-items:center;gap:8px;cursor:pointer}.import-token-group h3 input,.import-token-row>input{accent-color:#ef5a24}
 .import-token-group h3 span{display:grid;place-items:center;min-width:20px;height:20px;border-radius:99px;background:#292d34;color:#aeb3bc;font-size:9px}
-.import-token-row{display:grid;grid-template-columns:minmax(170px,.8fr) minmax(160px,1.2fr) 130px;align-items:center;gap:10px;padding:8px 11px;border-bottom:1px solid rgba(255,255,255,.045)}
+.import-token-row{display:grid;grid-template-columns:18px minmax(145px,.8fr) minmax(145px,1.2fr) 118px 54px;align-items:center;gap:9px;padding:8px 11px;border-bottom:1px solid rgba(255,255,255,.045)}
 .import-token-row:last-child{border-bottom:0}
 .import-token-row code{overflow:hidden;color:#dce0e6;font-size:10px;text-overflow:ellipsis;white-space:nowrap}
 .import-token-row>span{overflow:hidden;color:#8e949e;font-size:10px;text-overflow:ellipsis;white-space:nowrap}
 .import-token-row select{height:31px;border:1px solid #30343c;border-radius:6px;background:#202329;color:#c7cbd2;font-size:9px}
+.import-token-status{padding:4px 5px;border-radius:99px;background:rgba(118,215,155,.08);color:#76d79b;font-size:7px;text-align:center}.import-token-status.is-update{background:rgba(247,189,88,.08);color:#f7bd58}
 .import-commit{align-self:flex-end;min-width:180px}
 
 .audit-item{
@@ -1191,7 +1209,10 @@ input,textarea,select,code,pre,.width-control,.zoom-control,.scope-pill,.element
 .audit-item.ok{cursor:default}
 
 @media(max-width:760px){
-  .import-token-row{grid-template-columns:1fr}
+  .core-bridge-copy{padding-left:0}.core-bridge-copy:before{display:none}
+  .core-file-dropzone{grid-template-columns:38px minmax(0,1fr)}.core-file-action{grid-column:1/-1;justify-content:center}
+  .import-token-row{grid-template-columns:18px minmax(0,1fr)}
+  .import-token-row code,.import-token-row>span,.import-token-row select,.import-token-status{grid-column:2}
   .import-tabs{grid-template-columns:1fr}
   .import-actions{align-items:stretch;flex-direction:column}
   .import-actions select{width:100%;margin:0}
@@ -8342,6 +8363,199 @@ function createOrbitAutosaveScheduler({ window, getProfile, save, persistRecover
 }
 
 
+/* public/js/import/core-design-system-bridge.js */
+/**
+ * Orbit Core Design System Bridge
+ *
+ * Reads portable Core Framework `.core` files without changing the Orbit node
+ * tree. The compressed-file decoder is adapted from lz-string 1.5.0
+ * (Copyright 2013 Pieroxy, MIT License).
+ *
+ * Permission is hereby granted, free of charge, to any person obtaining a copy
+ * of this software and associated documentation files (the "Software"), to deal
+ * in the Software without restriction, including without limitation the rights
+ * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+ * copies of the Software, and to permit persons to whom the Software is
+ * furnished to do so, subject to inclusion of this copyright and permission
+ * notice. THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND.
+ */
+const ORBIT_CORE_BRIDGE_LIMITS=Object.freeze({sourceBytes:8*1024*1024,maxTokens:2000});
+
+function coreBridgeLzDecompress(length,resetValue,getNextValue){
+  const fromCharCode=String.fromCharCode,dictionary=[];let next,enlargeIn=4,dictSize=4,numBits=3,entry='',result=[],i,w,bits,resb,maxpower,power,c;
+  const data={val:getNextValue(0),position:resetValue,index:1};
+  for(i=0;i<3;i+=1)dictionary[i]=i;
+  bits=0;maxpower=4;power=1;
+  while(power!==maxpower){resb=data.val&data.position;data.position>>=1;if(data.position===0){data.position=resetValue;data.val=getNextValue(data.index++);}bits|=(resb>0?1:0)*power;power<<=1;}
+  next=bits;
+  if(next===0){bits=0;maxpower=256;power=1;while(power!==maxpower){resb=data.val&data.position;data.position>>=1;if(data.position===0){data.position=resetValue;data.val=getNextValue(data.index++);}bits|=(resb>0?1:0)*power;power<<=1;}c=fromCharCode(bits);}
+  else if(next===1){bits=0;maxpower=65536;power=1;while(power!==maxpower){resb=data.val&data.position;data.position>>=1;if(data.position===0){data.position=resetValue;data.val=getNextValue(data.index++);}bits|=(resb>0?1:0)*power;power<<=1;}c=fromCharCode(bits);}
+  else return '';
+  dictionary[3]=c;w=c;result.push(c);
+  while(true){
+    if(data.index>length)return '';
+    bits=0;maxpower=Math.pow(2,numBits);power=1;
+    while(power!==maxpower){resb=data.val&data.position;data.position>>=1;if(data.position===0){data.position=resetValue;data.val=getNextValue(data.index++);}bits|=(resb>0?1:0)*power;power<<=1;}
+    c=bits;
+    if(c===0){bits=0;maxpower=256;power=1;while(power!==maxpower){resb=data.val&data.position;data.position>>=1;if(data.position===0){data.position=resetValue;data.val=getNextValue(data.index++);}bits|=(resb>0?1:0)*power;power<<=1;}dictionary[dictSize++]=fromCharCode(bits);c=dictSize-1;enlargeIn--;}
+    else if(c===1){bits=0;maxpower=65536;power=1;while(power!==maxpower){resb=data.val&data.position;data.position>>=1;if(data.position===0){data.position=resetValue;data.val=getNextValue(data.index++);}bits|=(resb>0?1:0)*power;power<<=1;}dictionary[dictSize++]=fromCharCode(bits);c=dictSize-1;enlargeIn--;}
+    else if(c===2)return result.join('');
+    if(enlargeIn===0){enlargeIn=Math.pow(2,numBits);numBits++;}
+    if(dictionary[c])entry=dictionary[c];else if(c===dictSize)entry=w+w.charAt(0);else return null;
+    result.push(entry);dictionary[dictSize++]=w+entry.charAt(0);enlargeIn--;w=entry;
+    if(enlargeIn===0){enlargeIn=Math.pow(2,numBits);numBits++;}
+  }
+}
+
+function decodeCoreFrameworkFile(source=''){
+  const compressed=String(source||'');
+  if(!compressed)return '';
+  return coreBridgeLzDecompress(compressed.length,16384,index=>compressed.charCodeAt(index)-32)||'';
+}
+
+function coreBridgeRound(value){return Number(Number(value).toFixed(2));}
+function coreBridgeLength(value,useRem,rootSize){const number=coreBridgeRound(Number(value));return `${useRem?coreBridgeRound(number/rootSize):number}${useRem?'rem':'px'}`;}
+function coreBridgeVariableName(namingConvention='token',step='m'){
+  const base=String(namingConvention||'token').replace('{step}',step).replace(/\s+/g,'-');
+  return `--${base}${String(namingConvention).includes('{step}')?'':`-${step}`}`.replace(/^----/,'--');
+}
+function coreBridgeLabel(cssVar=''){
+  return String(cssVar).replace(/^--/,'').replace(/[-_]+/g,' ').replace(/\b\w/g,letter=>letter.toUpperCase());
+}
+function coreBridgeCategory(cssVar='',value='',hint=''){
+  if(['colors','typography','spacing','radius','shadows'].includes(hint))return hint;
+  const name=String(cssVar).toLowerCase(),raw=String(value).toLowerCase();
+  if(/shadow/.test(name)||/\d+(?:\.\d+)?(?:px|rem)\s+\d+(?:\.\d+)?(?:px|rem).*(?:rgba?|hsla?|#)/.test(raw))return 'shadows';
+  if(/radius|round|corner/.test(name))return 'radius';
+  if(/color|brand|primary|secondary|accent|surface|background|foreground|muted|neutral|black|white/.test(name)||/^(#|rgb|hsl|oklch|oklab|lab|lch|color\()/.test(raw))return 'colors';
+  if(/font|text|type|heading|body|display|line-height|letter/.test(name)||/font-family/.test(raw))return 'typography';
+  return 'spacing';
+}
+function coreBridgeNormalizeItem(cssVar,value,category='',source='core'){
+  const variable=String(cssVar||'').trim().replace(/^([^\-])/,match=>`--${match}`);
+  const raw=String(value??'').trim();
+  if(!/^--[A-Za-z0-9_-]+$/.test(variable)||!raw)return null;
+  return {cssVar:variable,value:raw,category:coreBridgeCategory(variable,raw,category),key:variable.replace(/^--/,''),name:coreBridgeLabel(variable),source};
+}
+function coreBridgeCssVariables(css='',hint='',source='stylesheet'){
+  const items=[];const re=/(--[A-Za-z0-9_-]+)\s*:\s*([^;{}]+);?/g;let match;
+  while((match=re.exec(String(css||'')))){const item=coreBridgeNormalizeItem(match[1],match[2],hint,source);if(item)items.push(item);}
+  return items;
+}
+
+function coreBridgeFluidValue(minSize,maxSize,minScreen,maxScreen,useRem,rootSize){
+  const span=maxScreen-minScreen;
+  if(!Number.isFinite(span)||span<=0)return coreBridgeLength(minSize,useRem,rootSize);
+  const slope=(maxSize-minSize)/span,preferredVw=`${coreBridgeRound(slope*100)}vw`,intercept=minSize-slope*minScreen;
+  return `clamp(${coreBridgeLength(minSize,useRem,rootSize)}, calc(${preferredVw} + ${coreBridgeLength(intercept,useRem,rootSize)}), ${coreBridgeLength(maxSize,useRem,rootSize)})`;
+}
+function coreBridgeScaleItems(data,kind,preferences={}){
+  if(!data||data.isDisabled||!Array.isArray(data.groups))return [];
+  const items=[],rootSize=Math.max(1,Number(preferences.root_font_size)||16),minScreen=Number(preferences.min_screen_width)||320,maxScreen=Number(preferences.max_screen_width)||1400,useRem=preferences.is_rem!==false;
+  data.groups.forEach(group=>{
+    if(!group||group.isDisabled)return;
+    const hint=kind==='typography'?'typography':'spacing';
+    if(group.mode==='fluid_manual'&&Array.isArray(group.manualSizes)&&group.manualSizes.length){
+      group.manualSizes.forEach(size=>{
+        const cssVar=`--${String(size.name||'').replace(/^--/,'')}`;
+        const value=String(size.css||'').trim()||coreBridgeFluidValue(Number(size.min)||0,Number(size.max)||0,minScreen,maxScreen,useRem,rootSize);
+        const item=coreBridgeNormalizeItem(cssVar,value,hint,'core-scale');if(item)items.push(item);
+      });
+      return;
+    }
+    const steps=String(group.steps||'').split(',').map(step=>step.trim()).filter(Boolean),baseIndex=Number(group.baseScaleIndex)||0;
+    const minConfig=group.min||{},maxConfig=group.max||{};
+    const minBase=Number(kind==='typography'?minConfig.fontSize:minConfig.size),maxBase=Number(kind==='typography'?maxConfig.fontSize:maxConfig.size);
+    const minRatio=Number(minConfig.isCustomScaleRatio&&minConfig.scaleRatioInputValue?minConfig.scaleRatioInputValue:minConfig.scaleRatio)||1;
+    const maxRatio=Number(maxConfig.isCustomScaleRatio&&maxConfig.scaleRatioInputValue?maxConfig.scaleRatioInputValue:maxConfig.scaleRatio)||1;
+    if(!Number.isFinite(minBase)||!Number.isFinite(maxBase))return;
+    steps.forEach((step,index)=>{
+      const offset=index-baseIndex,minSize=minBase*Math.pow(minRatio,offset),maxSize=maxBase*Math.pow(maxRatio,offset);
+      const cssVar=coreBridgeVariableName(group.namingConvention||kind,step);
+      const item=coreBridgeNormalizeItem(cssVar,coreBridgeFluidValue(minSize,maxSize,minScreen,maxScreen,useRem,rootSize),hint,'core-scale');if(item)items.push(item);
+    });
+  });
+  return items;
+}
+
+function coreBridgeColorItems(colorSystem){
+  if(!colorSystem||colorSystem.isDisabled||!Array.isArray(colorSystem.groups))return {items:[],darkCount:0,variantCount:0};
+  const items=[];let darkCount=0,variantCount=0;
+  colorSystem.groups.forEach(group=>{
+    if(!group||group.isDisabled||!Array.isArray(group.colors))return;
+    group.colors.forEach(color=>{
+      if(!color||!color.name||!color.value)return;
+      const base=coreBridgeNormalizeItem(`--${color.name}`,color.value,'colors','core-color');if(base)items.push(base);
+      if(color.darkValue)darkCount++;
+      for(const key of ['shades','tints'])for(const variant of Array.isArray(color[key])?color[key]:[]){const item=coreBridgeNormalizeItem(`--${variant.name}`,variant.value,'colors','core-color-variant');if(item)items.push(item);}
+      if(Array.isArray(color.transparentVariables))variantCount+=color.transparentVariables.length;
+    });
+  });
+  return {items,darkCount,variantCount};
+}
+
+function coreBridgeFontItems(fontsData){
+  if(!fontsData||fontsData.isDisabled||!Array.isArray(fontsData.fonts))return [];
+  return fontsData.fonts.flatMap(font=>{
+    if(!font||font.enable===false||!font.customVariable||!font.family)return [];
+    const cssVar=`--${String(font.customVariable).replace(/^--/,'')}`,family=/\s/.test(font.family)?`"${font.family}"`:font.family;
+    const item=coreBridgeNormalizeItem(cssVar,family,'typography','core-font');return item?[item]:[];
+  });
+}
+
+function coreBridgeStyleSheetItems(styleSheetData){
+  if(!styleSheetData||typeof styleSheetData!=='object')return [];
+  const items=[];const hints={colorStyles:'colors',typographyStyles:'typography',spacingStyles:'spacing'};
+  Object.entries(styleSheetData).forEach(([section,value])=>{
+    const hint=hints[section]||'';
+    (function visit(entry){
+      if(Array.isArray(entry)){entry.forEach(visit);return;}
+      if(!entry||typeof entry!=='object')return;
+      if(entry.isDisabled)return;
+      if(Array.isArray(entry.declarations))entry.declarations.forEach(declaration=>{const item=coreBridgeNormalizeItem(declaration?.property,declaration?.value,hint,'core-stylesheet');if(item)items.push(item);});
+      Object.entries(entry).forEach(([key,child])=>{if(key!=='declarations')visit(child);});
+    })(value);
+  });
+  return items;
+}
+
+function extractCoreDesignSystemTokens(preset={}){
+  const modules=preset.modulesData||{},preferences=preset.preferences||{},warnings=[];
+  const colorResult=coreBridgeColorItems(modules.COLOR_SYSTEM);
+  const candidates=[
+    ...colorResult.items,
+    ...coreBridgeScaleItems(modules.FLUID_TYPOGRAPHY,'typography',preferences),
+    ...coreBridgeScaleItems(modules.FLUID_SPACING,'spacing',preferences),
+    ...coreBridgeFontItems(modules.FONTS),
+    ...coreBridgeStyleSheetItems(preset.styleSheetData),
+  ];
+  const rawStylesheets=modules.STYLESHEETS;
+  if(rawStylesheets&&!rawStylesheets.isDisabled&&Array.isArray(rawStylesheets.groups))rawStylesheets.groups.forEach(group=>{if(group?.isActive!==false)candidates.push(...coreBridgeCssVariables(group?.css||'','','core-custom-css'));});
+  if(colorResult.darkCount)warnings.push(`${colorResult.darkCount} colores incluyen modo oscuro; Orbit importará su valor principal.`);
+  if(colorResult.variantCount)warnings.push(`${colorResult.variantCount} transparencias calculadas permanecerán en Core Framework.`);
+  const byVariable=new Map();
+  candidates.forEach(item=>{if(item)byVariable.set(item.cssVar,item);});
+  const items=[...byVariable.values()].slice(0,ORBIT_CORE_BRIDGE_LIMITS.maxTokens);
+  if(byVariable.size>items.length)warnings.push(`Se aplicó el límite de ${ORBIT_CORE_BRIDGE_LIMITS.maxTokens} tokens por importación.`);
+  return {items,warnings,stats:{colors:items.filter(item=>item.category==='colors').length,typography:items.filter(item=>item.category==='typography').length,spacing:items.filter(item=>item.category==='spacing').length,other:items.filter(item=>!['colors','typography','spacing'].includes(item.category)).length}};
+}
+
+function parseCoreDesignSystemSource(source,{filename=''}={}){
+  const raw=String(source||'');
+  if(!raw.trim())return {ok:false,error:'El archivo está vacío.'};
+  if(new TextEncoder().encode(raw).length>ORBIT_CORE_BRIDGE_LIMITS.sourceBytes)return {ok:false,error:'El archivo .core supera el límite seguro de 8 MB.'};
+  let preset=null,format='core';
+  const jsonSource=raw.replace(/^\uFEFF/,'').trim();
+  try{preset=JSON.parse(jsonSource);format='core-json';}catch{
+    try{const decoded=decodeCoreFrameworkFile(raw);preset=JSON.parse(decoded);}catch{return {ok:false,error:'No se pudo leer el archivo .core. Verifica que sea una exportación válida de Core Framework.'};}
+  }
+  if(!preset||typeof preset!=='object'||Array.isArray(preset)||(!preset.modulesData&&!preset.styleSheetData))return {ok:false,error:'El archivo no contiene un proyecto compatible de Core Framework.'};
+  const extracted=extractCoreDesignSystemTokens(preset);
+  if(!extracted.items.length)return {ok:false,error:'El proyecto Core no contiene variables compatibles para importar.'};
+  return {ok:true,format,filename:String(filename||''),projectName:String(preset.name||'Core Framework'),appVersion:String(preset.app_version||''),items:extracted.items,warnings:extracted.warnings,stats:extracted.stats};
+}
+
+
 /* public/js/json/orbit-json-studio.js */
 /** Orbit JSON Studio: parsing, v13 migration, validation, repair and sandboxed preview. */
 const ORBIT_JSON_VERSION = 13;
@@ -13420,21 +13634,49 @@ function classifyCssVariable(item){
 function analyzeDesignSystem(css){
   return parseCssVariables(css).map(item=>({...item,category:classifyCssVariable(item),key:slug(item.cssVar.replace(/^--/,'')),name:item.cssVar.replace(/^--/,'').replace(/[-_]+/g,' ').replace(/\b\w/g,c=>c.toUpperCase())}));
 }
-function designSystemPreview(items){
+function designSystemPreview(items,source={}){
   const groups=Object.keys(tokenMeta).map(category=>({category,items:items.filter(item=>item.category===category)})).filter(group=>group.items.length);
-  return `<div class="import-analysis"><div class="import-result-head"><strong>${items.length} variables detectadas</strong><span>${groups.length} categorías</span></div>${groups.map(group=>`<section class="import-token-group"><h3>${tokenMeta[group.category].label}<span>${group.items.length}</span></h3>${group.items.map(item=>`<div class="import-token-row"><code>${escapeHtml(item.cssVar)}</code><span>${escapeHtml(item.value)}</span><select data-import-token-category="${escapeHtml(item.cssVar)}">${Object.entries(tokenMeta).map(([key,meta])=>`<option value="${key}" ${item.category===key?'selected':''}>${meta.label}</option>`).join('')}</select></div>`).join('')}</section>`).join('')}<button class="primary-action import-commit" type="button" data-commit-design-system>Importar ${items.length} tokens</button></div>`;
+  const sourceCard=source.kind==='core'?`<div class="core-import-summary"><span class="core-import-badge">.core</span><div><strong>${escapeHtml(source.projectName||'Core Framework')}</strong><small>${source.appVersion?`Core ${escapeHtml(source.appVersion)} · `:''}${items.length} variables compatibles · la estructura de Orbit no cambiará</small></div><span class="core-import-ready">Listo</span></div>`:'';
+  const warningList=(source.warnings||[]).length?`<div class="core-import-warnings"><strong>Revisión antes de importar</strong>${source.warnings.map(warning=>`<span>• ${escapeHtml(warning)}</span>`).join('')}</div>`:'';
+  return `<div class="import-analysis">${sourceCard}<div class="import-result-head"><strong>${items.length} variables detectadas</strong><span>${groups.length} categorías</span></div>${groups.map(group=>`<section class="import-token-group"><h3><label><input type="checkbox" data-import-token-group="${group.category}" checked> ${tokenMeta[group.category].label}</label><span>${group.items.length}</span></h3>${group.items.map(item=>{const index=items.indexOf(item),owner=tokenCssVarOwner(item.cssVar);return `<div class="import-token-row" data-import-token-row="${index}" data-import-token-group-row="${group.category}"><input type="checkbox" data-import-token-enabled="${index}" checked aria-label="Importar ${escapeHtml(item.name)}"><code title="${escapeHtml(item.cssVar)}">${escapeHtml(item.cssVar)}</code><span title="${escapeHtml(item.value)}">${escapeHtml(item.value)}</span><select data-import-token-category="${index}">${Object.entries(tokenMeta).map(([key,meta])=>`<option value="${key}" ${item.category===key?'selected':''}>${meta.label}</option>`).join('')}</select><small class="import-token-status ${owner?'is-update':''}">${owner?'Actualizar':'Nuevo'}</small></div>`;}).join('')}</section>`).join('')}${warningList}<button class="primary-action import-commit" type="button" data-commit-design-system>Importar <span data-import-selected-count>${items.length}</span> tokens</button></div>`;
+}
+function refreshDesignSystemSelection(){
+  const checks=[...els.modalContent.querySelectorAll('[data-import-token-enabled]')],selected=checks.filter(input=>input.checked).length,button=els.modalContent.querySelector('[data-commit-design-system]'),count=els.modalContent.querySelector('[data-import-selected-count]');
+  if(count)count.textContent=selected;if(button)button.disabled=!selected;
+  els.modalContent.querySelectorAll('[data-import-token-group]').forEach(group=>{const rows=checks.filter(input=>input.closest('[data-import-token-group-row]')?.dataset.importTokenGroupRow===group.dataset.importTokenGroup);group.checked=rows.length>0&&rows.every(input=>input.checked);group.indeterminate=rows.some(input=>input.checked)&&!group.checked;});
 }
 function commitDesignSystem(){
   const items=state.pendingImport?.type==='tokens'?state.pendingImport.items:[]; if(!items.length)return;
   ensureTokenGroups();
-  const before=snapshot();
-  items.forEach(item=>{
-    const select=els.modalContent.querySelector(`[data-import-token-category="${CSS.escape(item.cssVar)}"]`);
-    const category=select?.value||item.category; const baseKey=slug(item.cssVar.replace(/^--/,'')); let key=baseKey,index=2;
+  const selected=items.map((item,index)=>({item,index})).filter(({index})=>els.modalContent.querySelector(`[data-import-token-enabled="${index}"]`)?.checked!==false);if(!selected.length)return;
+  const before=snapshot();let created=0,updated=0;
+  selected.forEach(({item,index:itemIndex})=>{
+    const select=els.modalContent.querySelector(`[data-import-token-category="${itemIndex}"]`);
+    const category=select?.value||item.category;const owner=tokenCssVarOwner(item.cssVar);
+    if(owner){
+      if(owner.category===category){state.tokens[category][owner.key]={...state.tokens[category][owner.key],name:item.name,value:item.value,cssVar:item.cssVar};updated++;return;}
+      delete state.tokens[owner.category][owner.key];
+    }
+    const baseKey=slug(item.cssVar.replace(/^--/,''))||'token';let key=baseKey,index=2;
     while(state.tokens[category][key]&&state.tokens[category][key].cssVar!==item.cssVar)key=`${baseKey}-${index++}`;
+    if(state.tokens[category][key])updated++;else created++;
     state.tokens[category][key]={name:item.name,value:item.value,cssVar:item.cssVar};
   });
-  pushHistory(before);markUnsaved();render();closeModal();toast(`${items.length} tokens importados`);
+  pushHistory(before);markUnsaved();syncGoogleFontsStylesheet();render();closeModal();toast(`${selected.length} tokens importados · ${created} nuevos · ${updated} actualizados`);
+}
+function showDesignSystemError(message){const host=$('#import-analysis');if(host)host.innerHTML=`<div class="core-import-error"><strong>No se pudo preparar la importación</strong><span>${escapeHtml(message)}</span></div>`;toast(message,'error');}
+function prepareDesignSystemImport(items,source={}){if(!items.length){showDesignSystemError('No se detectaron variables compatibles.');return false;}state.pendingImport={type:'tokens',items,source};const host=$('#import-analysis');if(host)host.innerHTML=designSystemPreview(items,source);return true;}
+async function loadDesignSystemFile(file){
+  if(!file)return false;
+  if(file.size>ORBIT_CORE_BRIDGE_LIMITS.sourceBytes){showDesignSystemError('El archivo supera el límite seguro de 8 MB.');return false;}
+  let source='';try{source=await file.text();}catch{showDesignSystemError('No se pudo leer el archivo seleccionado.');return false;}
+  const extension=String(file.name||'').toLowerCase().split('.').pop();
+  if(extension==='core'||extension==='json'){
+    const result=parseCoreDesignSystemSource(source,{filename:file.name});
+    if(!result.ok){showDesignSystemError(result.error);return false;}
+    return prepareDesignSystemImport(result.items,{kind:'core',projectName:result.projectName,appVersion:result.appVersion,warnings:result.warnings,filename:file.name});
+  }
+  const area=$('#import-design-css');if(area)area.value=source;const items=analyzeDesignSystem(source);return prepareDesignSystemImport(items,{kind:'css',filename:file.name});
 }
 function importTabs(active){
   const tabs=[['design-system','Design System'],['html-css','HTML + CSS'],['orbit-json','Orbit JSON / IA']];
@@ -13574,7 +13816,7 @@ function orbitJsonStudioMarkup(){
 function showImportHub(mode=state.importMode){
   state.importMode=mode;
   let body='';
-  if(mode==='design-system')body=`<div class="import-copy"><h3>Import Design System</h3><p>Pega el CSS exportado por Core Framework o cualquier sistema basado en variables CSS.</p></div><textarea id="import-design-css" class="code-area" rows="13" placeholder=":root {\n  --color-primary: #ef5a24;\n  --space-m: 1.5rem;\n}"></textarea><div class="import-actions"><label class="secondary-action file-action">Subir CSS<input id="design-system-file" type="file" accept=".css,text/css" hidden></label><button class="primary-action" type="button" data-analyze-design-system>Analizar variables</button></div><div id="import-analysis"></div>`;
+  if(mode==='design-system')body=`<div class="import-copy core-bridge-copy"><span class="core-bridge-kicker">CORE DESIGN SYSTEM BRIDGE</span><h3>Importar estilos sin cambiar el diseño</h3><p>Carga un proyecto <strong>.core</strong> para traer colores, tipografías, escalas de espaciado y variables. Orbit conserva la estructura, posiciones, imágenes y exportación Astro.</p></div><label class="core-file-dropzone"><input id="design-system-file" type="file" accept=".core,.json,.css,text/plain,application/json,text/css" hidden><span class="core-file-icon">C</span><span><strong>Cargar archivo .core</strong><small>También admite el JSON de Core Framework o CSS con variables</small></span><span class="core-file-action">Seleccionar archivo</span></label><div class="orbit-json-divider"><span>o pega CSS manualmente</span></div><textarea id="import-design-css" class="code-area" rows="9" placeholder=":root {\n  --color-primary: #ef5a24;\n  --space-m: 1.5rem;\n}"></textarea><div class="import-actions"><button class="primary-action" type="button" data-analyze-design-system>Analizar CSS</button></div><div id="import-analysis" aria-live="polite"></div>`;
   if(mode==='html-css')body=`<div class="import-copy"><h3>Importar HTML y CSS</h3><p>Orbit convierte etiquetas semánticas, clases y estilos básicos en elementos editables. El código complejo puede requerir revisión.</p></div><label class="import-label">HTML<textarea id="import-html-source" class="code-area" rows="10" placeholder="<main class=\"landing\">...</main>"></textarea></label><label class="import-label">CSS<textarea id="import-css-source" class="code-area" rows="9" placeholder=".landing { display:grid; gap:2rem; }"></textarea></label><div class="import-actions"><select id="code-import-mode"><option value="replace">Reemplazar canvas</option><option value="append">Añadir al final</option></select><button class="primary-action" type="button" data-import-html-css>Convertir a Orbit</button></div>`;
   if(mode==='orbit-json')body=orbitJsonStudioMarkup();
   openModal('Importar a Orbit','ORBIT IMPORT',`${importTabs(mode)}<div class="import-pane">${body}</div>`,'import-modal');
@@ -15259,7 +15501,7 @@ document.addEventListener('click',event=>{
   const tokenGroupButton=event.target.closest('[data-token-group]'); if(tokenGroupButton){const key=tokenGroupButton.dataset.tokenGroup;state.tokenGroupsOpen={...(state.tokenGroupsOpen||{}),[key]:state.tokenGroupsOpen?.[key]===false};renderLeft();markUnsaved();return;}
   const close=event.target.closest('[data-close-modal]'); if(close){closeModal();return;}
   const importTab=event.target.closest('[data-import-tab]'); if(importTab){showImportHub(importTab.dataset.importTab);return;}
-  if(event.target.closest('[data-analyze-design-system]')){const css=$('#import-design-css')?.value||'';const items=analyzeDesignSystem(css);if(!items.length){toast('No se detectaron variables CSS');return;}state.pendingImport={type:'tokens',items};const host=$('#import-analysis');if(host)host.innerHTML=designSystemPreview(items);return;}
+  if(event.target.closest('[data-analyze-design-system]')){const css=$('#import-design-css')?.value||'';const items=analyzeDesignSystem(css);if(!items.length){showDesignSystemError('No se detectaron variables CSS.');return;}prepareDesignSystemImport(items,{kind:'css'});return;}
   if(event.target.closest('[data-commit-design-system]')){commitDesignSystem();return;}
   if(event.target.closest('[data-import-html-css]')){try{const before=snapshot();const count=importHtmlCss($('#import-html-source')?.value||'',$('#import-css-source')?.value||'',$('#code-import-mode')?.value||'replace');pushHistory(before);markUnsaved();render();closeModal();toast(`${count} elementos importados`);}catch(error){toast(error.message);}return;}
   if(event.target.closest('[data-copy-orbit-ai-prompt]')){void copyOrbitAiAuthoringPrompt();return;}
@@ -15399,6 +15641,8 @@ document.addEventListener('pointerup',event=>{resizeEnd(event);endDirectEdit(eve
 document.addEventListener('dragover',event=>{
   const captureZone=event.target.closest?.('[data-ai-capture-dropzone]');
   if(captureZone){event.preventDefault();event.stopPropagation();captureZone.classList.add('is-dragging');if(event.dataTransfer)event.dataTransfer.dropEffect='copy';return;}
+  const coreZone=event.target.closest?.('.core-file-dropzone');
+  if(coreZone){event.preventDefault();event.stopPropagation();coreZone.classList.add('is-dragging');if(event.dataTransfer)event.dataTransfer.dropEffect='copy';return;}
   const zone=event.target.closest?.('[data-orbit-json-dropzone]');
   if(!zone)return;
   event.preventDefault();
@@ -15409,12 +15653,16 @@ document.addEventListener('dragover',event=>{
 document.addEventListener('dragleave',event=>{
   const captureZone=event.target.closest?.('[data-ai-capture-dropzone]');
   if(captureZone&&!captureZone.contains(event.relatedTarget)){captureZone.classList.remove('is-dragging');return;}
+  const coreZone=event.target.closest?.('.core-file-dropzone');
+  if(coreZone&&!coreZone.contains(event.relatedTarget)){coreZone.classList.remove('is-dragging');return;}
   const zone=event.target.closest?.('[data-orbit-json-dropzone]');
   if(zone&&!zone.contains(event.relatedTarget))zone.classList.remove('is-dragging');
 });
 document.addEventListener('drop',event=>{
   const captureZone=event.target.closest?.('[data-ai-capture-dropzone]');
   if(captureZone){event.preventDefault();event.stopPropagation();captureZone.classList.remove('is-dragging');loadAiWorkflowCapture(event.dataTransfer?.files?.[0]);return;}
+  const coreZone=event.target.closest?.('.core-file-dropzone');
+  if(coreZone){event.preventDefault();event.stopPropagation();coreZone.classList.remove('is-dragging');void loadDesignSystemFile(event.dataTransfer?.files?.[0]);return;}
   const zone=event.target.closest?.('[data-orbit-json-dropzone]');
   if(!zone)return;
   event.preventDefault();
@@ -15493,6 +15741,9 @@ document.addEventListener('input',event=>{
 
 document.addEventListener('change',async event=>{
   const t=event.target;
+  if(t.dataset.importTokenGroup!==undefined){const checked=t.checked;els.modalContent.querySelectorAll(`[data-import-token-group-row="${t.dataset.importTokenGroup}"] [data-import-token-enabled]`).forEach(input=>input.checked=checked);refreshDesignSystemSelection();return;}
+  if(t.dataset.importTokenEnabled!==undefined){refreshDesignSystemSelection();return;}
+  if(t.dataset.importTokenCategory!==undefined)return;
   if(t.dataset.aiCaptureFile!==undefined){loadAiWorkflowCapture(t.files?.[0]);return;}
   if(t.dataset.carouselResponsive!==undefined||t.dataset.carouselField!==undefined){
     if(state.transaction){updateCarouselFromControl(t);endTransaction();}
@@ -15514,7 +15765,7 @@ document.addEventListener('change',async event=>{
   }
   if(t.dataset.componentVariantSelect!==undefined){const rootId=t.dataset.componentRootId;if(rootId){state.selectedId=rootId;state.selectedIds=[rootId];applyComponentVariant(t.dataset.componentVariantSelect,t.value);}return;}
   if(t.dataset.componentPropInput!==undefined){endTransaction();return;}
-  if(t.id==='design-system-file'){const file=t.files?.[0];if(file){const area=$('#import-design-css');if(area)area.value=await file.text();}return;}
+  if(t.id==='design-system-file'){await loadDesignSystemFile(t.files?.[0]);t.value='';return;}
   if(t.id==='orbit-json-file'){await loadOrbitJsonFile(t.files?.[0]);return;}
   if(t.dataset.gridBuilderGap!==undefined){updateGridBuilderStyles({gap:t.value.trim()||'0px'});return;}
   if(t.dataset.gridTrackCol!==undefined){const s=gridBuilderStyles();if(s){const list=normalizeTrackList(s.gridColumnTracks,Math.max(1,Number(s.gridColumns)||1),s.gridUseMinMax?'minmax(0,1fr)':'1fr');list[Number(t.dataset.gridTrackCol)]=t.value.trim()||'1fr';updateGridBuilderStyles({gridColumnTracks:list});}return;}

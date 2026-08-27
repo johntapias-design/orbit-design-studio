@@ -3798,21 +3798,49 @@ function classifyCssVariable(item){
 function analyzeDesignSystem(css){
   return parseCssVariables(css).map(item=>({...item,category:classifyCssVariable(item),key:slug(item.cssVar.replace(/^--/,'')),name:item.cssVar.replace(/^--/,'').replace(/[-_]+/g,' ').replace(/\b\w/g,c=>c.toUpperCase())}));
 }
-function designSystemPreview(items){
+function designSystemPreview(items,source={}){
   const groups=Object.keys(tokenMeta).map(category=>({category,items:items.filter(item=>item.category===category)})).filter(group=>group.items.length);
-  return `<div class="import-analysis"><div class="import-result-head"><strong>${items.length} variables detectadas</strong><span>${groups.length} categorías</span></div>${groups.map(group=>`<section class="import-token-group"><h3>${tokenMeta[group.category].label}<span>${group.items.length}</span></h3>${group.items.map(item=>`<div class="import-token-row"><code>${escapeHtml(item.cssVar)}</code><span>${escapeHtml(item.value)}</span><select data-import-token-category="${escapeHtml(item.cssVar)}">${Object.entries(tokenMeta).map(([key,meta])=>`<option value="${key}" ${item.category===key?'selected':''}>${meta.label}</option>`).join('')}</select></div>`).join('')}</section>`).join('')}<button class="primary-action import-commit" type="button" data-commit-design-system>Importar ${items.length} tokens</button></div>`;
+  const sourceCard=source.kind==='core'?`<div class="core-import-summary"><span class="core-import-badge">.core</span><div><strong>${escapeHtml(source.projectName||'Core Framework')}</strong><small>${source.appVersion?`Core ${escapeHtml(source.appVersion)} · `:''}${items.length} variables compatibles · la estructura de Orbit no cambiará</small></div><span class="core-import-ready">Listo</span></div>`:'';
+  const warningList=(source.warnings||[]).length?`<div class="core-import-warnings"><strong>Revisión antes de importar</strong>${source.warnings.map(warning=>`<span>• ${escapeHtml(warning)}</span>`).join('')}</div>`:'';
+  return `<div class="import-analysis">${sourceCard}<div class="import-result-head"><strong>${items.length} variables detectadas</strong><span>${groups.length} categorías</span></div>${groups.map(group=>`<section class="import-token-group"><h3><label><input type="checkbox" data-import-token-group="${group.category}" checked> ${tokenMeta[group.category].label}</label><span>${group.items.length}</span></h3>${group.items.map(item=>{const index=items.indexOf(item),owner=tokenCssVarOwner(item.cssVar);return `<div class="import-token-row" data-import-token-row="${index}" data-import-token-group-row="${group.category}"><input type="checkbox" data-import-token-enabled="${index}" checked aria-label="Importar ${escapeHtml(item.name)}"><code title="${escapeHtml(item.cssVar)}">${escapeHtml(item.cssVar)}</code><span title="${escapeHtml(item.value)}">${escapeHtml(item.value)}</span><select data-import-token-category="${index}">${Object.entries(tokenMeta).map(([key,meta])=>`<option value="${key}" ${item.category===key?'selected':''}>${meta.label}</option>`).join('')}</select><small class="import-token-status ${owner?'is-update':''}">${owner?'Actualizar':'Nuevo'}</small></div>`;}).join('')}</section>`).join('')}${warningList}<button class="primary-action import-commit" type="button" data-commit-design-system>Importar <span data-import-selected-count>${items.length}</span> tokens</button></div>`;
+}
+function refreshDesignSystemSelection(){
+  const checks=[...els.modalContent.querySelectorAll('[data-import-token-enabled]')],selected=checks.filter(input=>input.checked).length,button=els.modalContent.querySelector('[data-commit-design-system]'),count=els.modalContent.querySelector('[data-import-selected-count]');
+  if(count)count.textContent=selected;if(button)button.disabled=!selected;
+  els.modalContent.querySelectorAll('[data-import-token-group]').forEach(group=>{const rows=checks.filter(input=>input.closest('[data-import-token-group-row]')?.dataset.importTokenGroupRow===group.dataset.importTokenGroup);group.checked=rows.length>0&&rows.every(input=>input.checked);group.indeterminate=rows.some(input=>input.checked)&&!group.checked;});
 }
 function commitDesignSystem(){
   const items=state.pendingImport?.type==='tokens'?state.pendingImport.items:[]; if(!items.length)return;
   ensureTokenGroups();
-  const before=snapshot();
-  items.forEach(item=>{
-    const select=els.modalContent.querySelector(`[data-import-token-category="${CSS.escape(item.cssVar)}"]`);
-    const category=select?.value||item.category; const baseKey=slug(item.cssVar.replace(/^--/,'')); let key=baseKey,index=2;
+  const selected=items.map((item,index)=>({item,index})).filter(({index})=>els.modalContent.querySelector(`[data-import-token-enabled="${index}"]`)?.checked!==false);if(!selected.length)return;
+  const before=snapshot();let created=0,updated=0;
+  selected.forEach(({item,index:itemIndex})=>{
+    const select=els.modalContent.querySelector(`[data-import-token-category="${itemIndex}"]`);
+    const category=select?.value||item.category;const owner=tokenCssVarOwner(item.cssVar);
+    if(owner){
+      if(owner.category===category){state.tokens[category][owner.key]={...state.tokens[category][owner.key],name:item.name,value:item.value,cssVar:item.cssVar};updated++;return;}
+      delete state.tokens[owner.category][owner.key];
+    }
+    const baseKey=slug(item.cssVar.replace(/^--/,''))||'token';let key=baseKey,index=2;
     while(state.tokens[category][key]&&state.tokens[category][key].cssVar!==item.cssVar)key=`${baseKey}-${index++}`;
+    if(state.tokens[category][key])updated++;else created++;
     state.tokens[category][key]={name:item.name,value:item.value,cssVar:item.cssVar};
   });
-  pushHistory(before);markUnsaved();render();closeModal();toast(`${items.length} tokens importados`);
+  pushHistory(before);markUnsaved();syncGoogleFontsStylesheet();render();closeModal();toast(`${selected.length} tokens importados · ${created} nuevos · ${updated} actualizados`);
+}
+function showDesignSystemError(message){const host=$('#import-analysis');if(host)host.innerHTML=`<div class="core-import-error"><strong>No se pudo preparar la importación</strong><span>${escapeHtml(message)}</span></div>`;toast(message,'error');}
+function prepareDesignSystemImport(items,source={}){if(!items.length){showDesignSystemError('No se detectaron variables compatibles.');return false;}state.pendingImport={type:'tokens',items,source};const host=$('#import-analysis');if(host)host.innerHTML=designSystemPreview(items,source);return true;}
+async function loadDesignSystemFile(file){
+  if(!file)return false;
+  if(file.size>ORBIT_CORE_BRIDGE_LIMITS.sourceBytes){showDesignSystemError('El archivo supera el límite seguro de 8 MB.');return false;}
+  let source='';try{source=await file.text();}catch{showDesignSystemError('No se pudo leer el archivo seleccionado.');return false;}
+  const extension=String(file.name||'').toLowerCase().split('.').pop();
+  if(extension==='core'||extension==='json'){
+    const result=parseCoreDesignSystemSource(source,{filename:file.name});
+    if(!result.ok){showDesignSystemError(result.error);return false;}
+    return prepareDesignSystemImport(result.items,{kind:'core',projectName:result.projectName,appVersion:result.appVersion,warnings:result.warnings,filename:file.name});
+  }
+  const area=$('#import-design-css');if(area)area.value=source;const items=analyzeDesignSystem(source);return prepareDesignSystemImport(items,{kind:'css',filename:file.name});
 }
 function importTabs(active){
   const tabs=[['design-system','Design System'],['html-css','HTML + CSS'],['orbit-json','Orbit JSON / IA']];
@@ -3952,7 +3980,7 @@ function orbitJsonStudioMarkup(){
 function showImportHub(mode=state.importMode){
   state.importMode=mode;
   let body='';
-  if(mode==='design-system')body=`<div class="import-copy"><h3>Import Design System</h3><p>Pega el CSS exportado por Core Framework o cualquier sistema basado en variables CSS.</p></div><textarea id="import-design-css" class="code-area" rows="13" placeholder=":root {\n  --color-primary: #ef5a24;\n  --space-m: 1.5rem;\n}"></textarea><div class="import-actions"><label class="secondary-action file-action">Subir CSS<input id="design-system-file" type="file" accept=".css,text/css" hidden></label><button class="primary-action" type="button" data-analyze-design-system>Analizar variables</button></div><div id="import-analysis"></div>`;
+  if(mode==='design-system')body=`<div class="import-copy core-bridge-copy"><span class="core-bridge-kicker">CORE DESIGN SYSTEM BRIDGE</span><h3>Importar estilos sin cambiar el diseño</h3><p>Carga un proyecto <strong>.core</strong> para traer colores, tipografías, escalas de espaciado y variables. Orbit conserva la estructura, posiciones, imágenes y exportación Astro.</p></div><label class="core-file-dropzone"><input id="design-system-file" type="file" accept=".core,.json,.css,text/plain,application/json,text/css" hidden><span class="core-file-icon">C</span><span><strong>Cargar archivo .core</strong><small>También admite el JSON de Core Framework o CSS con variables</small></span><span class="core-file-action">Seleccionar archivo</span></label><div class="orbit-json-divider"><span>o pega CSS manualmente</span></div><textarea id="import-design-css" class="code-area" rows="9" placeholder=":root {\n  --color-primary: #ef5a24;\n  --space-m: 1.5rem;\n}"></textarea><div class="import-actions"><button class="primary-action" type="button" data-analyze-design-system>Analizar CSS</button></div><div id="import-analysis" aria-live="polite"></div>`;
   if(mode==='html-css')body=`<div class="import-copy"><h3>Importar HTML y CSS</h3><p>Orbit convierte etiquetas semánticas, clases y estilos básicos en elementos editables. El código complejo puede requerir revisión.</p></div><label class="import-label">HTML<textarea id="import-html-source" class="code-area" rows="10" placeholder="<main class=\"landing\">...</main>"></textarea></label><label class="import-label">CSS<textarea id="import-css-source" class="code-area" rows="9" placeholder=".landing { display:grid; gap:2rem; }"></textarea></label><div class="import-actions"><select id="code-import-mode"><option value="replace">Reemplazar canvas</option><option value="append">Añadir al final</option></select><button class="primary-action" type="button" data-import-html-css>Convertir a Orbit</button></div>`;
   if(mode==='orbit-json')body=orbitJsonStudioMarkup();
   openModal('Importar a Orbit','ORBIT IMPORT',`${importTabs(mode)}<div class="import-pane">${body}</div>`,'import-modal');
@@ -5637,7 +5665,7 @@ document.addEventListener('click',event=>{
   const tokenGroupButton=event.target.closest('[data-token-group]'); if(tokenGroupButton){const key=tokenGroupButton.dataset.tokenGroup;state.tokenGroupsOpen={...(state.tokenGroupsOpen||{}),[key]:state.tokenGroupsOpen?.[key]===false};renderLeft();markUnsaved();return;}
   const close=event.target.closest('[data-close-modal]'); if(close){closeModal();return;}
   const importTab=event.target.closest('[data-import-tab]'); if(importTab){showImportHub(importTab.dataset.importTab);return;}
-  if(event.target.closest('[data-analyze-design-system]')){const css=$('#import-design-css')?.value||'';const items=analyzeDesignSystem(css);if(!items.length){toast('No se detectaron variables CSS');return;}state.pendingImport={type:'tokens',items};const host=$('#import-analysis');if(host)host.innerHTML=designSystemPreview(items);return;}
+  if(event.target.closest('[data-analyze-design-system]')){const css=$('#import-design-css')?.value||'';const items=analyzeDesignSystem(css);if(!items.length){showDesignSystemError('No se detectaron variables CSS.');return;}prepareDesignSystemImport(items,{kind:'css'});return;}
   if(event.target.closest('[data-commit-design-system]')){commitDesignSystem();return;}
   if(event.target.closest('[data-import-html-css]')){try{const before=snapshot();const count=importHtmlCss($('#import-html-source')?.value||'',$('#import-css-source')?.value||'',$('#code-import-mode')?.value||'replace');pushHistory(before);markUnsaved();render();closeModal();toast(`${count} elementos importados`);}catch(error){toast(error.message);}return;}
   if(event.target.closest('[data-copy-orbit-ai-prompt]')){void copyOrbitAiAuthoringPrompt();return;}
@@ -5777,6 +5805,8 @@ document.addEventListener('pointerup',event=>{resizeEnd(event);endDirectEdit(eve
 document.addEventListener('dragover',event=>{
   const captureZone=event.target.closest?.('[data-ai-capture-dropzone]');
   if(captureZone){event.preventDefault();event.stopPropagation();captureZone.classList.add('is-dragging');if(event.dataTransfer)event.dataTransfer.dropEffect='copy';return;}
+  const coreZone=event.target.closest?.('.core-file-dropzone');
+  if(coreZone){event.preventDefault();event.stopPropagation();coreZone.classList.add('is-dragging');if(event.dataTransfer)event.dataTransfer.dropEffect='copy';return;}
   const zone=event.target.closest?.('[data-orbit-json-dropzone]');
   if(!zone)return;
   event.preventDefault();
@@ -5787,12 +5817,16 @@ document.addEventListener('dragover',event=>{
 document.addEventListener('dragleave',event=>{
   const captureZone=event.target.closest?.('[data-ai-capture-dropzone]');
   if(captureZone&&!captureZone.contains(event.relatedTarget)){captureZone.classList.remove('is-dragging');return;}
+  const coreZone=event.target.closest?.('.core-file-dropzone');
+  if(coreZone&&!coreZone.contains(event.relatedTarget)){coreZone.classList.remove('is-dragging');return;}
   const zone=event.target.closest?.('[data-orbit-json-dropzone]');
   if(zone&&!zone.contains(event.relatedTarget))zone.classList.remove('is-dragging');
 });
 document.addEventListener('drop',event=>{
   const captureZone=event.target.closest?.('[data-ai-capture-dropzone]');
   if(captureZone){event.preventDefault();event.stopPropagation();captureZone.classList.remove('is-dragging');loadAiWorkflowCapture(event.dataTransfer?.files?.[0]);return;}
+  const coreZone=event.target.closest?.('.core-file-dropzone');
+  if(coreZone){event.preventDefault();event.stopPropagation();coreZone.classList.remove('is-dragging');void loadDesignSystemFile(event.dataTransfer?.files?.[0]);return;}
   const zone=event.target.closest?.('[data-orbit-json-dropzone]');
   if(!zone)return;
   event.preventDefault();
@@ -5871,6 +5905,9 @@ document.addEventListener('input',event=>{
 
 document.addEventListener('change',async event=>{
   const t=event.target;
+  if(t.dataset.importTokenGroup!==undefined){const checked=t.checked;els.modalContent.querySelectorAll(`[data-import-token-group-row="${t.dataset.importTokenGroup}"] [data-import-token-enabled]`).forEach(input=>input.checked=checked);refreshDesignSystemSelection();return;}
+  if(t.dataset.importTokenEnabled!==undefined){refreshDesignSystemSelection();return;}
+  if(t.dataset.importTokenCategory!==undefined)return;
   if(t.dataset.aiCaptureFile!==undefined){loadAiWorkflowCapture(t.files?.[0]);return;}
   if(t.dataset.carouselResponsive!==undefined||t.dataset.carouselField!==undefined){
     if(state.transaction){updateCarouselFromControl(t);endTransaction();}
@@ -5892,7 +5929,7 @@ document.addEventListener('change',async event=>{
   }
   if(t.dataset.componentVariantSelect!==undefined){const rootId=t.dataset.componentRootId;if(rootId){state.selectedId=rootId;state.selectedIds=[rootId];applyComponentVariant(t.dataset.componentVariantSelect,t.value);}return;}
   if(t.dataset.componentPropInput!==undefined){endTransaction();return;}
-  if(t.id==='design-system-file'){const file=t.files?.[0];if(file){const area=$('#import-design-css');if(area)area.value=await file.text();}return;}
+  if(t.id==='design-system-file'){await loadDesignSystemFile(t.files?.[0]);t.value='';return;}
   if(t.id==='orbit-json-file'){await loadOrbitJsonFile(t.files?.[0]);return;}
   if(t.dataset.gridBuilderGap!==undefined){updateGridBuilderStyles({gap:t.value.trim()||'0px'});return;}
   if(t.dataset.gridTrackCol!==undefined){const s=gridBuilderStyles();if(s){const list=normalizeTrackList(s.gridColumnTracks,Math.max(1,Number(s.gridColumns)||1),s.gridUseMinMax?'minmax(0,1fr)':'1fr');list[Number(t.dataset.gridTrackCol)]=t.value.trim()||'1fr';updateGridBuilderStyles({gridColumnTracks:list});}return;}

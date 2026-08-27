@@ -620,6 +620,16 @@ try {
     return {classesImported:report.classes===4,assignmentsImported:report.classAssignments>=11,sharedPrimary:titleA.styleClassId===sharedId&&titleB.styleClassId===sharedId,sharedEdit:classAfter.styles.base.fontSize==='37px'&&!titleA.styles.base.fontSize&&!titleB.styles.base.fontSize,bannerVisible:!!banner&&banner.textContent.includes('3 elementos vinculados'),localOverride:localNode.styleEditMode==='local'&&localNode.styles.base.color==='#123456'&&localClass.styles.base.color===initialColor,autoDetection:legacy.report.autoClasses===1&&legacy.report.classAssignments===2,v13AutoComponents:v13Import.document.version===13&&v13Import.report.autoComponents>=1,svgIconImport:svg.document.nodes[0].type==='svg'&&svg.document.nodes[0].svgCode.includes('<svg'),productionSeoExport:layoutContent.includes('og:title')&&layoutContent.includes('schema.org')&&layoutContent.includes('twitter:card'),swiperAbsentWithoutCarousel:!packageContent.dependencies.swiper};
   })()`);
 
+  const coreBridgeSuite=await evaluate(`(async()=>{
+    const qa=window.__ORBIT_QA__,before=qa.workspaceSnapshot(),beforeNodes=JSON.stringify(before.nodes);
+    const preset={name:'Core QA',app_version:'2.0.1',preferences:{root_font_size:16,min_screen_width:320,max_screen_width:1440,is_rem:true},modulesData:{COLOR_SYSTEM:{groups:[{id:'brand',name:'Brand',colors:[{id:'orange',name:'color-core-qa',value:'#f0642f'}]}]},FLUID_SPACING:{groups:[{id:'space',name:'Space',min:{size:16,scaleRatio:1.25},max:{size:24,scaleRatio:1.333},steps:'s,m,l',namingConvention:'core-space',baseScaleIndex:1}]}},styleSheetData:{}};
+    const parsed=parseCoreDesignSystemSource(JSON.stringify(preset),{filename:'core-qa.json'});document.getElementById('import-tools')?.click();document.querySelector('[data-import-tab="design-system"]')?.click();const input=document.getElementById('design-system-file'),accept=input?.accept||'',transfer=new DataTransfer();transfer.items.add(new File([JSON.stringify(preset)],'core-qa.json',{type:'application/json'}));input.files=transfer.files;input.dispatchEvent(new Event('change',{bubbles:true}));await new Promise(resolve=>setTimeout(resolve,180));
+    const preview={source:document.querySelector('.core-import-summary')?.textContent.includes('Core QA'),groups:document.querySelectorAll('[data-import-token-group]').length>=2,selectable:document.querySelectorAll('[data-import-token-enabled]').length===parsed.items.length,acceptsCore:accept.includes('.core')};
+    const spacing=document.querySelector('[data-import-token-group="spacing"]');spacing.checked=false;spacing.dispatchEvent(new Event('change',{bubbles:true}));const count=Number(document.querySelector('[data-import-selected-count]')?.textContent||0),selection=count===parsed.items.filter(item=>item.category!=='spacing').length;
+    document.querySelector('[data-commit-design-system]')?.click();const after=qa.workspaceSnapshot(),color=Object.values(after.tokens.colors).find(item=>item.cssVar==='--color-core-qa'),spacingImported=Object.values(after.tokens.spacing).some(item=>item.cssVar.startsWith('--core-space-'));
+    return {...preview,selection,applied:color?.value==='#f0642f',excluded:!spacingImported,structureProtected:JSON.stringify(after.nodes)===beforeNodes,modalClosed:document.getElementById('modal').hidden};
+  })()`);
+
   const orbitJsonStudioSuite=await evaluate(`(()=>{
     const studio=window.__ORBIT_QA__.orbitJsonStudio;
     const parsed=studio.parse('{"version":12,"projectName":"Legacy QA","nodes":[{"id":"hero","type":"heading","level":1,"content":"QA"}]}');
@@ -738,6 +748,7 @@ try {
   for (const [key,value] of Object.entries(textDirectEditSuite)) if(!value) failures.push(`text-direct-edit:${key}`);
   for (const [key,value] of Object.entries(backgroundStudioSuite)) if(!value) failures.push(`background-studio:${key}`);
   for (const [key,value] of Object.entries(sharedClassesSuite)) if(!value) failures.push(`shared-classes:${key}`);
+  for (const [key,value] of Object.entries(coreBridgeSuite)) if(!value) failures.push(`core-bridge:${key}`);
   for (const [key,value] of Object.entries(orbitJsonStudioSuite)) if(!value) failures.push(`orbit-json-studio:${key}`);
   for (const [key,value] of Object.entries(orbitJsonStudioUi)) if(!value) failures.push(`orbit-json-studio-ui:${key}`);
   for (const [key,value] of Object.entries(aiDesignWorkflowSuite)) {if(key==='captureUi'||key==='auditUi'){for(const [uiKey,uiValue] of Object.entries(value))if(!uiValue)failures.push(`ai-workflow-${key}:${uiKey}`);}else if(!value)failures.push(`ai-workflow:${key}`);}
@@ -750,7 +761,7 @@ try {
   for(const [key,value] of Object.entries(awardDashboardWide)){if(key==='documentOverflow'){if(value)failures.push('award-wide:overflow');}else if(!value)failures.push(`award-wide:${key}`);}
   if (runtimeErrors.length) failures.push(...runtimeErrors.map(error => `runtime:${error}`));
 
-  const output = { ok: failures.length === 0, failures, runtimeErrors, dashboardState, report, textDirectEditSuite, backgroundStudioSuite, googleFontsSuite, googleFontsCompact, googleFontsWide, tokenCrudSuite, inspectorColorSuite, tokenClearSuite, responsiveSuite, responsiveCompactLayout, zoomSuite, guidesSuite, minimapSuite, codeStudio, sharedClassesSuite, orbitJsonStudioSuite, orbitJsonStudioUi, aiDesignWorkflowSuite, aiWorkflowScrollSuite, productionExportSuite, swiperSuite, lightTheme, typographyAudit, awardDashboard, awardDashboardWide, evidenceDir };
+  const output = { ok: failures.length === 0, failures, runtimeErrors, dashboardState, report, textDirectEditSuite, backgroundStudioSuite, googleFontsSuite, googleFontsCompact, googleFontsWide, tokenCrudSuite, inspectorColorSuite, tokenClearSuite, responsiveSuite, responsiveCompactLayout, zoomSuite, guidesSuite, minimapSuite, codeStudio, sharedClassesSuite, coreBridgeSuite, orbitJsonStudioSuite, orbitJsonStudioUi, aiDesignWorkflowSuite, aiWorkflowScrollSuite, productionExportSuite, swiperSuite, lightTheme, typographyAudit, awardDashboard, awardDashboardWide, evidenceDir };
   process.stdout.write(`${JSON.stringify(output, null, 2)}\n`);
   if (failures.length) process.exitCode = 1;
 } finally {

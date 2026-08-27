@@ -21,6 +21,7 @@
 - Pruebas unitarias para contratos ChatGPT/Claude, plantilla, estilos y preparación.
 - QA funcional que verifica bloqueo sin mutación, reparación, preview y puntuación.
 - Biblioteca de secciones retirada temporalmente de la navegación sin eliminar sus plantillas internas.
+- Core Design System Bridge para importar archivos `.core`, revisar categorías y aplicar únicamente tokens seleccionados sin modificar el canvas.
 - Artefacto CI actualizado a `Orbit-Netlify-v0.31`.
 
 ## v0.30.0-alpha — AI Design Workflow

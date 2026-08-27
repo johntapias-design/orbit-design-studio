@@ -35,6 +35,7 @@ check('CI publica artefacto v0.31', workflowSource.includes('Orbit-Netlify-v0.31
 check('Scroll Entrance FX está fuera del monolito', !navigationSource.includes('function scrollFxControl(') && navigationSource.includes('renderScrollFxControl(node,field)'));
 check('Performance y recuperación están modularizadas', JS_MODULES.includes('reliability/project-reliability.js') && navigationSource.includes('createOrbitAutosaveScheduler'));
 check('Orbit JSON Studio está modularizado', JS_MODULES.includes('json/orbit-json-studio.js') && navigationSource.includes('validateOrbitJsonV13') && navigationSource.includes('createOrbitJsonPreviewHtml'));
+check('Core Design System Bridge importa .core sin alterar el canvas', JS_MODULES.includes('import/core-design-system-bridge.js') && navigationSource.includes('parseCoreDesignSystemSource') && navigationSource.includes("accept=\".core,.json,.css"));
 check('AI Import Reliability usa contrato estricto', navigationSource.includes('createOrbitJsonAiAuthoringPrompt') && navigationSource.includes('auditOrbitJsonImportReadiness') && navigationSource.includes('ORBIT_JSON_LIMITS.sourceBytes'));
 check('biblioteca de secciones retirada de la navegación', !indexHtml.includes('data-tab="sections"') && navigationSource.includes("if(state.tab==='sections')state.tab='elements'"));
 check('AI Design Workflow está modularizado', JS_MODULES.includes('ai/ai-design-workflow.js') && navigationSource.includes('createOrbitAiContext') && navigationSource.includes('auditOrbitVisualDesign') && navigationSource.includes('showAiDesignWorkflow'));

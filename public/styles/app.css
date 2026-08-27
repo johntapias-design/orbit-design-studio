@@ -1147,17 +1147,35 @@ input,textarea,select,code,pre,.width-control,.zoom-control,.scope-pill,.element
   font-size:10px;
 }
 .file-action{display:inline-flex;align-items:center;justify-content:center;cursor:pointer}
+.core-bridge-copy{position:relative;padding:2px 0 0 44px}
+.core-bridge-copy:before{content:"C";position:absolute;left:0;top:0;width:32px;height:32px;display:grid;place-items:center;border:1px solid rgba(239,90,36,.35);border-radius:9px;background:rgba(239,90,36,.09);color:#ef5a24;font:750 13px "Geist Mono",monospace}
+.core-bridge-kicker{display:block;margin-bottom:5px;color:#ef5a24;font:650 7px "Geist Mono",monospace;letter-spacing:1.15px}
+.core-file-dropzone{min-height:82px;display:grid;grid-template-columns:38px minmax(0,1fr) auto;align-items:center;gap:12px;padding:14px;border:1px dashed #3a404a;border-radius:11px;background:#111419;cursor:pointer;transition:border-color .15s,background .15s,transform .15s}
+.core-file-dropzone:hover,.core-file-dropzone.is-dragging{border-color:#ef5a24;background:rgba(239,90,36,.055);transform:translateY(-1px)}
+.core-file-icon{width:38px;height:38px;display:grid;place-items:center;border-radius:10px;background:#272c34;color:#ef5a24;font:750 14px "Geist Mono",monospace}
+.core-file-dropzone>span:nth-of-type(2){min-width:0}
+.core-file-dropzone strong,.core-file-dropzone small{display:block}
+.core-file-dropzone strong{color:#e3e6eb;font-size:11px}.core-file-dropzone small{margin-top:4px;color:#777e89;font-size:8px;line-height:1.4}
+.core-file-action{min-height:34px;display:inline-flex;align-items:center;padding:0 12px;border:1px solid #353a43;border-radius:7px;background:#20242a;color:#cbd0d7;font-size:9px;font-weight:650;white-space:nowrap}
 .import-analysis{display:flex;flex-direction:column;gap:12px;padding-top:5px}
+.core-import-summary{display:grid;grid-template-columns:auto minmax(0,1fr) auto;align-items:center;gap:11px;padding:12px 13px;border:1px solid rgba(239,90,36,.24);border-radius:10px;background:rgba(239,90,36,.055)}
+.core-import-badge{display:grid;place-items:center;min-width:42px;height:29px;border-radius:7px;background:#ef5a24;color:#17191d;font:750 9px "Geist Mono",monospace}
+.core-import-summary strong,.core-import-summary small{display:block}.core-import-summary strong{color:#f0f2f5;font-size:11px}.core-import-summary small{margin-top:3px;color:#858c96;font-size:8px;line-height:1.4}
+.core-import-ready{color:#76d79b;font-size:9px;font-weight:700}
+.core-import-warnings,.core-import-error{display:flex;flex-direction:column;gap:5px;padding:11px 13px;border:1px solid rgba(247,189,88,.22);border-radius:9px;background:rgba(247,189,88,.055);color:#aeb3bb;font-size:9px;line-height:1.45}
+.core-import-warnings strong{color:#f7bd58}.core-import-error{border-color:rgba(255,91,91,.28);background:rgba(255,91,91,.07)}.core-import-error strong{color:#ff8585}.core-import-error span{color:#adb2ba}
 .import-result-head{display:flex;align-items:center;justify-content:space-between;padding:11px 13px;border:1px solid #343943;border-radius:9px;background:#202329}
 .import-result-head strong{font-size:12px}.import-result-head span{color:#ef5a24;font-size:10px}
 .import-token-group{overflow:hidden;border:1px solid #2e3239;border-radius:9px;background:#15171b}
 .import-token-group h3{display:flex;align-items:center;justify-content:space-between;margin:0;padding:10px 12px;border-bottom:1px solid #2a2e35;color:#cfd2d7;font-size:10px;text-transform:uppercase;letter-spacing:.06em}
+.import-token-group h3 label{display:flex;align-items:center;gap:8px;cursor:pointer}.import-token-group h3 input,.import-token-row>input{accent-color:#ef5a24}
 .import-token-group h3 span{display:grid;place-items:center;min-width:20px;height:20px;border-radius:99px;background:#292d34;color:#aeb3bc;font-size:9px}
-.import-token-row{display:grid;grid-template-columns:minmax(170px,.8fr) minmax(160px,1.2fr) 130px;align-items:center;gap:10px;padding:8px 11px;border-bottom:1px solid rgba(255,255,255,.045)}
+.import-token-row{display:grid;grid-template-columns:18px minmax(145px,.8fr) minmax(145px,1.2fr) 118px 54px;align-items:center;gap:9px;padding:8px 11px;border-bottom:1px solid rgba(255,255,255,.045)}
 .import-token-row:last-child{border-bottom:0}
 .import-token-row code{overflow:hidden;color:#dce0e6;font-size:10px;text-overflow:ellipsis;white-space:nowrap}
 .import-token-row>span{overflow:hidden;color:#8e949e;font-size:10px;text-overflow:ellipsis;white-space:nowrap}
 .import-token-row select{height:31px;border:1px solid #30343c;border-radius:6px;background:#202329;color:#c7cbd2;font-size:9px}
+.import-token-status{padding:4px 5px;border-radius:99px;background:rgba(118,215,155,.08);color:#76d79b;font-size:7px;text-align:center}.import-token-status.is-update{background:rgba(247,189,88,.08);color:#f7bd58}
 .import-commit{align-self:flex-end;min-width:180px}
 
 .audit-item{
@@ -1171,7 +1189,10 @@ input,textarea,select,code,pre,.width-control,.zoom-control,.scope-pill,.element
 .audit-item.ok{cursor:default}
 
 @media(max-width:760px){
-  .import-token-row{grid-template-columns:1fr}
+  .core-bridge-copy{padding-left:0}.core-bridge-copy:before{display:none}
+  .core-file-dropzone{grid-template-columns:38px minmax(0,1fr)}.core-file-action{grid-column:1/-1;justify-content:center}
+  .import-token-row{grid-template-columns:18px minmax(0,1fr)}
+  .import-token-row code,.import-token-row>span,.import-token-row select,.import-token-status{grid-column:2}
   .import-tabs{grid-template-columns:1fr}
   .import-actions{align-items:stretch;flex-direction:column}
   .import-actions select{width:100%;margin:0}
