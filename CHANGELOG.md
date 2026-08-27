@@ -25,6 +25,13 @@
 - Sustitución global de fuentes faltantes por fuentes del sistema o variables de Google Fonts listas para exportar.
 - Optimización opcional de imágenes embebidas con reporte de ahorro, sin alterar el proyecto hasta confirmar la importación.
 
+### Componentes reutilizables
+
+- Biblioteca compartida local para guardar headers, botones, formularios, secciones y bloques entre proyectos de distintos clientes.
+- Empaquetado selectivo de la estructura y únicamente las clases, variables, tipografías e imágenes realmente utilizadas.
+- Inserción segura como nuevo Component Pro, con IDs regenerados y resolución automática de nombres o variables en conflicto.
+- Búsqueda, categorías, proyecto de origen y eliminación segura sin afectar los proyectos donde el componente ya fue usado.
+
 ### QA
 
 - Pruebas unitarias para contratos ChatGPT/Claude, plantilla, estilos y preparación.

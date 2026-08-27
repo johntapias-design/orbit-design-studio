@@ -16,6 +16,7 @@ export const JS_MODULES = Object.freeze([
   'reliability/project-reliability.js',
   'import/core-design-system-bridge.js',
   'json/orbit-json-studio.js',
+  'components/reusable-component-library.js',
   'ai/ai-design-workflow.js',
   'export/production-export.js',
   'projects/workspace-storage.js',

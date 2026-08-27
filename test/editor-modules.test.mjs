@@ -166,6 +166,24 @@ test('Gestor de recursos detecta y reemplaza imágenes y tipografías faltantes'
   assert.equal(studio.auditOrbitJsonResources(font.document).stats.missing, 0);
 });
 
+test('Biblioteca reutilizable empaqueta solo dependencias usadas y evita colisiones entre clientes', () => {
+  const library = loadScript('public/js/components/reusable-component-library.js', '({ createReusableComponentPackage, prepareReusableComponentImport, orbitComponentCategory })');
+  const image = 'data:image/webp;base64,AAAA';
+  const node = { id: 'header', type: 'section', name: 'Client Header', htmlTag: 'header', globalClassIds: ['class-nav'], styleClassId: 'class-nav', styles: { base: { color: 'var(--color-brand)' } }, children: [{ id: 'logo', type: 'image', src: image, alt: 'Logo', styles: { base: {} } }] };
+  const entry = library.createReusableComponentPackage({ id: 'library-header', node, projectName: 'Cliente A', globalClasses: [{ id: 'class-nav', name: 'nav', styles: { base: { gap: '20px', color: 'var(--color-brand)' } } }, { id: 'unused', name: 'unused', styles: { base: {} } }], tokens: { colors: { brand: { name: 'Brand', value: '#ff5500', cssVar: '--color-brand' }, unused: { name: 'Unused', value: '#000', cssVar: '--color-unused' } } }, assets: [{ id: 'logo-a', name: 'logo.webp', src: image, type: 'image/webp' }, { id: 'unused-image', src: 'data:image/png;base64,BBBB' }] });
+  assert.equal(library.orbitComponentCategory(node), 'headers');
+  assert.equal(entry.globalClasses.length, 1);
+  assert.equal(Object.keys(entry.tokens.colors).join(','), 'brand');
+  assert.equal(entry.assets.length, 1);
+  const prepared = library.prepareReusableComponentImport(entry, { tokens: { colors: { brand: { name: 'Other brand', value: '#0055ff', cssVar: '--color-brand' } } }, globalClasses: [{ id: 'class-nav', name: 'nav', styles: { base: { gap: '8px' } } }], assets: [] }, { uid: prefix => `${prefix}-new` });
+  assert.equal(prepared.report.tokensAdded, 1);
+  assert.equal(prepared.report.classesAdded, 1);
+  assert.equal(prepared.report.assetsAdded, 1);
+  assert.notEqual(prepared.tree.styleClassId, 'class-nav');
+  assert.match(prepared.tree.styles.base.color, /client-header/);
+  assert.equal(prepared.globalClasses.length, 2);
+});
+
 test('AI Import Studio genera contratos para ChatGPT y Claude y elimina estilos incompatibles', () => {
   const studio = loadScript('public/js/json/orbit-json-studio.js', '({ createOrbitJsonAiTemplate, createOrbitJsonAiAuthoringPrompt, auditOrbitJsonImportReadiness, validateOrbitJsonV13, repairOrbitJsonV13 })');
   const template = studio.createOrbitJsonAiTemplate();
