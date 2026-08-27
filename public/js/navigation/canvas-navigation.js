@@ -3913,6 +3913,7 @@ function showAiDesignWorkflow(tab=aiWorkflowTab){
   const tabs=[['capture','Captura a Orbit'],['generate','Generación contextual'],['audit','Auditor visual']];
   const body=tab==='capture'?aiWorkflowCaptureMarkup():tab==='generate'?aiWorkflowGenerateMarkup():aiWorkflowAuditMarkup(report);
   openModal('AI Design Workflow','ORBIT AI',`<div class="ai-workflow">${aiWorkflowHeader(report)}<nav class="ai-workflow-tabs">${tabs.map(([key,label])=>`<button type="button" data-ai-workflow-tab="${key}" class="${tab===key?'active':''}">${label}</button>`).join('')}</nav><div class="ai-workflow-pane">${body}</div></div>`,'ai-workflow-modal');
+  els.modalContent.scrollTop=0;
 }
 function loadAiWorkflowCapture(file){
   if(!file)return;

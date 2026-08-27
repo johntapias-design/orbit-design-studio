@@ -647,6 +647,17 @@ try {
     return {available:!!ai,context:context.orbitDocumentVersion===13&&context.stats.nodes>=1,audit:audit.checked>=1&&Number.isFinite(audit.score),prompt:prompt.includes('Orbit JSON v13')&&prompt.includes('Mejorar la jerarquía'),local:local.type==='section'&&local.children.length===3&&!!local.styles.mobile,extract:extracted.ok&&extracted.value.version===13,captureUi,auditUi};
   })()`);
 
+  await setViewport(820,620);
+  const aiWorkflowScrollSuite=await evaluate(`(async()=>{
+    const ai=window.__ORBIT_QA__.aiDesignWorkflow;ai.open('capture');await new Promise(resolve=>requestAnimationFrame(()=>requestAnimationFrame(resolve)));
+    const modal=document.querySelector('.ai-workflow-modal'),card=modal,content=modal?.querySelector('.modal-content'),tabs=modal?.querySelector('.ai-workflow-tabs'),cardRect=card?.getBoundingClientRect();
+    const scrollable=!!content&&content.scrollHeight>content.clientHeight;content.scrollTop=content.scrollHeight;await new Promise(resolve=>requestAnimationFrame(resolve));const scrollWorks=content.scrollTop>0;
+    const scrollContained=getComputedStyle(content).overscrollBehaviorY==='contain'&&getComputedStyle(content).overflowY==='auto';const stickyTabs=getComputedStyle(tabs).position==='sticky';
+    tabs.querySelector('[data-ai-workflow-tab="audit"]')?.click();await new Promise(resolve=>requestAnimationFrame(resolve));const tabReset=content.scrollTop===0;const withinViewport=!!cardRect&&cardRect.top>=0&&cardRect.bottom<=window.innerHeight;
+    document.querySelector('[data-close-modal]')?.click();return {scrollable,scrollWorks,scrollContained,stickyTabs,tabReset,withinViewport,pageFixed:document.documentElement.scrollTop===0&&document.body.scrollTop===0};
+  })()`);
+  await setViewport(1600,900);
+
   const productionExportSuite=await evaluate(`(()=>{
     const qa=window.__ORBIT_QA__;const image='data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mNk+A8AAQUBAScY42YAAAAASUVORK5CYII=';
     qa.loadOrbitDocument({version:13,projectName:'Production QA',pageMeta:{language:'es',title:'Production QA',description:'Salida Astro lista para producción',ogImage:'/og.jpg'},assets:[{id:'asset-qa-image',name:'hero.png',alt:'Hero de producción',src:image,type:'image/png'}],nodes:[{id:'production-main',type:'section',name:'Main',htmlTag:'main',styles:{base:{}},children:[{id:'production-title',type:'heading',name:'Title',tag:'h1',htmlTag:'h1',content:'Production QA',styles:{base:{}}},{id:'production-image',type:'image',name:'Hero',src:image,alt:'Hero de producción',styles:{base:{width:'100%',maxWidth:'1200px'}}}]}]},'production-title');
@@ -728,6 +739,7 @@ try {
   for (const [key,value] of Object.entries(orbitJsonStudioSuite)) if(!value) failures.push(`orbit-json-studio:${key}`);
   for (const [key,value] of Object.entries(orbitJsonStudioUi)) if(!value) failures.push(`orbit-json-studio-ui:${key}`);
   for (const [key,value] of Object.entries(aiDesignWorkflowSuite)) {if(key==='captureUi'||key==='auditUi'){for(const [uiKey,uiValue] of Object.entries(value))if(!uiValue)failures.push(`ai-workflow-${key}:${uiKey}`);}else if(!value)failures.push(`ai-workflow:${key}`);}
+  for (const [key,value] of Object.entries(aiWorkflowScrollSuite)) if(!value) failures.push(`ai-workflow-scroll:${key}`);
   for (const [key,value] of Object.entries(productionExportSuite)) {if(key==='ui'){for(const [uiKey,uiValue] of Object.entries(value))if(!uiValue)failures.push(`production-export-ui:${uiKey}`);}else if(!value)failures.push(`production-export:${key}`);}
   for (const [key,value] of Object.entries(swiperSuite)) if(!value) failures.push(`swiper:${key}`);
   if (lightTheme.mode !== 'global' || !lightTheme.visible || !lightTheme.themeTogglePresent || lightTheme.surface === 'rgba(0, 0, 0, 0)') failures.push('theme:light-contextual-toolbar');
@@ -736,7 +748,7 @@ try {
   for(const [key,value] of Object.entries(awardDashboardWide)){if(key==='documentOverflow'){if(value)failures.push('award-wide:overflow');}else if(!value)failures.push(`award-wide:${key}`);}
   if (runtimeErrors.length) failures.push(...runtimeErrors.map(error => `runtime:${error}`));
 
-  const output = { ok: failures.length === 0, failures, runtimeErrors, dashboardState, report, textDirectEditSuite, backgroundStudioSuite, googleFontsSuite, googleFontsCompact, googleFontsWide, tokenCrudSuite, inspectorColorSuite, tokenClearSuite, responsiveSuite, responsiveCompactLayout, zoomSuite, guidesSuite, minimapSuite, codeStudio, sharedClassesSuite, orbitJsonStudioSuite, orbitJsonStudioUi, aiDesignWorkflowSuite, productionExportSuite, swiperSuite, lightTheme, typographyAudit, awardDashboard, awardDashboardWide, evidenceDir };
+  const output = { ok: failures.length === 0, failures, runtimeErrors, dashboardState, report, textDirectEditSuite, backgroundStudioSuite, googleFontsSuite, googleFontsCompact, googleFontsWide, tokenCrudSuite, inspectorColorSuite, tokenClearSuite, responsiveSuite, responsiveCompactLayout, zoomSuite, guidesSuite, minimapSuite, codeStudio, sharedClassesSuite, orbitJsonStudioSuite, orbitJsonStudioUi, aiDesignWorkflowSuite, aiWorkflowScrollSuite, productionExportSuite, swiperSuite, lightTheme, typographyAudit, awardDashboard, awardDashboardWide, evidenceDir };
   process.stdout.write(`${JSON.stringify(output, null, 2)}\n`);
   if (failures.length) process.exitCode = 1;
 } finally {
