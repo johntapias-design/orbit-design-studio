@@ -34,6 +34,7 @@
 
 ### QA
 
+- Ejemplo Boulevard Creative Studio con 167 elementos editables, siete bloques responsive y recursos gráficos autocontenidos para pruebas de fidelidad visual.
 - Banco reproducible de cinco proyectos representativos: agencia, restaurante, catálogo, portafolio y servicios profesionales.
 - Métricas de importación y corrección con mediana, percentil 95, errores frecuentes y recursos faltantes en `reports/real-project-benchmark.json`.
 - Validación automática de que cada proyecto reparado termina como Orbit JSON v13 válido y dentro del presupuesto de tiempo.

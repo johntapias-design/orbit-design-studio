@@ -143,6 +143,17 @@ test('Orbit JSON Studio repara IDs y genera preview que escapa contenido', () =>
   assert.match(preview, /&lt;script&gt;alert/);
 });
 
+test('ejemplo Boulevard se importa completo sin errores ni recursos pendientes', () => {
+  const studio = loadScript('public/js/json/orbit-json-studio.js', '({ validateOrbitJsonV13, auditOrbitJsonResources })');
+  const document = JSON.parse(readFileSync(new URL('../examples/boulevard-creative-studio.orbit.json', import.meta.url), 'utf8'));
+  const validation = studio.validateOrbitJsonV13(document);
+  const resources = studio.auditOrbitJsonResources(document);
+  assert.equal(validation.valid, true);
+  assert.equal(validation.warnings.length, 0);
+  assert.ok(validation.stats.nodes >= 160);
+  assert.equal(resources.stats.missing, 0);
+});
+
 test('Reparación automática explica identificadores, propiedades, estilos y referencias', () => {
   const studio = loadScript('public/js/json/orbit-json-studio.js', '({ repairOrbitJsonV13, validateOrbitJsonV13 })');
   const result = studio.repairOrbitJsonV13({

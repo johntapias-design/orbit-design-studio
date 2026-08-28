@@ -1,0 +1,3002 @@
+{
+  "version": 13,
+  "projectName": "Boulevard Creative Studio",
+  "pageMeta": {
+    "language": "en",
+    "title": "Boulevard — Creative Design Studio",
+    "description": "Independent design studio creating bold identities, digital products and memorable brand experiences."
+  },
+  "tokens": {
+    "colors": {
+      "paper": {
+        "name": "Paper",
+        "value": "#f7f7f4",
+        "cssVar": "--color-paper"
+      },
+      "white": {
+        "name": "White",
+        "value": "#ffffff",
+        "cssVar": "--color-white"
+      },
+      "ink": {
+        "name": "Ink",
+        "value": "#181818",
+        "cssVar": "--color-ink"
+      },
+      "muted": {
+        "name": "Muted",
+        "value": "#666a70",
+        "cssVar": "--color-muted"
+      },
+      "line": {
+        "name": "Line",
+        "value": "#dadddf",
+        "cssVar": "--color-line"
+      },
+      "soft": {
+        "name": "Soft surface",
+        "value": "#eef0f2",
+        "cssVar": "--color-soft"
+      },
+      "blue": {
+        "name": "Boulevard blue",
+        "value": "#2441c5",
+        "cssVar": "--color-blue"
+      },
+      "periwinkle": {
+        "name": "Periwinkle",
+        "value": "#8296ff",
+        "cssVar": "--color-periwinkle"
+      },
+      "lime": {
+        "name": "Acid lime",
+        "value": "#d9ff2f",
+        "cssVar": "--color-lime"
+      },
+      "dark": {
+        "name": "Footer dark",
+        "value": "#1c1c1c",
+        "cssVar": "--color-dark"
+      }
+    },
+    "typography": {
+      "sans": {
+        "name": "Sans",
+        "value": "Arial, Helvetica, sans-serif",
+        "cssVar": "--typography-sans"
+      },
+      "mono": {
+        "name": "Mono",
+        "value": "ui-monospace, SFMono-Regular, monospace",
+        "cssVar": "--typography-mono"
+      }
+    },
+    "spacing": {
+      "xs": {
+        "name": "XS",
+        "value": "8px"
+      },
+      "sm": {
+        "name": "Small",
+        "value": "14px"
+      },
+      "md": {
+        "name": "Medium",
+        "value": "24px"
+      },
+      "lg": {
+        "name": "Large",
+        "value": "48px"
+      },
+      "xl": {
+        "name": "XL",
+        "value": "96px"
+      }
+    },
+    "radius": {
+      "card": {
+        "name": "Card",
+        "value": "18px"
+      },
+      "pill": {
+        "name": "Pill",
+        "value": "999px"
+      }
+    },
+    "shadows": {
+      "soft": {
+        "name": "Soft",
+        "value": "0 18px 50px rgba(20,25,40,.08)"
+      }
+    }
+  },
+  "assets": [
+    {
+      "id": "asset-device",
+      "name": "Brand device",
+      "type": "image",
+      "src": "data:image/svg+xml;charset=utf-8,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20viewBox%3D%220%200%20320%20320%22%3E%3Cdefs%3E%3ClinearGradient%20id%3D%22g%22%20x1%3D%220%22%20y1%3D%220%22%20x2%3D%221%22%20y2%3D%221%22%3E%3Cstop%20stop-color%3D%22%230d0d0f%22%2F%3E%3Cstop%20offset%3D%221%22%20stop-color%3D%22%23444952%22%2F%3E%3C%2FlinearGradient%3E%3C%2Fdefs%3E%3Crect%20width%3D%22320%22%20height%3D%22320%22%20rx%3D%2222%22%20fill%3D%22url(%23g)%22%2F%3E%3Cg%20stroke%3D%22rgba(255%2C255%2C255%2C.8)%22%20stroke-width%3D%223%22%3E%3Cpath%20d%3D%22M20%2030%20Q80%20160%2020%20290%22%2F%3E%3Cpath%20d%3D%22M36%2030%20Q88%20160%2036%20290%22%2F%3E%3Cpath%20d%3D%22M52%2030%20Q96%20160%2052%20290%22%2F%3E%3Cpath%20d%3D%22M68%2030%20Q104%20160%2068%20290%22%2F%3E%3Cpath%20d%3D%22M84%2030%20Q112%20160%2084%20290%22%2F%3E%3Cpath%20d%3D%22M100%2030%20Q120%20160%20100%20290%22%2F%3E%3Cpath%20d%3D%22M116%2030%20Q128%20160%20116%20290%22%2F%3E%3Cpath%20d%3D%22M132%2030%20Q136%20160%20132%20290%22%2F%3E%3Cpath%20d%3D%22M148%2030%20Q144%20160%20148%20290%22%2F%3E%3Cpath%20d%3D%22M164%2030%20Q152%20160%20164%20290%22%2F%3E%3Cpath%20d%3D%22M180%2030%20Q160%20160%20180%20290%22%2F%3E%3Cpath%20d%3D%22M196%2030%20Q168%20160%20196%20290%22%2F%3E%3Cpath%20d%3D%22M212%2030%20Q176%20160%20212%20290%22%2F%3E%3Cpath%20d%3D%22M228%2030%20Q184%20160%20228%20290%22%2F%3E%3Cpath%20d%3D%22M244%2030%20Q192%20160%20244%20290%22%2F%3E%3Cpath%20d%3D%22M260%2030%20Q200%20160%20260%20290%22%2F%3E%3Cpath%20d%3D%22M276%2030%20Q208%20160%20276%20290%22%2F%3E%3Cpath%20d%3D%22M292%2030%20Q216%20160%20292%20290%22%2F%3E%3C%2Fg%3E%3Ctext%20x%3D%2224%22%20y%3D%22294%22%20fill%3D%22white%22%20font-size%3D%2213%22%20font-family%3D%22Arial%22%20font-weight%3D%22700%22%3EBrand%20device%3C%2Ftext%3E%3C%2Fsvg%3E",
+      "alt": "Brand device"
+    },
+    {
+      "id": "asset-bag",
+      "name": "Identity bag",
+      "type": "image",
+      "src": "data:image/svg+xml;charset=utf-8,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20viewBox%3D%220%200%20320%20320%22%3E%3Cdefs%3E%3ClinearGradient%20id%3D%22g%22%20x1%3D%220%22%20y1%3D%220%22%20x2%3D%221%22%20y2%3D%221%22%3E%3Cstop%20stop-color%3D%22%23f1f3f5%22%2F%3E%3Cstop%20offset%3D%221%22%20stop-color%3D%22%23dce4ea%22%2F%3E%3C%2FlinearGradient%3E%3C%2Fdefs%3E%3Crect%20width%3D%22320%22%20height%3D%22320%22%20rx%3D%2222%22%20fill%3D%22url(%23g)%22%2F%3E%3Cpath%20d%3D%22M105%2092h110l22%20170H83z%22%20fill%3D%22%23181818%22%2F%3E%3Cpath%20d%3D%22M125%20100c0-58%2070-58%2070%200%22%20fill%3D%22none%22%20stroke%3D%22%23181818%22%20stroke-width%3D%2212%22%2F%3E%3Ctext%20x%3D%22160%22%20y%3D%22214%22%20fill%3D%22white%22%20font-size%3D%2272%22%20font-family%3D%22Arial%22%20text-anchor%3D%22middle%22%3E.us%3C%2Ftext%3E%3Ctext%20x%3D%2224%22%20y%3D%22294%22%20fill%3D%22white%22%20font-size%3D%2213%22%20font-family%3D%22Arial%22%20font-weight%3D%22700%22%3EIdentity%20bag%3C%2Ftext%3E%3C%2Fsvg%3E",
+      "alt": "Identity bag"
+    },
+    {
+      "id": "asset-chat",
+      "name": "Chat Genius",
+      "type": "image",
+      "src": "data:image/svg+xml;charset=utf-8,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20viewBox%3D%220%200%20320%20320%22%3E%3Cdefs%3E%3ClinearGradient%20id%3D%22g%22%20x1%3D%220%22%20y1%3D%220%22%20x2%3D%221%22%20y2%3D%221%22%3E%3Cstop%20stop-color%3D%22%23090a0d%22%2F%3E%3Cstop%20offset%3D%221%22%20stop-color%3D%22%232445e4%22%2F%3E%3C%2FlinearGradient%3E%3C%2Fdefs%3E%3Crect%20width%3D%22320%22%20height%3D%22320%22%20rx%3D%2222%22%20fill%3D%22url(%23g)%22%2F%3E%3Cg%20stroke%3D%22rgba(255%2C255%2C255%2C.8)%22%20stroke-width%3D%223%22%3E%3Cpath%20d%3D%22M20%2030%20Q80%20160%2020%20290%22%2F%3E%3Cpath%20d%3D%22M36%2030%20Q88%20160%2036%20290%22%2F%3E%3Cpath%20d%3D%22M52%2030%20Q96%20160%2052%20290%22%2F%3E%3Cpath%20d%3D%22M68%2030%20Q104%20160%2068%20290%22%2F%3E%3Cpath%20d%3D%22M84%2030%20Q112%20160%2084%20290%22%2F%3E%3Cpath%20d%3D%22M100%2030%20Q120%20160%20100%20290%22%2F%3E%3Cpath%20d%3D%22M116%2030%20Q128%20160%20116%20290%22%2F%3E%3Cpath%20d%3D%22M132%2030%20Q136%20160%20132%20290%22%2F%3E%3Cpath%20d%3D%22M148%2030%20Q144%20160%20148%20290%22%2F%3E%3Cpath%20d%3D%22M164%2030%20Q152%20160%20164%20290%22%2F%3E%3Cpath%20d%3D%22M180%2030%20Q160%20160%20180%20290%22%2F%3E%3Cpath%20d%3D%22M196%2030%20Q168%20160%20196%20290%22%2F%3E%3Cpath%20d%3D%22M212%2030%20Q176%20160%20212%20290%22%2F%3E%3Cpath%20d%3D%22M228%2030%20Q184%20160%20228%20290%22%2F%3E%3Cpath%20d%3D%22M244%2030%20Q192%20160%20244%20290%22%2F%3E%3Cpath%20d%3D%22M260%2030%20Q200%20160%20260%20290%22%2F%3E%3Cpath%20d%3D%22M276%2030%20Q208%20160%20276%20290%22%2F%3E%3Cpath%20d%3D%22M292%2030%20Q216%20160%20292%20290%22%2F%3E%3C%2Fg%3E%3Ctext%20x%3D%2224%22%20y%3D%22294%22%20fill%3D%22white%22%20font-size%3D%2213%22%20font-family%3D%22Arial%22%20font-weight%3D%22700%22%3EChat%20Genius%3C%2Ftext%3E%3C%2Fsvg%3E",
+      "alt": "Chat Genius"
+    },
+    {
+      "id": "asset-field",
+      "name": "Field Type",
+      "type": "image",
+      "src": "data:image/svg+xml;charset=utf-8,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20viewBox%3D%220%200%20320%20320%22%3E%3Cdefs%3E%3ClinearGradient%20id%3D%22g%22%20x1%3D%220%22%20y1%3D%220%22%20x2%3D%221%22%20y2%3D%221%22%3E%3Cstop%20stop-color%3D%22%23eef1ff%22%2F%3E%3Cstop%20offset%3D%221%22%20stop-color%3D%22%236275e8%22%2F%3E%3C%2FlinearGradient%3E%3C%2Fdefs%3E%3Crect%20width%3D%22320%22%20height%3D%22320%22%20rx%3D%2222%22%20fill%3D%22url(%23g)%22%2F%3E%3Cg%20stroke%3D%22rgba(255%2C255%2C255%2C.8)%22%20stroke-width%3D%223%22%3E%3Cpath%20d%3D%22M20%2030%20Q80%20160%2020%20290%22%2F%3E%3Cpath%20d%3D%22M36%2030%20Q88%20160%2036%20290%22%2F%3E%3Cpath%20d%3D%22M52%2030%20Q96%20160%2052%20290%22%2F%3E%3Cpath%20d%3D%22M68%2030%20Q104%20160%2068%20290%22%2F%3E%3Cpath%20d%3D%22M84%2030%20Q112%20160%2084%20290%22%2F%3E%3Cpath%20d%3D%22M100%2030%20Q120%20160%20100%20290%22%2F%3E%3Cpath%20d%3D%22M116%2030%20Q128%20160%20116%20290%22%2F%3E%3Cpath%20d%3D%22M132%2030%20Q136%20160%20132%20290%22%2F%3E%3Cpath%20d%3D%22M148%2030%20Q144%20160%20148%20290%22%2F%3E%3Cpath%20d%3D%22M164%2030%20Q152%20160%20164%20290%22%2F%3E%3Cpath%20d%3D%22M180%2030%20Q160%20160%20180%20290%22%2F%3E%3Cpath%20d%3D%22M196%2030%20Q168%20160%20196%20290%22%2F%3E%3Cpath%20d%3D%22M212%2030%20Q176%20160%20212%20290%22%2F%3E%3Cpath%20d%3D%22M228%2030%20Q184%20160%20228%20290%22%2F%3E%3Cpath%20d%3D%22M244%2030%20Q192%20160%20244%20290%22%2F%3E%3Cpath%20d%3D%22M260%2030%20Q200%20160%20260%20290%22%2F%3E%3Cpath%20d%3D%22M276%2030%20Q208%20160%20276%20290%22%2F%3E%3Cpath%20d%3D%22M292%2030%20Q216%20160%20292%20290%22%2F%3E%3C%2Fg%3E%3Ctext%20x%3D%2224%22%20y%3D%22294%22%20fill%3D%22white%22%20font-size%3D%2213%22%20font-family%3D%22Arial%22%20font-weight%3D%22700%22%3EField%20Type%3C%2Ftext%3E%3C%2Fsvg%3E",
+      "alt": "Field Type"
+    },
+    {
+      "id": "asset-detail",
+      "name": "Identity detail",
+      "type": "image",
+      "src": "data:image/svg+xml;charset=utf-8,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20viewBox%3D%220%200%20320%20320%22%3E%3Cdefs%3E%3ClinearGradient%20id%3D%22g%22%20x1%3D%220%22%20y1%3D%220%22%20x2%3D%221%22%20y2%3D%221%22%3E%3Cstop%20stop-color%3D%22%23d8dce8%22%2F%3E%3Cstop%20offset%3D%221%22%20stop-color%3D%22%237382a6%22%2F%3E%3C%2FlinearGradient%3E%3C%2Fdefs%3E%3Crect%20width%3D%22320%22%20height%3D%22320%22%20rx%3D%2222%22%20fill%3D%22url(%23g)%22%2F%3E%3Ccircle%20cx%3D%22225%22%20cy%3D%2295%22%20r%3D%22112%22%20fill%3D%22rgba(255%2C255%2C255%2C.23)%22%2F%3E%3Ccircle%20cx%3D%2292%22%20cy%3D%22242%22%20r%3D%2296%22%20fill%3D%22rgba(0%2C0%2C0%2C.22)%22%2F%3E%3Cpath%20d%3D%22M30%20250L270%2048%22%20stroke%3D%22rgba(255%2C255%2C255%2C.75)%22%20stroke-width%3D%2218%22%2F%3E%3Ctext%20x%3D%2224%22%20y%3D%22294%22%20fill%3D%22white%22%20font-size%3D%2213%22%20font-family%3D%22Arial%22%20font-weight%3D%22700%22%3EIdentity%20detail%3C%2Ftext%3E%3C%2Fsvg%3E",
+      "alt": "Identity detail"
+    },
+    {
+      "id": "asset-founder",
+      "name": "Creative founder",
+      "type": "image",
+      "src": "data:image/svg+xml;charset=utf-8,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20viewBox%3D%220%200%20320%20320%22%3E%3Cdefs%3E%3ClinearGradient%20id%3D%22g%22%20x1%3D%220%22%20y1%3D%220%22%20x2%3D%221%22%20y2%3D%221%22%3E%3Cstop%20stop-color%3D%22%23dce4e7%22%2F%3E%3Cstop%20offset%3D%221%22%20stop-color%3D%22%237795b4%22%2F%3E%3C%2FlinearGradient%3E%3C%2Fdefs%3E%3Crect%20width%3D%22320%22%20height%3D%22320%22%20rx%3D%2222%22%20fill%3D%22url(%23g)%22%2F%3E%3Ccircle%20cx%3D%22160%22%20cy%3D%22118%22%20r%3D%2260%22%20fill%3D%22%23d3a67d%22%2F%3E%3Cpath%20d%3D%22M68%20304c10-100%2052-132%2092-132s82%2032%2092%20132%22%20fill%3D%22%23202530%22%2F%3E%3Cpath%20d%3D%22M96%2086c18-62%20118-70%20136%206-40-18-92-22-136-6%22%20fill%3D%22%23294a78%22%2F%3E%3Ctext%20x%3D%2224%22%20y%3D%22294%22%20fill%3D%22white%22%20font-size%3D%2213%22%20font-family%3D%22Arial%22%20font-weight%3D%22700%22%3ECreative%20founder%3C%2Ftext%3E%3C%2Fsvg%3E",
+      "alt": "Creative founder"
+    }
+  ],
+  "components": [],
+  "globalClasses": [
+    {
+      "id": "class-pill-button",
+      "name": "pill-button",
+      "styles": {
+        "base": {
+          "display": "inline-flex",
+          "alignItems": "center",
+          "justifyContent": "center",
+          "minHeight": "42px",
+          "paddingRight": "20px",
+          "paddingLeft": "20px",
+          "background": "var(--color-lime)",
+          "color": "var(--color-ink)",
+          "borderRadius": "999px",
+          "fontSize": "12px",
+          "fontWeight": 700
+        }
+      },
+      "states": {
+        "hover": {
+          "transform": "translateY(-2px)",
+          "boxShadow": "0 10px 25px rgba(0,0,0,.15)"
+        }
+      }
+    }
+  ],
+  "nodes": [
+    {
+      "id": "hero",
+      "type": "section",
+      "name": "hero",
+      "children": [
+        {
+          "id": "hero-inner",
+          "type": "container",
+          "name": "hero-inner",
+          "children": [
+            {
+              "id": "nav",
+              "type": "container",
+              "name": "nav",
+              "children": [
+                {
+                  "id": "brand-small",
+                  "type": "text",
+                  "name": "brand-small",
+                  "content": "Boulevard™",
+                  "styles": {
+                    "base": {
+                      "color": "var(--color-white)",
+                      "fontSize": "18px",
+                      "fontWeight": 700
+                    }
+                  },
+                  "children": []
+                },
+                {
+                  "id": "time",
+                  "type": "text",
+                  "name": "time",
+                  "content": "France · 03:47 PM (GMT+2)",
+                  "styles": {
+                    "base": {
+                      "color": "var(--color-white)",
+                      "fontSize": "11px"
+                    }
+                  },
+                  "children": []
+                },
+                {
+                  "id": "nav-links",
+                  "type": "text",
+                  "name": "nav-links",
+                  "content": "About  Service  Project  Team  Reviews",
+                  "styles": {
+                    "base": {
+                      "color": "var(--color-white)",
+                      "fontSize": "11px"
+                    }
+                  },
+                  "children": []
+                },
+                {
+                  "id": "nav-contact",
+                  "type": "text",
+                  "name": "nav-contact",
+                  "content": "Get Connected",
+                  "styles": {
+                    "base": {
+                      "color": "var(--color-white)",
+                      "fontSize": "11px",
+                      "textDecoration": "underline"
+                    }
+                  },
+                  "children": []
+                }
+              ],
+              "styles": {
+                "base": {
+                  "display": "grid",
+                  "gridTemplateColumns": "1fr 1fr 1.4fr auto",
+                  "gap": "24px",
+                  "alignItems": "center"
+                },
+                "tablet": {
+                  "gridTemplateColumns": "1fr auto"
+                },
+                "mobile": {
+                  "gridTemplateColumns": "1fr auto"
+                }
+              }
+            },
+            {
+              "id": "hero-content",
+              "type": "container",
+              "name": "hero-content",
+              "children": [
+                {
+                  "id": "hero-message",
+                  "type": "container",
+                  "name": "hero-message",
+                  "children": [
+                    {
+                      "id": "hero-label",
+                      "type": "text",
+                      "name": "hero-label",
+                      "content": "AGENCY THAT MOVES CULTURE",
+                      "styles": {
+                        "base": {
+                          "color": "var(--color-white)",
+                          "fontFamily": "var(--typography-mono)",
+                          "fontSize": "11px",
+                          "fontWeight": 700
+                        }
+                      },
+                      "children": []
+                    },
+                    {
+                      "id": "hero-subtitle",
+                      "type": "heading",
+                      "name": "hero-subtitle",
+                      "content": "Design studio that not only creates digital products but also experiences.",
+                      "level": 2,
+                      "styles": {
+                        "base": {
+                          "maxWidth": "460px",
+                          "color": "var(--color-white)",
+                          "fontSize": "36px",
+                          "lineHeight": 1,
+                          "fontWeight": 600
+                        },
+                        "mobile": {
+                          "fontSize": "27px"
+                        }
+                      },
+                      "children": []
+                    },
+                    {
+                      "id": "hero-button",
+                      "type": "button",
+                      "name": "hero-button",
+                      "content": "Let's Collaborate  →",
+                      "href": "#contact",
+                      "globalClassIds": [
+                        "class-pill-button"
+                      ],
+                      "styles": {
+                        "base": {}
+                      },
+                      "children": []
+                    }
+                  ],
+                  "styles": {
+                    "base": {
+                      "display": "flex",
+                      "direction": "column",
+                      "alignItems": "flex-start",
+                      "gap": "22px"
+                    }
+                  }
+                },
+                {
+                  "id": "hero-scroll",
+                  "type": "text",
+                  "name": "hero-scroll",
+                  "content": "Scroll for more",
+                  "styles": {
+                    "base": {
+                      "color": "var(--color-white)",
+                      "fontSize": "11px",
+                      "alignSelf": "flex-end"
+                    }
+                  },
+                  "children": []
+                }
+              ],
+              "styles": {
+                "base": {
+                  "display": "grid",
+                  "gridTemplateColumns": "1fr auto",
+                  "gap": "24px",
+                  "alignItems": "end",
+                  "paddingTop": "110px"
+                },
+                "mobile": {
+                  "gridTemplateColumns": "1fr",
+                  "paddingTop": "72px"
+                }
+              }
+            },
+            {
+              "id": "hero-title",
+              "type": "heading",
+              "name": "hero-title",
+              "content": "Boulevard",
+              "level": 1,
+              "styles": {
+                "base": {
+                  "color": "var(--color-white)",
+                  "fontFamily": "var(--typography-sans)",
+                  "fontSize": "142px",
+                  "fontWeight": 600,
+                  "lineHeight": 0.8,
+                  "letterSpacing": "-9px",
+                  "marginTop": "70px",
+                  "whiteSpace": "nowrap"
+                },
+                "tablet": {
+                  "fontSize": "100px"
+                },
+                "mobile": {
+                  "fontSize": "58px",
+                  "letterSpacing": "-4px",
+                  "whiteSpace": "normal"
+                }
+              },
+              "children": []
+            }
+          ],
+          "styles": {
+            "base": {
+              "width": "100%",
+              "maxWidth": "1200px",
+              "marginLeft": "auto",
+              "marginRight": "auto",
+              "display": "flex",
+              "direction": "column"
+            }
+          }
+        }
+      ],
+      "styles": {
+        "base": {
+          "width": "100%",
+          "minHeight": "720px",
+          "paddingTop": "28px",
+          "paddingRight": "48px",
+          "paddingBottom": "40px",
+          "paddingLeft": "48px",
+          "background": "radial-gradient(circle at 88% 0%, #8d92ff 0%, transparent 38%), radial-gradient(circle at 48% 70%, #6b4dff 0%, transparent 36%), linear-gradient(135deg, #193bcc 0%, #2239be 48%, #4434d5 100%)",
+          "overflow": "hidden"
+        },
+        "tablet": {
+          "paddingRight": "32px",
+          "paddingLeft": "32px"
+        },
+        "mobile": {
+          "minHeight": "650px",
+          "paddingRight": "20px",
+          "paddingLeft": "20px"
+        }
+      }
+    },
+    {
+      "id": "about",
+      "type": "section",
+      "name": "about",
+      "children": [
+        {
+          "id": "about-inner",
+          "type": "container",
+          "name": "about-inner",
+          "children": [
+            {
+              "id": "about-heading",
+              "type": "heading",
+              "name": "about-heading",
+              "content": "Reshaping what exists, we’re here to help you stand out—with clarity, creativity, and edge.",
+              "level": 2,
+              "styles": {
+                "base": {
+                  "maxWidth": "1050px",
+                  "fontSize": "52px",
+                  "fontWeight": 600,
+                  "lineHeight": 0.98,
+                  "letterSpacing": "-2.7px"
+                },
+                "tablet": {
+                  "fontSize": "42px"
+                },
+                "mobile": {
+                  "fontSize": "31px",
+                  "letterSpacing": "-1.2px"
+                }
+              },
+              "children": []
+            },
+            {
+              "id": "about-cards",
+              "type": "container",
+              "name": "about-cards",
+              "children": [
+                {
+                  "id": "about-card-bold",
+                  "type": "container",
+                  "name": "about-card-bold",
+                  "children": [
+                    {
+                      "id": "about-star",
+                      "type": "text",
+                      "name": "about-star",
+                      "content": "✕",
+                      "styles": {
+                        "base": {
+                          "color": "var(--color-lime)",
+                          "fontSize": "42px",
+                          "fontWeight": 800
+                        }
+                      },
+                      "children": []
+                    },
+                    {
+                      "id": "about-bold-copy",
+                      "type": "container",
+                      "name": "about-bold-copy",
+                      "children": [
+                        {
+                          "id": "about-bold-label",
+                          "type": "text",
+                          "name": "about-bold-label",
+                          "content": "MADE FOR THE BOLD",
+                          "styles": {
+                            "base": {
+                              "color": "var(--color-white)",
+                              "fontSize": "10px",
+                              "fontWeight": 700
+                            }
+                          },
+                          "children": []
+                        },
+                        {
+                          "id": "about-bold-text",
+                          "type": "text",
+                          "name": "about-bold-text",
+                          "content": "Design experiences, not just screens. Tell stories, not just taglines.",
+                          "styles": {
+                            "base": {
+                              "color": "var(--color-white)",
+                              "fontSize": "18px",
+                              "lineHeight": 1.15,
+                              "fontWeight": 600
+                            }
+                          },
+                          "children": []
+                        }
+                      ],
+                      "styles": {
+                        "base": {
+                          "display": "flex",
+                          "direction": "column",
+                          "gap": "10px"
+                        }
+                      }
+                    }
+                  ],
+                  "styles": {
+                    "base": {
+                      "borderRadius": "18px",
+                      "borderWidth": "1px",
+                      "borderColor": "var(--color-line)",
+                      "overflow": "hidden",
+                      "minHeight": "290px",
+                      "display": "flex",
+                      "direction": "column",
+                      "justifyContent": "space-between",
+                      "paddingTop": "24px",
+                      "paddingRight": "24px",
+                      "paddingBottom": "24px",
+                      "paddingLeft": "24px",
+                      "background": "linear-gradient(145deg,#173bc7,#6145ed)"
+                    }
+                  }
+                },
+                {
+                  "id": "about-card-device",
+                  "type": "image",
+                  "name": "about-card-device",
+                  "src": "data:image/svg+xml;charset=utf-8,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20viewBox%3D%220%200%20320%20320%22%3E%3Cdefs%3E%3ClinearGradient%20id%3D%22g%22%20x1%3D%220%22%20y1%3D%220%22%20x2%3D%221%22%20y2%3D%221%22%3E%3Cstop%20stop-color%3D%22%230d0d0f%22%2F%3E%3Cstop%20offset%3D%221%22%20stop-color%3D%22%23444952%22%2F%3E%3C%2FlinearGradient%3E%3C%2Fdefs%3E%3Crect%20width%3D%22320%22%20height%3D%22320%22%20rx%3D%2222%22%20fill%3D%22url(%23g)%22%2F%3E%3Cg%20stroke%3D%22rgba(255%2C255%2C255%2C.8)%22%20stroke-width%3D%223%22%3E%3Cpath%20d%3D%22M20%2030%20Q80%20160%2020%20290%22%2F%3E%3Cpath%20d%3D%22M36%2030%20Q88%20160%2036%20290%22%2F%3E%3Cpath%20d%3D%22M52%2030%20Q96%20160%2052%20290%22%2F%3E%3Cpath%20d%3D%22M68%2030%20Q104%20160%2068%20290%22%2F%3E%3Cpath%20d%3D%22M84%2030%20Q112%20160%2084%20290%22%2F%3E%3Cpath%20d%3D%22M100%2030%20Q120%20160%20100%20290%22%2F%3E%3Cpath%20d%3D%22M116%2030%20Q128%20160%20116%20290%22%2F%3E%3Cpath%20d%3D%22M132%2030%20Q136%20160%20132%20290%22%2F%3E%3Cpath%20d%3D%22M148%2030%20Q144%20160%20148%20290%22%2F%3E%3Cpath%20d%3D%22M164%2030%20Q152%20160%20164%20290%22%2F%3E%3Cpath%20d%3D%22M180%2030%20Q160%20160%20180%20290%22%2F%3E%3Cpath%20d%3D%22M196%2030%20Q168%20160%20196%20290%22%2F%3E%3Cpath%20d%3D%22M212%2030%20Q176%20160%20212%20290%22%2F%3E%3Cpath%20d%3D%22M228%2030%20Q184%20160%20228%20290%22%2F%3E%3Cpath%20d%3D%22M244%2030%20Q192%20160%20244%20290%22%2F%3E%3Cpath%20d%3D%22M260%2030%20Q200%20160%20260%20290%22%2F%3E%3Cpath%20d%3D%22M276%2030%20Q208%20160%20276%20290%22%2F%3E%3Cpath%20d%3D%22M292%2030%20Q216%20160%20292%20290%22%2F%3E%3C%2Fg%3E%3Ctext%20x%3D%2224%22%20y%3D%22294%22%20fill%3D%22white%22%20font-size%3D%2213%22%20font-family%3D%22Arial%22%20font-weight%3D%22700%22%3EBrand%20device%3C%2Ftext%3E%3C%2Fsvg%3E",
+                  "alt": "Brand device",
+                  "styles": {
+                    "base": {
+                      "borderRadius": "18px",
+                      "borderWidth": "1px",
+                      "borderColor": "var(--color-line)",
+                      "overflow": "hidden",
+                      "width": "100%",
+                      "height": "290px",
+                      "objectFit": "cover"
+                    }
+                  },
+                  "children": []
+                },
+                {
+                  "id": "about-card-growth",
+                  "type": "container",
+                  "name": "about-card-growth",
+                  "children": [
+                    {
+                      "id": "growth-label",
+                      "type": "text",
+                      "name": "growth-label",
+                      "content": "(Growth)",
+                      "styles": {
+                        "base": {
+                          "color": "var(--color-ink)",
+                          "fontFamily": "var(--typography-mono)",
+                          "fontSize": "11px",
+                          "fontWeight": 700,
+                          "letterSpacing": "1px",
+                          "textTransform": "uppercase"
+                        }
+                      },
+                      "children": []
+                    },
+                    {
+                      "id": "growth-value",
+                      "type": "heading",
+                      "name": "growth-value",
+                      "content": "+32%",
+                      "level": 3,
+                      "styles": {
+                        "base": {
+                          "color": "var(--color-blue)",
+                          "fontSize": "66px",
+                          "lineHeight": 1,
+                          "fontWeight": 700
+                        }
+                      },
+                      "children": []
+                    },
+                    {
+                      "id": "growth-copy",
+                      "type": "text",
+                      "name": "growth-copy",
+                      "content": "Design experiences, not just screens.",
+                      "styles": {
+                        "base": {
+                          "maxWidth": "170px",
+                          "fontSize": "12px",
+                          "lineHeight": 1.3
+                        }
+                      },
+                      "children": []
+                    }
+                  ],
+                  "styles": {
+                    "base": {
+                      "borderRadius": "18px",
+                      "borderWidth": "1px",
+                      "borderColor": "var(--color-line)",
+                      "overflow": "hidden",
+                      "minHeight": "290px",
+                      "display": "flex",
+                      "direction": "column",
+                      "justifyContent": "space-between",
+                      "paddingTop": "24px",
+                      "paddingRight": "24px",
+                      "paddingBottom": "24px",
+                      "paddingLeft": "24px",
+                      "background": "var(--color-white)"
+                    }
+                  }
+                }
+              ],
+              "styles": {
+                "base": {
+                  "display": "grid",
+                  "gridTemplateColumns": "1fr 1fr 1fr",
+                  "gap": "18px",
+                  "marginTop": "48px"
+                },
+                "tablet": {
+                  "gridTemplateColumns": "1fr 1fr"
+                },
+                "mobile": {
+                  "gridTemplateColumns": "1fr"
+                }
+              }
+            },
+            {
+              "id": "about-strip",
+              "type": "container",
+              "name": "about-strip",
+              "children": [
+                {
+                  "id": "about-code",
+                  "type": "text",
+                  "name": "about-code",
+                  "content": "(ABOUT — 01)",
+                  "styles": {
+                    "base": {
+                      "color": "var(--color-ink)",
+                      "fontFamily": "var(--typography-mono)",
+                      "fontSize": "11px",
+                      "fontWeight": 700,
+                      "letterSpacing": "1px",
+                      "textTransform": "uppercase"
+                    }
+                  },
+                  "children": []
+                },
+                {
+                  "id": "about-purpose",
+                  "type": "text",
+                  "name": "about-purpose",
+                  "content": "We help you to shape your ideas into visuals that resonate, disrupt, and last.",
+                  "styles": {
+                    "base": {
+                      "maxWidth": "360px",
+                      "fontSize": "12px",
+                      "lineHeight": 1.4
+                    }
+                  },
+                  "children": []
+                },
+                {
+                  "id": "about-call",
+                  "type": "text",
+                  "name": "about-call",
+                  "content": "Book a Call Now",
+                  "styles": {
+                    "base": {
+                      "fontSize": "11px",
+                      "fontWeight": 700,
+                      "textDecoration": "underline"
+                    }
+                  },
+                  "children": []
+                }
+              ],
+              "styles": {
+                "base": {
+                  "display": "grid",
+                  "gridTemplateColumns": "1fr 1fr auto",
+                  "gap": "24px",
+                  "paddingTop": "28px",
+                  "borderWidth": "1px",
+                  "borderColor": "var(--color-line)"
+                },
+                "mobile": {
+                  "gridTemplateColumns": "1fr",
+                  "gap": "14px"
+                }
+              }
+            }
+          ],
+          "styles": {
+            "base": {
+              "width": "100%",
+              "maxWidth": "1200px",
+              "marginLeft": "auto",
+              "marginRight": "auto",
+              "display": "flex",
+              "direction": "column",
+              "gap": "28px"
+            }
+          }
+        }
+      ],
+      "styles": {
+        "base": {
+          "width": "100%",
+          "paddingTop": "96px",
+          "paddingRight": "48px",
+          "paddingBottom": "96px",
+          "paddingLeft": "48px",
+          "background": "var(--color-paper)",
+          "color": "var(--color-ink)"
+        },
+        "tablet": {
+          "paddingRight": "32px",
+          "paddingLeft": "32px"
+        },
+        "mobile": {
+          "paddingTop": "64px",
+          "paddingRight": "20px",
+          "paddingBottom": "64px",
+          "paddingLeft": "20px"
+        }
+      }
+    },
+    {
+      "id": "services",
+      "type": "section",
+      "name": "services",
+      "children": [
+        {
+          "id": "services-inner",
+          "type": "container",
+          "name": "services-inner",
+          "children": [
+            {
+              "id": "services-heading",
+              "type": "heading",
+              "name": "services-heading",
+              "content": "Our Services",
+              "level": 2,
+              "styles": {
+                "base": {
+                  "color": "var(--color-blue)",
+                  "fontFamily": "var(--typography-sans)",
+                  "fontSize": "104px",
+                  "fontWeight": 700,
+                  "lineHeight": 0.9,
+                  "letterSpacing": "-6px"
+                },
+                "tablet": {
+                  "fontSize": "76px"
+                },
+                "mobile": {
+                  "fontSize": "52px",
+                  "letterSpacing": "-3px"
+                }
+              },
+              "children": []
+            },
+            {
+              "id": "services-intro",
+              "type": "container",
+              "name": "services-intro",
+              "children": [
+                {
+                  "id": "services-code",
+                  "type": "text",
+                  "name": "services-code",
+                  "content": "(SERVICE — 02)",
+                  "styles": {
+                    "base": {
+                      "color": "var(--color-ink)",
+                      "fontFamily": "var(--typography-mono)",
+                      "fontSize": "11px",
+                      "fontWeight": 700,
+                      "letterSpacing": "1px",
+                      "textTransform": "uppercase"
+                    }
+                  },
+                  "children": []
+                },
+                {
+                  "id": "services-statement",
+                  "type": "heading",
+                  "name": "services-statement",
+                  "content": "An agency that brings passion into every project.",
+                  "level": 3,
+                  "styles": {
+                    "base": {
+                      "maxWidth": "650px",
+                      "fontSize": "43px",
+                      "lineHeight": 1,
+                      "fontWeight": 600
+                    },
+                    "mobile": {
+                      "fontSize": "30px"
+                    }
+                  },
+                  "children": []
+                }
+              ],
+              "styles": {
+                "base": {
+                  "display": "grid",
+                  "gridTemplateColumns": "1fr 2fr",
+                  "gap": "48px",
+                  "paddingTop": "36px",
+                  "paddingBottom": "38px"
+                },
+                "mobile": {
+                  "gridTemplateColumns": "1fr",
+                  "gap": "18px"
+                }
+              }
+            },
+            {
+              "id": "services-layout",
+              "type": "container",
+              "name": "services-layout",
+              "children": [
+                {
+                  "id": "service-list",
+                  "type": "container",
+                  "name": "service-list",
+                  "children": [
+                    {
+                      "id": "service-row-1",
+                      "type": "container",
+                      "name": "service-row-1",
+                      "children": [
+                        {
+                          "id": "service-number-1",
+                          "type": "text",
+                          "name": "service-number-1",
+                          "content": "01.",
+                          "styles": {
+                            "base": {
+                              "fontFamily": "var(--typography-mono)",
+                              "fontSize": "12px",
+                              "color": "var(--color-muted)"
+                            }
+                          },
+                          "children": []
+                        },
+                        {
+                          "id": "service-copy-1",
+                          "type": "container",
+                          "name": "service-copy-1",
+                          "children": [
+                            {
+                              "id": "service-title-1",
+                              "type": "heading",
+                              "name": "service-title-1",
+                              "content": "Brand Identity",
+                              "level": 3,
+                              "styles": {
+                                "base": {
+                                  "fontSize": "30px",
+                                  "lineHeight": 1,
+                                  "fontWeight": 600
+                                }
+                              },
+                              "children": []
+                            },
+                            {
+                              "id": "service-description",
+                              "type": "text",
+                              "name": "service-description",
+                              "content": "We specialize in crafting unique brand identities that resonate with audiences.",
+                              "styles": {
+                                "base": {
+                                  "maxWidth": "620px",
+                                  "fontSize": "14px",
+                                  "lineHeight": 1.55,
+                                  "color": "var(--color-muted)"
+                                }
+                              },
+                              "children": []
+                            },
+                            {
+                              "id": "service-tags",
+                              "type": "container",
+                              "name": "service-tags",
+                              "children": [
+                                {
+                                  "id": "service-tag-1",
+                                  "type": "text",
+                                  "name": "service-tag-1",
+                                  "content": "Strategy",
+                                  "styles": {
+                                    "base": {
+                                      "paddingTop": "7px",
+                                      "paddingRight": "10px",
+                                      "paddingBottom": "7px",
+                                      "paddingLeft": "10px",
+                                      "borderRadius": "999px",
+                                      "background": "var(--color-soft)",
+                                      "fontSize": "10px",
+                                      "fontWeight": 700
+                                    }
+                                  },
+                                  "children": []
+                                },
+                                {
+                                  "id": "service-tag-2",
+                                  "type": "text",
+                                  "name": "service-tag-2",
+                                  "content": "Logo Design",
+                                  "styles": {
+                                    "base": {
+                                      "paddingTop": "7px",
+                                      "paddingRight": "10px",
+                                      "paddingBottom": "7px",
+                                      "paddingLeft": "10px",
+                                      "borderRadius": "999px",
+                                      "background": "var(--color-soft)",
+                                      "fontSize": "10px",
+                                      "fontWeight": 700
+                                    }
+                                  },
+                                  "children": []
+                                },
+                                {
+                                  "id": "service-tag-3",
+                                  "type": "text",
+                                  "name": "service-tag-3",
+                                  "content": "Package Design",
+                                  "styles": {
+                                    "base": {
+                                      "paddingTop": "7px",
+                                      "paddingRight": "10px",
+                                      "paddingBottom": "7px",
+                                      "paddingLeft": "10px",
+                                      "borderRadius": "999px",
+                                      "background": "var(--color-soft)",
+                                      "fontSize": "10px",
+                                      "fontWeight": 700
+                                    }
+                                  },
+                                  "children": []
+                                },
+                                {
+                                  "id": "service-tag-4",
+                                  "type": "text",
+                                  "name": "service-tag-4",
+                                  "content": "Typography",
+                                  "styles": {
+                                    "base": {
+                                      "paddingTop": "7px",
+                                      "paddingRight": "10px",
+                                      "paddingBottom": "7px",
+                                      "paddingLeft": "10px",
+                                      "borderRadius": "999px",
+                                      "background": "var(--color-soft)",
+                                      "fontSize": "10px",
+                                      "fontWeight": 700
+                                    }
+                                  },
+                                  "children": []
+                                },
+                                {
+                                  "id": "service-tag-5",
+                                  "type": "text",
+                                  "name": "service-tag-5",
+                                  "content": "Color Scheme",
+                                  "styles": {
+                                    "base": {
+                                      "paddingTop": "7px",
+                                      "paddingRight": "10px",
+                                      "paddingBottom": "7px",
+                                      "paddingLeft": "10px",
+                                      "borderRadius": "999px",
+                                      "background": "var(--color-soft)",
+                                      "fontSize": "10px",
+                                      "fontWeight": 700
+                                    }
+                                  },
+                                  "children": []
+                                }
+                              ],
+                              "styles": {
+                                "base": {
+                                  "display": "flex",
+                                  "flexWrap": "wrap",
+                                  "gap": "7px"
+                                }
+                              }
+                            }
+                          ],
+                          "styles": {
+                            "base": {
+                              "display": "flex",
+                              "direction": "column",
+                              "gap": "18px"
+                            }
+                          }
+                        },
+                        {
+                          "id": "service-toggle-1",
+                          "type": "text",
+                          "name": "service-toggle-1",
+                          "content": "−",
+                          "styles": {
+                            "base": {
+                              "fontSize": "25px",
+                              "textAlign": "right"
+                            }
+                          },
+                          "children": []
+                        }
+                      ],
+                      "styles": {
+                        "base": {
+                          "display": "grid",
+                          "gridTemplateColumns": "52px 1fr 32px",
+                          "gap": "18px",
+                          "paddingTop": "28px",
+                          "paddingBottom": "28px",
+                          "borderWidth": "1px",
+                          "borderColor": "var(--color-line)"
+                        },
+                        "mobile": {
+                          "gridTemplateColumns": "38px 1fr 24px",
+                          "gap": "10px"
+                        }
+                      }
+                    },
+                    {
+                      "id": "service-row-2",
+                      "type": "container",
+                      "name": "service-row-2",
+                      "children": [
+                        {
+                          "id": "service-number-2",
+                          "type": "text",
+                          "name": "service-number-2",
+                          "content": "02.",
+                          "styles": {
+                            "base": {
+                              "fontFamily": "var(--typography-mono)",
+                              "fontSize": "12px",
+                              "color": "var(--color-muted)"
+                            }
+                          },
+                          "children": []
+                        },
+                        {
+                          "id": "service-copy-2",
+                          "type": "container",
+                          "name": "service-copy-2",
+                          "children": [
+                            {
+                              "id": "service-title-2",
+                              "type": "heading",
+                              "name": "service-title-2",
+                              "content": "UI/UX Design",
+                              "level": 3,
+                              "styles": {
+                                "base": {
+                                  "fontSize": "30px",
+                                  "lineHeight": 1,
+                                  "fontWeight": 600
+                                }
+                              },
+                              "children": []
+                            }
+                          ],
+                          "styles": {
+                            "base": {
+                              "display": "flex",
+                              "direction": "column",
+                              "gap": "18px"
+                            }
+                          }
+                        },
+                        {
+                          "id": "service-toggle-2",
+                          "type": "text",
+                          "name": "service-toggle-2",
+                          "content": "+",
+                          "styles": {
+                            "base": {
+                              "fontSize": "25px",
+                              "textAlign": "right"
+                            }
+                          },
+                          "children": []
+                        }
+                      ],
+                      "styles": {
+                        "base": {
+                          "display": "grid",
+                          "gridTemplateColumns": "52px 1fr 32px",
+                          "gap": "18px",
+                          "paddingTop": "28px",
+                          "paddingBottom": "28px",
+                          "borderWidth": "1px",
+                          "borderColor": "var(--color-line)"
+                        },
+                        "mobile": {
+                          "gridTemplateColumns": "38px 1fr 24px",
+                          "gap": "10px"
+                        }
+                      }
+                    },
+                    {
+                      "id": "service-row-3",
+                      "type": "container",
+                      "name": "service-row-3",
+                      "children": [
+                        {
+                          "id": "service-number-3",
+                          "type": "text",
+                          "name": "service-number-3",
+                          "content": "03.",
+                          "styles": {
+                            "base": {
+                              "fontFamily": "var(--typography-mono)",
+                              "fontSize": "12px",
+                              "color": "var(--color-muted)"
+                            }
+                          },
+                          "children": []
+                        },
+                        {
+                          "id": "service-copy-3",
+                          "type": "container",
+                          "name": "service-copy-3",
+                          "children": [
+                            {
+                              "id": "service-title-3",
+                              "type": "heading",
+                              "name": "service-title-3",
+                              "content": "Development",
+                              "level": 3,
+                              "styles": {
+                                "base": {
+                                  "fontSize": "30px",
+                                  "lineHeight": 1,
+                                  "fontWeight": 600
+                                }
+                              },
+                              "children": []
+                            }
+                          ],
+                          "styles": {
+                            "base": {
+                              "display": "flex",
+                              "direction": "column",
+                              "gap": "18px"
+                            }
+                          }
+                        },
+                        {
+                          "id": "service-toggle-3",
+                          "type": "text",
+                          "name": "service-toggle-3",
+                          "content": "+",
+                          "styles": {
+                            "base": {
+                              "fontSize": "25px",
+                              "textAlign": "right"
+                            }
+                          },
+                          "children": []
+                        }
+                      ],
+                      "styles": {
+                        "base": {
+                          "display": "grid",
+                          "gridTemplateColumns": "52px 1fr 32px",
+                          "gap": "18px",
+                          "paddingTop": "28px",
+                          "paddingBottom": "28px",
+                          "borderWidth": "1px",
+                          "borderColor": "var(--color-line)"
+                        },
+                        "mobile": {
+                          "gridTemplateColumns": "38px 1fr 24px",
+                          "gap": "10px"
+                        }
+                      }
+                    }
+                  ],
+                  "styles": {
+                    "base": {
+                      "display": "flex",
+                      "direction": "column"
+                    }
+                  }
+                },
+                {
+                  "id": "service-image",
+                  "type": "image",
+                  "name": "service-image",
+                  "src": "data:image/svg+xml;charset=utf-8,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20viewBox%3D%220%200%20320%20320%22%3E%3Cdefs%3E%3ClinearGradient%20id%3D%22g%22%20x1%3D%220%22%20y1%3D%220%22%20x2%3D%221%22%20y2%3D%221%22%3E%3Cstop%20stop-color%3D%22%23f1f3f5%22%2F%3E%3Cstop%20offset%3D%221%22%20stop-color%3D%22%23dce4ea%22%2F%3E%3C%2FlinearGradient%3E%3C%2Fdefs%3E%3Crect%20width%3D%22320%22%20height%3D%22320%22%20rx%3D%2222%22%20fill%3D%22url(%23g)%22%2F%3E%3Cpath%20d%3D%22M105%2092h110l22%20170H83z%22%20fill%3D%22%23181818%22%2F%3E%3Cpath%20d%3D%22M125%20100c0-58%2070-58%2070%200%22%20fill%3D%22none%22%20stroke%3D%22%23181818%22%20stroke-width%3D%2212%22%2F%3E%3Ctext%20x%3D%22160%22%20y%3D%22214%22%20fill%3D%22white%22%20font-size%3D%2272%22%20font-family%3D%22Arial%22%20text-anchor%3D%22middle%22%3E.us%3C%2Ftext%3E%3Ctext%20x%3D%2224%22%20y%3D%22294%22%20fill%3D%22white%22%20font-size%3D%2213%22%20font-family%3D%22Arial%22%20font-weight%3D%22700%22%3EIdentity%20bag%3C%2Ftext%3E%3C%2Fsvg%3E",
+                  "alt": "Identity bag",
+                  "styles": {
+                    "base": {
+                      "borderRadius": "18px",
+                      "borderWidth": "1px",
+                      "borderColor": "var(--color-line)",
+                      "overflow": "hidden",
+                      "width": "100%",
+                      "height": "580px",
+                      "objectFit": "cover"
+                    }
+                  },
+                  "children": []
+                }
+              ],
+              "styles": {
+                "base": {
+                  "display": "grid",
+                  "gridTemplateColumns": "1.15fr .85fr",
+                  "gap": "48px"
+                },
+                "tablet": {
+                  "gridTemplateColumns": "1fr 1fr"
+                },
+                "mobile": {
+                  "gridTemplateColumns": "1fr"
+                }
+              }
+            }
+          ],
+          "styles": {
+            "base": {
+              "width": "100%",
+              "maxWidth": "1200px",
+              "marginLeft": "auto",
+              "marginRight": "auto",
+              "display": "flex",
+              "direction": "column"
+            }
+          }
+        }
+      ],
+      "styles": {
+        "base": {
+          "width": "100%",
+          "paddingTop": "96px",
+          "paddingRight": "48px",
+          "paddingBottom": "96px",
+          "paddingLeft": "48px",
+          "background": "var(--color-paper)",
+          "color": "var(--color-ink)"
+        },
+        "tablet": {
+          "paddingRight": "32px",
+          "paddingLeft": "32px"
+        },
+        "mobile": {
+          "paddingTop": "64px",
+          "paddingRight": "20px",
+          "paddingBottom": "64px",
+          "paddingLeft": "20px"
+        }
+      }
+    },
+    {
+      "id": "work",
+      "type": "section",
+      "name": "work",
+      "children": [
+        {
+          "id": "work-inner",
+          "type": "container",
+          "name": "work-inner",
+          "children": [
+            {
+              "id": "work-title-row",
+              "type": "container",
+              "name": "work-title-row",
+              "children": [
+                {
+                  "id": "work-heading",
+                  "type": "heading",
+                  "name": "work-heading",
+                  "content": "Our Work",
+                  "level": 2,
+                  "styles": {
+                    "base": {
+                      "color": "var(--color-blue)",
+                      "fontFamily": "var(--typography-sans)",
+                      "fontSize": "104px",
+                      "fontWeight": 700,
+                      "lineHeight": 0.9,
+                      "letterSpacing": "-6px"
+                    },
+                    "tablet": {
+                      "fontSize": "76px"
+                    },
+                    "mobile": {
+                      "fontSize": "52px",
+                      "letterSpacing": "-3px"
+                    }
+                  },
+                  "children": []
+                },
+                {
+                  "id": "work-code",
+                  "type": "text",
+                  "name": "work-code",
+                  "content": "(PROJECT — 03)",
+                  "styles": {
+                    "base": {
+                      "color": "var(--color-ink)",
+                      "fontFamily": "var(--typography-mono)",
+                      "fontSize": "11px",
+                      "fontWeight": 700,
+                      "letterSpacing": "1px",
+                      "textTransform": "uppercase"
+                    }
+                  },
+                  "children": []
+                }
+              ],
+              "styles": {
+                "base": {
+                  "display": "flex",
+                  "justifyContent": "space-between",
+                  "alignItems": "end"
+                }
+              }
+            },
+            {
+              "id": "project-grid",
+              "type": "container",
+              "name": "project-grid",
+              "children": [
+                {
+                  "id": "project-chat",
+                  "type": "container",
+                  "name": "project-chat",
+                  "children": [
+                    {
+                      "id": "project-chat-image",
+                      "type": "image",
+                      "name": "project-chat-image",
+                      "src": "data:image/svg+xml;charset=utf-8,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20viewBox%3D%220%200%20320%20320%22%3E%3Cdefs%3E%3ClinearGradient%20id%3D%22g%22%20x1%3D%220%22%20y1%3D%220%22%20x2%3D%221%22%20y2%3D%221%22%3E%3Cstop%20stop-color%3D%22%23090a0d%22%2F%3E%3Cstop%20offset%3D%221%22%20stop-color%3D%22%232445e4%22%2F%3E%3C%2FlinearGradient%3E%3C%2Fdefs%3E%3Crect%20width%3D%22320%22%20height%3D%22320%22%20rx%3D%2222%22%20fill%3D%22url(%23g)%22%2F%3E%3Cg%20stroke%3D%22rgba(255%2C255%2C255%2C.8)%22%20stroke-width%3D%223%22%3E%3Cpath%20d%3D%22M20%2030%20Q80%20160%2020%20290%22%2F%3E%3Cpath%20d%3D%22M36%2030%20Q88%20160%2036%20290%22%2F%3E%3Cpath%20d%3D%22M52%2030%20Q96%20160%2052%20290%22%2F%3E%3Cpath%20d%3D%22M68%2030%20Q104%20160%2068%20290%22%2F%3E%3Cpath%20d%3D%22M84%2030%20Q112%20160%2084%20290%22%2F%3E%3Cpath%20d%3D%22M100%2030%20Q120%20160%20100%20290%22%2F%3E%3Cpath%20d%3D%22M116%2030%20Q128%20160%20116%20290%22%2F%3E%3Cpath%20d%3D%22M132%2030%20Q136%20160%20132%20290%22%2F%3E%3Cpath%20d%3D%22M148%2030%20Q144%20160%20148%20290%22%2F%3E%3Cpath%20d%3D%22M164%2030%20Q152%20160%20164%20290%22%2F%3E%3Cpath%20d%3D%22M180%2030%20Q160%20160%20180%20290%22%2F%3E%3Cpath%20d%3D%22M196%2030%20Q168%20160%20196%20290%22%2F%3E%3Cpath%20d%3D%22M212%2030%20Q176%20160%20212%20290%22%2F%3E%3Cpath%20d%3D%22M228%2030%20Q184%20160%20228%20290%22%2F%3E%3Cpath%20d%3D%22M244%2030%20Q192%20160%20244%20290%22%2F%3E%3Cpath%20d%3D%22M260%2030%20Q200%20160%20260%20290%22%2F%3E%3Cpath%20d%3D%22M276%2030%20Q208%20160%20276%20290%22%2F%3E%3Cpath%20d%3D%22M292%2030%20Q216%20160%20292%20290%22%2F%3E%3C%2Fg%3E%3Ctext%20x%3D%2224%22%20y%3D%22294%22%20fill%3D%22white%22%20font-size%3D%2213%22%20font-family%3D%22Arial%22%20font-weight%3D%22700%22%3EChat%20Genius%3C%2Ftext%3E%3C%2Fsvg%3E",
+                      "alt": "Chat Genius",
+                      "styles": {
+                        "base": {
+                          "borderRadius": "18px",
+                          "borderWidth": "1px",
+                          "borderColor": "var(--color-line)",
+                          "overflow": "hidden",
+                          "width": "100%",
+                          "aspectRatio": "1.55",
+                          "objectFit": "cover"
+                        }
+                      },
+                      "children": []
+                    },
+                    {
+                      "id": "project-chat-title",
+                      "type": "heading",
+                      "name": "project-chat-title",
+                      "content": "Chat Genius",
+                      "level": 3,
+                      "styles": {
+                        "base": {
+                          "fontSize": "20px",
+                          "fontWeight": 600
+                        }
+                      },
+                      "children": []
+                    },
+                    {
+                      "id": "project-chat-meta",
+                      "type": "text",
+                      "name": "project-chat-meta",
+                      "content": "2024 — Still on going · Website Design · Development",
+                      "styles": {
+                        "base": {
+                          "fontSize": "10px",
+                          "color": "var(--color-muted)"
+                        }
+                      },
+                      "children": []
+                    }
+                  ],
+                  "styles": {
+                    "base": {
+                      "display": "flex",
+                      "direction": "column",
+                      "gap": "10px"
+                    }
+                  }
+                },
+                {
+                  "id": "project-field",
+                  "type": "container",
+                  "name": "project-field",
+                  "children": [
+                    {
+                      "id": "project-field-image",
+                      "type": "image",
+                      "name": "project-field-image",
+                      "src": "data:image/svg+xml;charset=utf-8,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20viewBox%3D%220%200%20320%20320%22%3E%3Cdefs%3E%3ClinearGradient%20id%3D%22g%22%20x1%3D%220%22%20y1%3D%220%22%20x2%3D%221%22%20y2%3D%221%22%3E%3Cstop%20stop-color%3D%22%23eef1ff%22%2F%3E%3Cstop%20offset%3D%221%22%20stop-color%3D%22%236275e8%22%2F%3E%3C%2FlinearGradient%3E%3C%2Fdefs%3E%3Crect%20width%3D%22320%22%20height%3D%22320%22%20rx%3D%2222%22%20fill%3D%22url(%23g)%22%2F%3E%3Cg%20stroke%3D%22rgba(255%2C255%2C255%2C.8)%22%20stroke-width%3D%223%22%3E%3Cpath%20d%3D%22M20%2030%20Q80%20160%2020%20290%22%2F%3E%3Cpath%20d%3D%22M36%2030%20Q88%20160%2036%20290%22%2F%3E%3Cpath%20d%3D%22M52%2030%20Q96%20160%2052%20290%22%2F%3E%3Cpath%20d%3D%22M68%2030%20Q104%20160%2068%20290%22%2F%3E%3Cpath%20d%3D%22M84%2030%20Q112%20160%2084%20290%22%2F%3E%3Cpath%20d%3D%22M100%2030%20Q120%20160%20100%20290%22%2F%3E%3Cpath%20d%3D%22M116%2030%20Q128%20160%20116%20290%22%2F%3E%3Cpath%20d%3D%22M132%2030%20Q136%20160%20132%20290%22%2F%3E%3Cpath%20d%3D%22M148%2030%20Q144%20160%20148%20290%22%2F%3E%3Cpath%20d%3D%22M164%2030%20Q152%20160%20164%20290%22%2F%3E%3Cpath%20d%3D%22M180%2030%20Q160%20160%20180%20290%22%2F%3E%3Cpath%20d%3D%22M196%2030%20Q168%20160%20196%20290%22%2F%3E%3Cpath%20d%3D%22M212%2030%20Q176%20160%20212%20290%22%2F%3E%3Cpath%20d%3D%22M228%2030%20Q184%20160%20228%20290%22%2F%3E%3Cpath%20d%3D%22M244%2030%20Q192%20160%20244%20290%22%2F%3E%3Cpath%20d%3D%22M260%2030%20Q200%20160%20260%20290%22%2F%3E%3Cpath%20d%3D%22M276%2030%20Q208%20160%20276%20290%22%2F%3E%3Cpath%20d%3D%22M292%2030%20Q216%20160%20292%20290%22%2F%3E%3C%2Fg%3E%3Ctext%20x%3D%2224%22%20y%3D%22294%22%20fill%3D%22white%22%20font-size%3D%2213%22%20font-family%3D%22Arial%22%20font-weight%3D%22700%22%3EField%20Type%3C%2Ftext%3E%3C%2Fsvg%3E",
+                      "alt": "Field Type",
+                      "styles": {
+                        "base": {
+                          "borderRadius": "18px",
+                          "borderWidth": "1px",
+                          "borderColor": "var(--color-line)",
+                          "overflow": "hidden",
+                          "width": "100%",
+                          "aspectRatio": "1.55",
+                          "objectFit": "cover"
+                        }
+                      },
+                      "children": []
+                    },
+                    {
+                      "id": "project-field-title",
+                      "type": "heading",
+                      "name": "project-field-title",
+                      "content": "Field Type",
+                      "level": 3,
+                      "styles": {
+                        "base": {
+                          "fontSize": "20px",
+                          "fontWeight": 600
+                        }
+                      },
+                      "children": []
+                    },
+                    {
+                      "id": "project-field-meta",
+                      "type": "text",
+                      "name": "project-field-meta",
+                      "content": "2023 — Jan 2025 · Branding · Social Media",
+                      "styles": {
+                        "base": {
+                          "fontSize": "10px",
+                          "color": "var(--color-muted)"
+                        }
+                      },
+                      "children": []
+                    }
+                  ],
+                  "styles": {
+                    "base": {
+                      "display": "flex",
+                      "direction": "column",
+                      "gap": "10px"
+                    }
+                  }
+                }
+              ],
+              "styles": {
+                "base": {
+                  "display": "grid",
+                  "gridTemplateColumns": "1fr 1fr",
+                  "gap": "18px",
+                  "marginTop": "44px"
+                },
+                "mobile": {
+                  "gridTemplateColumns": "1fr"
+                }
+              }
+            },
+            {
+              "id": "studio-story",
+              "type": "container",
+              "name": "studio-story",
+              "children": [
+                {
+                  "id": "story-detail-image",
+                  "type": "image",
+                  "name": "story-detail-image",
+                  "src": "data:image/svg+xml;charset=utf-8,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20viewBox%3D%220%200%20320%20320%22%3E%3Cdefs%3E%3ClinearGradient%20id%3D%22g%22%20x1%3D%220%22%20y1%3D%220%22%20x2%3D%221%22%20y2%3D%221%22%3E%3Cstop%20stop-color%3D%22%23d8dce8%22%2F%3E%3Cstop%20offset%3D%221%22%20stop-color%3D%22%237382a6%22%2F%3E%3C%2FlinearGradient%3E%3C%2Fdefs%3E%3Crect%20width%3D%22320%22%20height%3D%22320%22%20rx%3D%2222%22%20fill%3D%22url(%23g)%22%2F%3E%3Ccircle%20cx%3D%22225%22%20cy%3D%2295%22%20r%3D%22112%22%20fill%3D%22rgba(255%2C255%2C255%2C.23)%22%2F%3E%3Ccircle%20cx%3D%2292%22%20cy%3D%22242%22%20r%3D%2296%22%20fill%3D%22rgba(0%2C0%2C0%2C.22)%22%2F%3E%3Cpath%20d%3D%22M30%20250L270%2048%22%20stroke%3D%22rgba(255%2C255%2C255%2C.75)%22%20stroke-width%3D%2218%22%2F%3E%3Ctext%20x%3D%2224%22%20y%3D%22294%22%20fill%3D%22white%22%20font-size%3D%2213%22%20font-family%3D%22Arial%22%20font-weight%3D%22700%22%3EIdentity%20detail%3C%2Ftext%3E%3C%2Fsvg%3E",
+                  "alt": "Identity detail",
+                  "styles": {
+                    "base": {
+                      "borderRadius": "18px",
+                      "borderWidth": "1px",
+                      "borderColor": "var(--color-line)",
+                      "overflow": "hidden",
+                      "width": "280px",
+                      "aspectRatio": "1.6",
+                      "objectFit": "cover"
+                    }
+                  },
+                  "children": []
+                },
+                {
+                  "id": "story-copy",
+                  "type": "container",
+                  "name": "story-copy",
+                  "children": [
+                    {
+                      "id": "story-heading",
+                      "type": "heading",
+                      "name": "story-heading",
+                      "content": "We born in a shared studio loft with one mission: create work that doesn’t blend in.",
+                      "level": 3,
+                      "styles": {
+                        "base": {
+                          "maxWidth": "650px",
+                          "fontSize": "35px",
+                          "lineHeight": 1,
+                          "fontWeight": 600
+                        },
+                        "mobile": {
+                          "fontSize": "27px"
+                        }
+                      },
+                      "children": []
+                    },
+                    {
+                      "id": "story-button",
+                      "type": "button",
+                      "name": "story-button",
+                      "content": "See All Projects  →",
+                      "href": "#contact",
+                      "globalClassIds": [
+                        "class-pill-button"
+                      ],
+                      "styles": {
+                        "base": {}
+                      },
+                      "children": []
+                    }
+                  ],
+                  "styles": {
+                    "base": {
+                      "display": "flex",
+                      "direction": "column",
+                      "alignItems": "flex-start",
+                      "gap": "24px"
+                    }
+                  }
+                }
+              ],
+              "styles": {
+                "base": {
+                  "display": "grid",
+                  "gridTemplateColumns": "300px 1fr",
+                  "gap": "54px",
+                  "alignItems": "center",
+                  "marginTop": "36px"
+                },
+                "mobile": {
+                  "gridTemplateColumns": "1fr"
+                }
+              }
+            },
+            {
+              "id": "milestones-wrap",
+              "type": "container",
+              "name": "milestones-wrap",
+              "children": [
+                {
+                  "id": "milestones-label",
+                  "type": "text",
+                  "name": "milestones-label",
+                  "content": "AGENCY MILESTONES",
+                  "styles": {
+                    "base": {
+                      "color": "var(--color-ink)",
+                      "fontFamily": "var(--typography-mono)",
+                      "fontSize": "11px",
+                      "fontWeight": 700,
+                      "letterSpacing": "1px",
+                      "textTransform": "uppercase"
+                    }
+                  },
+                  "children": []
+                },
+                {
+                  "id": "milestones-grid",
+                  "type": "container",
+                  "name": "milestones-grid",
+                  "children": [
+                    {
+                      "id": "milestone-1",
+                      "type": "container",
+                      "name": "milestone-1",
+                      "children": [
+                        {
+                          "id": "milestone-value-1",
+                          "type": "heading",
+                          "name": "milestone-value-1",
+                          "content": "15+",
+                          "level": 3,
+                          "styles": {
+                            "base": {
+                              "fontSize": "58px",
+                              "lineHeight": 1,
+                              "fontWeight": 600
+                            }
+                          },
+                          "children": []
+                        },
+                        {
+                          "id": "milestone-copy-1",
+                          "type": "text",
+                          "name": "milestone-copy-1",
+                          "content": "Years of Experience",
+                          "styles": {
+                            "base": {
+                              "fontSize": "11px",
+                              "color": "var(--color-muted)"
+                            }
+                          },
+                          "children": []
+                        }
+                      ],
+                      "styles": {
+                        "base": {
+                          "display": "flex",
+                          "direction": "column",
+                          "gap": "10px"
+                        }
+                      }
+                    },
+                    {
+                      "id": "milestone-2",
+                      "type": "container",
+                      "name": "milestone-2",
+                      "children": [
+                        {
+                          "id": "milestone-value-2",
+                          "type": "heading",
+                          "name": "milestone-value-2",
+                          "content": "50+",
+                          "level": 3,
+                          "styles": {
+                            "base": {
+                              "fontSize": "58px",
+                              "lineHeight": 1,
+                              "fontWeight": 600
+                            }
+                          },
+                          "children": []
+                        },
+                        {
+                          "id": "milestone-copy-2",
+                          "type": "text",
+                          "name": "milestone-copy-2",
+                          "content": "Projects Completed",
+                          "styles": {
+                            "base": {
+                              "fontSize": "11px",
+                              "color": "var(--color-muted)"
+                            }
+                          },
+                          "children": []
+                        }
+                      ],
+                      "styles": {
+                        "base": {
+                          "display": "flex",
+                          "direction": "column",
+                          "gap": "10px"
+                        }
+                      }
+                    },
+                    {
+                      "id": "milestone-3",
+                      "type": "container",
+                      "name": "milestone-3",
+                      "children": [
+                        {
+                          "id": "milestone-value-3",
+                          "type": "heading",
+                          "name": "milestone-value-3",
+                          "content": "20+",
+                          "level": 3,
+                          "styles": {
+                            "base": {
+                              "fontSize": "58px",
+                              "lineHeight": 1,
+                              "fontWeight": 600
+                            }
+                          },
+                          "children": []
+                        },
+                        {
+                          "id": "milestone-copy-3",
+                          "type": "text",
+                          "name": "milestone-copy-3",
+                          "content": "Clients Worldwide",
+                          "styles": {
+                            "base": {
+                              "fontSize": "11px",
+                              "color": "var(--color-muted)"
+                            }
+                          },
+                          "children": []
+                        }
+                      ],
+                      "styles": {
+                        "base": {
+                          "display": "flex",
+                          "direction": "column",
+                          "gap": "10px"
+                        }
+                      }
+                    },
+                    {
+                      "id": "milestone-4",
+                      "type": "container",
+                      "name": "milestone-4",
+                      "children": [
+                        {
+                          "id": "milestone-value-4",
+                          "type": "heading",
+                          "name": "milestone-value-4",
+                          "content": "100%",
+                          "level": 3,
+                          "styles": {
+                            "base": {
+                              "fontSize": "58px",
+                              "lineHeight": 1,
+                              "fontWeight": 600
+                            }
+                          },
+                          "children": []
+                        },
+                        {
+                          "id": "milestone-copy-4",
+                          "type": "text",
+                          "name": "milestone-copy-4",
+                          "content": "Customer Satisfaction",
+                          "styles": {
+                            "base": {
+                              "fontSize": "11px",
+                              "color": "var(--color-muted)"
+                            }
+                          },
+                          "children": []
+                        }
+                      ],
+                      "styles": {
+                        "base": {
+                          "display": "flex",
+                          "direction": "column",
+                          "gap": "10px"
+                        }
+                      }
+                    }
+                  ],
+                  "styles": {
+                    "base": {
+                      "display": "grid",
+                      "gridTemplateColumns": "repeat(4,1fr)",
+                      "gap": "28px",
+                      "paddingTop": "28px",
+                      "borderWidth": "1px",
+                      "borderColor": "var(--color-line)"
+                    },
+                    "mobile": {
+                      "gridTemplateColumns": "1fr 1fr"
+                    }
+                  }
+                }
+              ],
+              "styles": {
+                "base": {
+                  "display": "flex",
+                  "direction": "column",
+                  "gap": "18px",
+                  "marginTop": "70px"
+                }
+              }
+            }
+          ],
+          "styles": {
+            "base": {
+              "width": "100%",
+              "maxWidth": "1200px",
+              "marginLeft": "auto",
+              "marginRight": "auto",
+              "display": "flex",
+              "direction": "column"
+            }
+          }
+        }
+      ],
+      "styles": {
+        "base": {
+          "width": "100%",
+          "paddingTop": "96px",
+          "paddingRight": "48px",
+          "paddingBottom": "96px",
+          "paddingLeft": "48px",
+          "background": "var(--color-paper)",
+          "color": "var(--color-ink)"
+        },
+        "tablet": {
+          "paddingRight": "32px",
+          "paddingLeft": "32px"
+        },
+        "mobile": {
+          "paddingTop": "64px",
+          "paddingRight": "20px",
+          "paddingBottom": "64px",
+          "paddingLeft": "20px"
+        }
+      }
+    },
+    {
+      "id": "team",
+      "type": "section",
+      "name": "team",
+      "children": [
+        {
+          "id": "team-inner",
+          "type": "container",
+          "name": "team-inner",
+          "children": [
+            {
+              "id": "team-header",
+              "type": "container",
+              "name": "team-header",
+              "children": [
+                {
+                  "id": "team-heading",
+                  "type": "heading",
+                  "name": "team-heading",
+                  "content": "Man Behind The Work",
+                  "level": 2,
+                  "styles": {
+                    "base": {
+                      "color": "var(--color-blue)",
+                      "fontFamily": "var(--typography-sans)",
+                      "fontSize": "104px",
+                      "fontWeight": 700,
+                      "lineHeight": 0.9,
+                      "letterSpacing": "-6px"
+                    },
+                    "tablet": {
+                      "fontSize": "76px"
+                    },
+                    "mobile": {
+                      "fontSize": "52px",
+                      "letterSpacing": "-3px"
+                    }
+                  },
+                  "children": []
+                },
+                {
+                  "id": "team-note",
+                  "type": "container",
+                  "name": "team-note",
+                  "children": [
+                    {
+                      "id": "team-avatars",
+                      "type": "text",
+                      "name": "team-avatars",
+                      "content": "● ● ●",
+                      "styles": {
+                        "base": {
+                          "color": "var(--color-blue)",
+                          "fontSize": "20px",
+                          "letterSpacing": "-2px"
+                        }
+                      },
+                      "children": []
+                    },
+                    {
+                      "id": "team-copy",
+                      "type": "text",
+                      "name": "team-copy",
+                      "content": "From digital campaigns to full-stack brand systems, our small team shipped big things.",
+                      "styles": {
+                        "base": {
+                          "maxWidth": "320px",
+                          "fontSize": "12px",
+                          "lineHeight": 1.4
+                        }
+                      },
+                      "children": []
+                    }
+                  ],
+                  "styles": {
+                    "base": {
+                      "display": "flex",
+                      "direction": "column",
+                      "gap": "12px"
+                    }
+                  }
+                }
+              ],
+              "styles": {
+                "base": {
+                  "display": "grid",
+                  "gridTemplateColumns": "1.45fr .55fr",
+                  "gap": "48px",
+                  "alignItems": "end"
+                },
+                "mobile": {
+                  "gridTemplateColumns": "1fr"
+                }
+              }
+            },
+            {
+              "id": "team-cards",
+              "type": "container",
+              "name": "team-cards",
+              "children": [
+                {
+                  "id": "founder-image",
+                  "type": "image",
+                  "name": "founder-image",
+                  "src": "data:image/svg+xml;charset=utf-8,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20viewBox%3D%220%200%20320%20320%22%3E%3Cdefs%3E%3ClinearGradient%20id%3D%22g%22%20x1%3D%220%22%20y1%3D%220%22%20x2%3D%221%22%20y2%3D%221%22%3E%3Cstop%20stop-color%3D%22%23dce4e7%22%2F%3E%3Cstop%20offset%3D%221%22%20stop-color%3D%22%237795b4%22%2F%3E%3C%2FlinearGradient%3E%3C%2Fdefs%3E%3Crect%20width%3D%22320%22%20height%3D%22320%22%20rx%3D%2222%22%20fill%3D%22url(%23g)%22%2F%3E%3Ccircle%20cx%3D%22160%22%20cy%3D%22118%22%20r%3D%2260%22%20fill%3D%22%23d3a67d%22%2F%3E%3Cpath%20d%3D%22M68%20304c10-100%2052-132%2092-132s82%2032%2092%20132%22%20fill%3D%22%23202530%22%2F%3E%3Cpath%20d%3D%22M96%2086c18-62%20118-70%20136%206-40-18-92-22-136-6%22%20fill%3D%22%23294a78%22%2F%3E%3Ctext%20x%3D%2224%22%20y%3D%22294%22%20fill%3D%22white%22%20font-size%3D%2213%22%20font-family%3D%22Arial%22%20font-weight%3D%22700%22%3ECreative%20founder%3C%2Ftext%3E%3C%2Fsvg%3E",
+                  "alt": "Creative founder",
+                  "styles": {
+                    "base": {
+                      "borderRadius": "18px",
+                      "borderWidth": "1px",
+                      "borderColor": "var(--color-line)",
+                      "overflow": "hidden",
+                      "width": "100%",
+                      "height": "360px",
+                      "objectFit": "cover"
+                    }
+                  },
+                  "children": []
+                },
+                {
+                  "id": "recognition-card",
+                  "type": "container",
+                  "name": "recognition-card",
+                  "children": [
+                    {
+                      "id": "recognition-star",
+                      "type": "text",
+                      "name": "recognition-star",
+                      "content": "✦",
+                      "styles": {
+                        "base": {
+                          "color": "var(--color-lime)",
+                          "fontSize": "44px"
+                        }
+                      },
+                      "children": []
+                    },
+                    {
+                      "id": "recognition-copy",
+                      "type": "container",
+                      "name": "recognition-copy",
+                      "children": [
+                        {
+                          "id": "recognition-label",
+                          "type": "text",
+                          "name": "recognition-label",
+                          "content": "GLOBAL RECOGNITION",
+                          "styles": {
+                            "base": {
+                              "color": "var(--color-white)",
+                              "fontSize": "10px",
+                              "fontWeight": 700
+                            }
+                          },
+                          "children": []
+                        },
+                        {
+                          "id": "recognition-title",
+                          "type": "heading",
+                          "name": "recognition-title",
+                          "content": "We thrive to create design that make impact—not just impressions.",
+                          "level": 3,
+                          "styles": {
+                            "base": {
+                              "color": "var(--color-white)",
+                              "fontSize": "27px",
+                              "lineHeight": 1,
+                              "fontWeight": 600
+                            }
+                          },
+                          "children": []
+                        }
+                      ],
+                      "styles": {
+                        "base": {
+                          "display": "flex",
+                          "direction": "column",
+                          "gap": "14px"
+                        }
+                      }
+                    }
+                  ],
+                  "styles": {
+                    "base": {
+                      "borderRadius": "18px",
+                      "borderWidth": "1px",
+                      "borderColor": "var(--color-line)",
+                      "overflow": "hidden",
+                      "minHeight": "360px",
+                      "display": "flex",
+                      "direction": "column",
+                      "justifyContent": "space-between",
+                      "paddingTop": "26px",
+                      "paddingRight": "26px",
+                      "paddingBottom": "26px",
+                      "paddingLeft": "26px",
+                      "background": "linear-gradient(145deg,#183dc6,#6650ef)"
+                    }
+                  }
+                },
+                {
+                  "id": "rating-card",
+                  "type": "container",
+                  "name": "rating-card",
+                  "children": [
+                    {
+                      "id": "rating-label",
+                      "type": "text",
+                      "name": "rating-label",
+                      "content": "(Rating)",
+                      "styles": {
+                        "base": {
+                          "color": "var(--color-ink)",
+                          "fontFamily": "var(--typography-mono)",
+                          "fontSize": "11px",
+                          "fontWeight": 700,
+                          "letterSpacing": "1px",
+                          "textTransform": "uppercase"
+                        }
+                      },
+                      "children": []
+                    },
+                    {
+                      "id": "rating-value",
+                      "type": "heading",
+                      "name": "rating-value",
+                      "content": "4.9/5",
+                      "level": 3,
+                      "styles": {
+                        "base": {
+                          "color": "var(--color-blue)",
+                          "fontSize": "70px",
+                          "lineHeight": 1,
+                          "fontWeight": 600
+                        }
+                      },
+                      "children": []
+                    },
+                    {
+                      "id": "rating-copy",
+                      "type": "text",
+                      "name": "rating-copy",
+                      "content": "by 2000+ clients world-wide · ★ Trustpilot",
+                      "styles": {
+                        "base": {
+                          "fontSize": "12px",
+                          "lineHeight": 1.4
+                        }
+                      },
+                      "children": []
+                    }
+                  ],
+                  "styles": {
+                    "base": {
+                      "borderRadius": "18px",
+                      "borderWidth": "1px",
+                      "borderColor": "var(--color-line)",
+                      "overflow": "hidden",
+                      "minHeight": "360px",
+                      "display": "flex",
+                      "direction": "column",
+                      "justifyContent": "space-between",
+                      "paddingTop": "26px",
+                      "paddingRight": "26px",
+                      "paddingBottom": "26px",
+                      "paddingLeft": "26px",
+                      "background": "var(--color-white)"
+                    }
+                  }
+                }
+              ],
+              "styles": {
+                "base": {
+                  "display": "grid",
+                  "gridTemplateColumns": "1fr 1fr 1fr",
+                  "gap": "18px",
+                  "marginTop": "46px"
+                },
+                "tablet": {
+                  "gridTemplateColumns": "1fr 1fr"
+                },
+                "mobile": {
+                  "gridTemplateColumns": "1fr"
+                }
+              }
+            },
+            {
+              "id": "team-cta",
+              "type": "container",
+              "name": "team-cta",
+              "children": [
+                {
+                  "id": "team-cta-copy",
+                  "type": "text",
+                  "name": "team-cta-copy",
+                  "content": "Whether you’re launching something new or reshaping what exists, we’re here to help you stand out—with clarity, creativity, and edge.",
+                  "styles": {
+                    "base": {
+                      "maxWidth": "650px",
+                      "fontSize": "12px",
+                      "lineHeight": 1.5
+                    }
+                  },
+                  "children": []
+                },
+                {
+                  "id": "team-cta-button",
+                  "type": "button",
+                  "name": "team-cta-button",
+                  "content": "Start Your Project  →",
+                  "href": "#contact",
+                  "globalClassIds": [
+                    "class-pill-button"
+                  ],
+                  "styles": {
+                    "base": {}
+                  },
+                  "children": []
+                }
+              ],
+              "styles": {
+                "base": {
+                  "display": "flex",
+                  "justifyContent": "space-between",
+                  "alignItems": "center",
+                  "gap": "30px",
+                  "paddingTop": "34px"
+                },
+                "mobile": {
+                  "direction": "column",
+                  "alignItems": "flex-start"
+                }
+              }
+            }
+          ],
+          "styles": {
+            "base": {
+              "width": "100%",
+              "maxWidth": "1200px",
+              "marginLeft": "auto",
+              "marginRight": "auto",
+              "display": "flex",
+              "direction": "column"
+            }
+          }
+        }
+      ],
+      "styles": {
+        "base": {
+          "width": "100%",
+          "paddingTop": "96px",
+          "paddingRight": "48px",
+          "paddingBottom": "96px",
+          "paddingLeft": "48px",
+          "background": "var(--color-paper)",
+          "color": "var(--color-ink)"
+        },
+        "tablet": {
+          "paddingRight": "32px",
+          "paddingLeft": "32px"
+        },
+        "mobile": {
+          "paddingTop": "64px",
+          "paddingRight": "20px",
+          "paddingBottom": "64px",
+          "paddingLeft": "20px"
+        }
+      }
+    },
+    {
+      "id": "testimonials",
+      "type": "section",
+      "name": "testimonials",
+      "children": [
+        {
+          "id": "testimonials-inner",
+          "type": "container",
+          "name": "testimonials-inner",
+          "children": [
+            {
+              "id": "testimonials-title-row",
+              "type": "container",
+              "name": "testimonials-title-row",
+              "children": [
+                {
+                  "id": "testimonial-title-copy",
+                  "type": "container",
+                  "name": "testimonial-title-copy",
+                  "children": [
+                    {
+                      "id": "reviews-code",
+                      "type": "text",
+                      "name": "reviews-code",
+                      "content": "(REVIEWS — 05)",
+                      "styles": {
+                        "base": {
+                          "color": "var(--color-ink)",
+                          "fontFamily": "var(--typography-mono)",
+                          "fontSize": "11px",
+                          "fontWeight": 700,
+                          "letterSpacing": "1px",
+                          "textTransform": "uppercase"
+                        }
+                      },
+                      "children": []
+                    },
+                    {
+                      "id": "testimonials-heading",
+                      "type": "heading",
+                      "name": "testimonials-heading",
+                      "content": "Testimonials",
+                      "level": 2,
+                      "styles": {
+                        "base": {
+                          "color": "var(--color-blue)",
+                          "fontFamily": "var(--typography-sans)",
+                          "fontSize": "104px",
+                          "fontWeight": 700,
+                          "lineHeight": 0.9,
+                          "letterSpacing": "-6px"
+                        },
+                        "tablet": {
+                          "fontSize": "76px"
+                        },
+                        "mobile": {
+                          "fontSize": "52px",
+                          "letterSpacing": "-3px"
+                        }
+                      },
+                      "children": []
+                    }
+                  ],
+                  "styles": {
+                    "base": {
+                      "display": "flex",
+                      "direction": "column",
+                      "gap": "20px"
+                    }
+                  }
+                },
+                {
+                  "id": "testimonial-arrows",
+                  "type": "text",
+                  "name": "testimonial-arrows",
+                  "content": "‹   ›",
+                  "styles": {
+                    "base": {
+                      "fontSize": "28px",
+                      "letterSpacing": "10px"
+                    }
+                  },
+                  "children": []
+                }
+              ],
+              "styles": {
+                "base": {
+                  "display": "flex",
+                  "justifyContent": "space-between",
+                  "alignItems": "end"
+                }
+              }
+            },
+            {
+              "id": "testimonial-main",
+              "type": "container",
+              "name": "testimonial-main",
+              "children": [
+                {
+                  "id": "conversion",
+                  "type": "container",
+                  "name": "conversion",
+                  "children": [
+                    {
+                      "id": "conversion-label",
+                      "type": "text",
+                      "name": "conversion-label",
+                      "content": "WORDS FROM THE ONES WHO KNOW US BEST",
+                      "styles": {
+                        "base": {
+                          "color": "var(--color-ink)",
+                          "fontFamily": "var(--typography-mono)",
+                          "fontSize": "11px",
+                          "fontWeight": 700,
+                          "letterSpacing": "1px",
+                          "textTransform": "uppercase"
+                        }
+                      },
+                      "children": []
+                    },
+                    {
+                      "id": "conversion-value",
+                      "type": "heading",
+                      "name": "conversion-value",
+                      "content": "+80%",
+                      "level": 3,
+                      "styles": {
+                        "base": {
+                          "fontSize": "64px",
+                          "lineHeight": 1,
+                          "fontWeight": 600
+                        }
+                      },
+                      "children": []
+                    },
+                    {
+                      "id": "conversion-copy",
+                      "type": "text",
+                      "name": "conversion-copy",
+                      "content": "Conversion Rate",
+                      "styles": {
+                        "base": {
+                          "fontSize": "11px",
+                          "color": "var(--color-muted)"
+                        }
+                      },
+                      "children": []
+                    }
+                  ],
+                  "styles": {
+                    "base": {
+                      "display": "flex",
+                      "direction": "column",
+                      "justifyContent": "space-between",
+                      "minHeight": "300px"
+                    }
+                  }
+                },
+                {
+                  "id": "quote",
+                  "type": "container",
+                  "name": "quote",
+                  "children": [
+                    {
+                      "id": "quote-text",
+                      "type": "heading",
+                      "name": "quote-text",
+                      "content": "“Working with Boulevard felt less like building with a creative partner. Every visual, every word—just hit right.”",
+                      "level": 3,
+                      "styles": {
+                        "base": {
+                          "maxWidth": "720px",
+                          "fontSize": "38px",
+                          "lineHeight": 1.02,
+                          "fontWeight": 600
+                        },
+                        "mobile": {
+                          "fontSize": "28px"
+                        }
+                      },
+                      "children": []
+                    },
+                    {
+                      "id": "quote-author",
+                      "type": "container",
+                      "name": "quote-author",
+                      "children": [
+                        {
+                          "id": "author-avatar",
+                          "type": "text",
+                          "name": "author-avatar",
+                          "content": "●",
+                          "styles": {
+                            "base": {
+                              "color": "var(--color-blue)",
+                              "fontSize": "26px"
+                            }
+                          },
+                          "children": []
+                        },
+                        {
+                          "id": "author-copy",
+                          "type": "container",
+                          "name": "author-copy",
+                          "children": [
+                            {
+                              "id": "author-name",
+                              "type": "text",
+                              "name": "author-name",
+                              "content": "Guy Hawkins",
+                              "styles": {
+                                "base": {
+                                  "fontSize": "13px",
+                                  "fontWeight": 700
+                                }
+                              },
+                              "children": []
+                            },
+                            {
+                              "id": "author-role",
+                              "type": "text",
+                              "name": "author-role",
+                              "content": "Head of Product at Webflow",
+                              "styles": {
+                                "base": {
+                                  "fontSize": "10px",
+                                  "color": "var(--color-muted)"
+                                }
+                              },
+                              "children": []
+                            }
+                          ],
+                          "styles": {
+                            "base": {
+                              "display": "flex",
+                              "direction": "column",
+                              "gap": "4px"
+                            }
+                          }
+                        },
+                        {
+                          "id": "webflow-logo",
+                          "type": "text",
+                          "name": "webflow-logo",
+                          "content": "Webflow",
+                          "styles": {
+                            "base": {
+                              "marginLeft": "auto",
+                              "fontSize": "20px",
+                              "fontWeight": 700
+                            }
+                          },
+                          "children": []
+                        }
+                      ],
+                      "styles": {
+                        "base": {
+                          "display": "flex",
+                          "alignItems": "center",
+                          "gap": "12px"
+                        }
+                      }
+                    }
+                  ],
+                  "styles": {
+                    "base": {
+                      "display": "flex",
+                      "direction": "column",
+                      "justifyContent": "space-between",
+                      "minHeight": "300px"
+                    }
+                  }
+                }
+              ],
+              "styles": {
+                "base": {
+                  "display": "grid",
+                  "gridTemplateColumns": ".65fr 1.35fr",
+                  "gap": "70px",
+                  "marginTop": "60px",
+                  "paddingTop": "44px",
+                  "borderWidth": "1px",
+                  "borderColor": "var(--color-line)"
+                },
+                "mobile": {
+                  "gridTemplateColumns": "1fr",
+                  "gap": "34px"
+                }
+              }
+            },
+            {
+              "id": "client-proof",
+              "type": "container",
+              "name": "client-proof",
+              "children": [
+                {
+                  "id": "client-proof-label",
+                  "type": "text",
+                  "name": "client-proof-label",
+                  "content": "✦ Working with brands that matter",
+                  "styles": {
+                    "base": {
+                      "fontSize": "11px",
+                      "fontWeight": 700
+                    }
+                  },
+                  "children": []
+                },
+                {
+                  "id": "client-grid",
+                  "type": "container",
+                  "name": "client-grid",
+                  "children": [
+                    {
+                      "id": "client-1",
+                      "type": "container",
+                      "name": "client-1",
+                      "children": [
+                        {
+                          "id": "client-name-1",
+                          "type": "text",
+                          "name": "client-name-1",
+                          "content": "coinbase",
+                          "styles": {
+                            "base": {
+                              "fontSize": "18px",
+                              "fontWeight": 700,
+                              "textAlign": "center"
+                            }
+                          },
+                          "children": []
+                        }
+                      ],
+                      "styles": {
+                        "base": {
+                          "minHeight": "100px",
+                          "display": "flex",
+                          "alignItems": "center",
+                          "justifyContent": "center",
+                          "borderWidth": "1px",
+                          "borderColor": "var(--color-line)",
+                          "borderRadius": "14px",
+                          "background": "var(--color-white)"
+                        }
+                      }
+                    },
+                    {
+                      "id": "client-2",
+                      "type": "container",
+                      "name": "client-2",
+                      "children": [
+                        {
+                          "id": "client-name-2",
+                          "type": "text",
+                          "name": "client-name-2",
+                          "content": "slack",
+                          "styles": {
+                            "base": {
+                              "fontSize": "18px",
+                              "fontWeight": 700,
+                              "textAlign": "center"
+                            }
+                          },
+                          "children": []
+                        }
+                      ],
+                      "styles": {
+                        "base": {
+                          "minHeight": "100px",
+                          "display": "flex",
+                          "alignItems": "center",
+                          "justifyContent": "center",
+                          "borderWidth": "1px",
+                          "borderColor": "var(--color-line)",
+                          "borderRadius": "14px",
+                          "background": "var(--color-white)"
+                        }
+                      }
+                    },
+                    {
+                      "id": "client-3",
+                      "type": "container",
+                      "name": "client-3",
+                      "children": [
+                        {
+                          "id": "client-name-3",
+                          "type": "text",
+                          "name": "client-name-3",
+                          "content": "Webflow",
+                          "styles": {
+                            "base": {
+                              "fontSize": "18px",
+                              "fontWeight": 700,
+                              "textAlign": "center"
+                            }
+                          },
+                          "children": []
+                        }
+                      ],
+                      "styles": {
+                        "base": {
+                          "minHeight": "100px",
+                          "display": "flex",
+                          "alignItems": "center",
+                          "justifyContent": "center",
+                          "borderWidth": "1px",
+                          "borderColor": "var(--color-line)",
+                          "borderRadius": "14px",
+                          "background": "var(--color-white)"
+                        }
+                      }
+                    },
+                    {
+                      "id": "client-4",
+                      "type": "container",
+                      "name": "client-4",
+                      "children": [
+                        {
+                          "id": "client-name-4",
+                          "type": "text",
+                          "name": "client-name-4",
+                          "content": "Spotify",
+                          "styles": {
+                            "base": {
+                              "fontSize": "18px",
+                              "fontWeight": 700,
+                              "textAlign": "center"
+                            }
+                          },
+                          "children": []
+                        }
+                      ],
+                      "styles": {
+                        "base": {
+                          "minHeight": "100px",
+                          "display": "flex",
+                          "alignItems": "center",
+                          "justifyContent": "center",
+                          "borderWidth": "1px",
+                          "borderColor": "var(--color-line)",
+                          "borderRadius": "14px",
+                          "background": "var(--color-white)"
+                        }
+                      }
+                    }
+                  ],
+                  "styles": {
+                    "base": {
+                      "display": "grid",
+                      "gridTemplateColumns": "repeat(4,1fr)",
+                      "gap": "14px"
+                    },
+                    "mobile": {
+                      "gridTemplateColumns": "1fr 1fr"
+                    }
+                  }
+                }
+              ],
+              "styles": {
+                "base": {
+                  "display": "flex",
+                  "direction": "column",
+                  "gap": "24px",
+                  "marginTop": "60px"
+                }
+              }
+            }
+          ],
+          "styles": {
+            "base": {
+              "width": "100%",
+              "maxWidth": "1200px",
+              "marginLeft": "auto",
+              "marginRight": "auto",
+              "display": "flex",
+              "direction": "column"
+            }
+          }
+        }
+      ],
+      "styles": {
+        "base": {
+          "width": "100%",
+          "paddingTop": "96px",
+          "paddingRight": "48px",
+          "paddingBottom": "96px",
+          "paddingLeft": "48px",
+          "background": "var(--color-paper)",
+          "color": "var(--color-ink)"
+        },
+        "tablet": {
+          "paddingRight": "32px",
+          "paddingLeft": "32px"
+        },
+        "mobile": {
+          "paddingTop": "64px",
+          "paddingRight": "20px",
+          "paddingBottom": "64px",
+          "paddingLeft": "20px"
+        }
+      }
+    },
+    {
+      "id": "footer",
+      "type": "section",
+      "name": "footer",
+      "children": [
+        {
+          "id": "footer-inner",
+          "type": "container",
+          "name": "footer-inner",
+          "children": [
+            {
+              "id": "footer-contact",
+              "type": "container",
+              "name": "footer-contact",
+              "children": [
+                {
+                  "id": "footer-email-wrap",
+                  "type": "container",
+                  "name": "footer-email-wrap",
+                  "children": [
+                    {
+                      "id": "footer-question",
+                      "type": "text",
+                      "name": "footer-question",
+                      "content": "HAVE ANY PROJECT IN MIND?",
+                      "styles": {
+                        "base": {
+                          "color": "var(--color-white)",
+                          "fontSize": "10px",
+                          "fontWeight": 700
+                        }
+                      },
+                      "children": []
+                    },
+                    {
+                      "id": "footer-email",
+                      "type": "heading",
+                      "name": "footer-email",
+                      "content": "hello@boulevard.com",
+                      "level": 2,
+                      "styles": {
+                        "base": {
+                          "color": "var(--color-periwinkle)",
+                          "fontSize": "60px",
+                          "lineHeight": 1,
+                          "fontWeight": 500,
+                          "letterSpacing": "-2px"
+                        },
+                        "mobile": {
+                          "fontSize": "36px"
+                        }
+                      },
+                      "children": []
+                    }
+                  ],
+                  "styles": {
+                    "base": {
+                      "display": "flex",
+                      "direction": "column",
+                      "gap": "10px"
+                    }
+                  }
+                },
+                {
+                  "id": "footer-call",
+                  "type": "button",
+                  "name": "footer-call",
+                  "content": "Book a Call  →",
+                  "href": "#contact",
+                  "globalClassIds": [
+                    "class-pill-button"
+                  ],
+                  "styles": {
+                    "base": {}
+                  },
+                  "children": []
+                }
+              ],
+              "styles": {
+                "base": {
+                  "display": "flex",
+                  "justifyContent": "space-between",
+                  "alignItems": "end",
+                  "gap": "30px",
+                  "paddingBottom": "46px",
+                  "borderWidth": "1px",
+                  "borderColor": "#343434"
+                },
+                "mobile": {
+                  "direction": "column",
+                  "alignItems": "flex-start"
+                }
+              }
+            },
+            {
+              "id": "footer-columns",
+              "type": "container",
+              "name": "footer-columns",
+              "children": [
+                {
+                  "id": "footer-about",
+                  "type": "container",
+                  "name": "footer-about",
+                  "children": [
+                    {
+                      "id": "copyright",
+                      "type": "text",
+                      "name": "copyright",
+                      "content": "© 2025 Boulevard Creative",
+                      "styles": {
+                        "base": {
+                          "color": "var(--color-white)",
+                          "fontSize": "10px"
+                        }
+                      },
+                      "children": []
+                    },
+                    {
+                      "id": "footer-about-copy",
+                      "type": "text",
+                      "name": "footer-about-copy",
+                      "content": "Work with our strategists, designers, and developers who deliver high-quality work with passion.",
+                      "styles": {
+                        "base": {
+                          "maxWidth": "420px",
+                          "color": "var(--color-white)",
+                          "fontSize": "16px",
+                          "lineHeight": 1.35
+                        }
+                      },
+                      "children": []
+                    }
+                  ],
+                  "styles": {
+                    "base": {
+                      "display": "flex",
+                      "direction": "column",
+                      "gap": "20px"
+                    }
+                  }
+                },
+                {
+                  "id": "footer-nav",
+                  "type": "container",
+                  "name": "footer-nav",
+                  "children": [
+                    {
+                      "id": "footer-nav-label",
+                      "type": "text",
+                      "name": "footer-nav-label",
+                      "content": "NAVIGATE",
+                      "styles": {
+                        "base": {
+                          "color": "var(--color-white)",
+                          "fontSize": "10px",
+                          "fontWeight": 700
+                        }
+                      },
+                      "children": []
+                    },
+                    {
+                      "id": "footer-nav-links",
+                      "type": "text",
+                      "name": "footer-nav-links",
+                      "content": "Home\nProjects\nService\nAbout\nContact",
+                      "styles": {
+                        "base": {
+                          "color": "var(--color-white)",
+                          "fontSize": "12px",
+                          "lineHeight": 1.8
+                        }
+                      },
+                      "children": []
+                    }
+                  ],
+                  "styles": {
+                    "base": {
+                      "display": "flex",
+                      "direction": "column",
+                      "gap": "14px"
+                    }
+                  }
+                },
+                {
+                  "id": "footer-social",
+                  "type": "container",
+                  "name": "footer-social",
+                  "children": [
+                    {
+                      "id": "footer-social-label",
+                      "type": "text",
+                      "name": "footer-social-label",
+                      "content": "SOCIAL MEDIA",
+                      "styles": {
+                        "base": {
+                          "color": "var(--color-white)",
+                          "fontSize": "10px",
+                          "fontWeight": 700
+                        }
+                      },
+                      "children": []
+                    },
+                    {
+                      "id": "footer-social-links",
+                      "type": "text",
+                      "name": "footer-social-links",
+                      "content": "Instagram\nTwitter (X)\nLinkedIn\nDribbble",
+                      "styles": {
+                        "base": {
+                          "color": "var(--color-white)",
+                          "fontSize": "12px",
+                          "lineHeight": 1.8
+                        }
+                      },
+                      "children": []
+                    }
+                  ],
+                  "styles": {
+                    "base": {
+                      "display": "flex",
+                      "direction": "column",
+                      "gap": "14px"
+                    }
+                  }
+                }
+              ],
+              "styles": {
+                "base": {
+                  "display": "grid",
+                  "gridTemplateColumns": "2fr .6fr .6fr",
+                  "gap": "70px",
+                  "paddingTop": "46px"
+                },
+                "mobile": {
+                  "gridTemplateColumns": "1fr 1fr"
+                }
+              }
+            },
+            {
+              "id": "footer-brand",
+              "type": "heading",
+              "name": "footer-brand",
+              "content": "Boulevard™",
+              "level": 2,
+              "styles": {
+                "base": {
+                  "color": "var(--color-white)",
+                  "fontSize": "58px",
+                  "fontWeight": 600,
+                  "marginTop": "70px"
+                },
+                "mobile": {
+                  "fontSize": "42px"
+                }
+              },
+              "children": []
+            }
+          ],
+          "styles": {
+            "base": {
+              "width": "100%",
+              "maxWidth": "1200px",
+              "marginLeft": "auto",
+              "marginRight": "auto",
+              "display": "flex",
+              "direction": "column"
+            }
+          }
+        }
+      ],
+      "styles": {
+        "base": {
+          "width": "100%",
+          "paddingTop": "54px",
+          "paddingRight": "48px",
+          "paddingBottom": "54px",
+          "paddingLeft": "48px",
+          "background": "var(--color-dark)"
+        },
+        "tablet": {
+          "paddingRight": "32px",
+          "paddingLeft": "32px"
+        },
+        "mobile": {
+          "paddingRight": "20px",
+          "paddingLeft": "20px"
+        }
+      }
+    }
+  ]
+}
