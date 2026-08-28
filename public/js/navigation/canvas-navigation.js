@@ -5228,11 +5228,28 @@ function generatedAstro(options={}){
   const swiperScript=standaloneSwiperMarkup(state.nodes);
   return `<!doctype html>\n<html lang="${escapeHtml(meta.language||'es')}">\n  <head>\n    <meta charset="UTF-8" />\n    <meta name="viewport" content="width=device-width" />\n    <meta name="description" content="${escapeHtml(meta.description||'Sitio creado con Orbit')}" />${googleFontsHeadMarkup()}\n    <title>${escapeHtml(meta.title||state.projectName)}</title>\n  </head>\n  <body>\n${body}${customScript}${swiperScript}\n  </body>\n</html>\n`;
 }
+function staticPageFilePath(page,index=0){
+  const route=normalizeOrbitExportRoute(page?.slug,index);
+  if(route==='/')return 'index.html';
+  const clean=route.replace(/^\/+|\/+$/g,'');
+  return clean==='404'?'404.html':`${clean}/index.html`;
+}
+function generatedStaticPageHtml(page,index=0){
+  const meta=page?.meta||{};
+  const route=normalizeOrbitExportRoute(page?.slug,index);
+  const canonical=meta.canonicalUrl||((state.exportSettings?.siteUrl||'')+(`${route==='/'?'':route}`));
+  const css=[generatedTokensCss(),generatedStyles().replace(/^@import[^;]+;\s*/gm,''),generatedGlobalClassesCss(),generatedElementsCss()].join('\n');
+  const body=(page?.nodes||[]).map(node=>exportNode(node,2,{optimizedImages:false,previewAssets:false})).join('\n');
+  const customScript=inlineScriptMarkup(page?.customJs||'');
+  const swiperScript=standaloneSwiperMarkup(page?.nodes||[]);
+  return `<!doctype html>\n<html lang="${escapeHtml(meta.language||'es')}">\n  <head>\n    <meta charset="UTF-8" />\n    <meta name="viewport" content="width=device-width, initial-scale=1" />\n    <meta name="description" content="${escapeHtml(meta.description||'')}" />\n    <meta name="robots" content="${meta.noIndex?'noindex,nofollow':'index,follow'}" />\n    <meta name="generator" content="Orbit Design Studio ${ORBIT_APP.versionLabel}" />${canonical?`\n    <link rel="canonical" href="${escapeHtml(canonical)}" />`:''}${googleFontsHeadMarkup()}\n    <link rel="icon" href="/favicon.svg" type="image/svg+xml" />\n    <meta property="og:title" content="${escapeHtml(meta.title||page?.name||state.projectName)}" />\n    <meta property="og:description" content="${escapeHtml(meta.description||'')}" />\n    <meta name="twitter:card" content="summary_large_image" />\n    <title>${escapeHtml(meta.title||page?.name||state.projectName)}</title>\n    <style>\n${css}\n    </style>\n  </head>\n  <body>\n${body}${customScript}${swiperScript}\n  </body>\n</html>\n`;
+}
 function dataUrlBytes(dataUrl){ const [header,data]=dataUrl.split(','); if(header.includes(';base64')){ const raw=atob(data); return Uint8Array.from(raw,c=>c.charCodeAt(0)); } return new TextEncoder().encode(decodeURIComponent(data)); }
 function projectFiles(){
   syncCurrentPageRecord();state.exportSettings=normalizeOrbitProductionExportSettings(state.exportSettings,state.projectName);const componentNames=componentNameMap();const allNodes=state.pages.flatMap(page=>page.nodes||[]);const usesSwiper=nodesUseSwiper(allNodes);const productionAudit=auditOrbitProductionExport({projectName:state.projectName,pages:state.pages,nodes:state.nodes,pageMeta:state.pageMeta},state.exportSettings);const packageData=createOrbitProductionPackage({name:slug(state.projectName),usesSwiper,settings:state.exportSettings});const files=[
     {name:'package.json',data:JSON.stringify(packageData,null,2)},
     {name:'astro.config.mjs',data:createOrbitAstroConfig(state.exportSettings,state.projectName)},
+    {name:'netlify.toml',data:createOrbitNetlifyConfig()},
     {name:'.nvmrc',data:'26\n'},
     {name:'.gitignore',data:'node_modules/\ndist/\n.astro/\n.lighthouseci/\nlighthouse-reports/\n'},
     {name:'src/layouts/BaseLayout.astro',data:generatedLayout()},
@@ -5240,7 +5257,9 @@ function projectFiles(){
     {name:'src/styles/classes.css',data:generatedGlobalClassesCss()},
     {name:'src/styles/elements.css',data:generatedElementsCss()},
     {name:'src/styles/global.css',data:generatedStyles()},
-    {name:'README.md',data:`# ${state.projectName}\n\nProyecto Astro de producción generado con Orbit Design Studio ${ORBIT_APP.versionLabel}.\n\n## Desarrollo\n\n\`\`\`bash\nnpm install\nnpm run dev\n\`\`\`\n\n## Compilar y verificar\n\n\`\`\`bash\nnpm run build\n${state.exportSettings.lighthouse?'npm run lighthouse\n':''}\`\`\`\n\nLas imágenes locales se transforman a AVIF/WebP durante la compilación. Los reportes Lighthouse quedan en \`lighthouse-reports/\`.\n`},
+    {name:'README.md',data:`# ${state.projectName}\n\nExportación profesional generada con Orbit Design Studio ${ORBIT_APP.versionLabel}. El ZIP incluye HTML estático listo para publicar y el proyecto Astro editable.\n\n## Publicación rápida\n\nDescomprime el ZIP y publica su contenido: \`index.html\` y las carpetas de cada ruta ya funcionan como sitio estático.\n\n## Desarrollo con Astro\n\n\`\`\`bash\nnpm install\nnpm run dev\n\`\`\`\n\n## Compilar y verificar\n\n\`\`\`bash\nnpm run build\n${state.exportSettings.lighthouse?'npm run lighthouse\n':''}\`\`\`\n\nNetlify puede conectar este proyecto desde GitHub usando \`netlify.toml\`. Las imágenes locales se transforman a AVIF/WebP durante la compilación y los reportes Lighthouse quedan en \`lighthouse-reports/\`. Revisa \`orbit/production-readiness.json\` antes de publicar.\n`},
+    {name:'DEPLOY.md',data:`# Publicar\n\n## Sin herramientas técnicas\n\n1. Descomprime este ZIP.\n2. Sube la carpeta completa a tu servicio de hosting.\n3. Verifica las rutas indicadas en \`orbit/production-readiness.json\`.\n\n## Netlify desde GitHub\n\nEl repositorio ya incluye la configuración: comando \`npm run build\`, carpeta pública \`dist\` y Node 26. No es necesario cambiarla.\n\n## Antes de entregar\n\nEjecuta Lighthouse y comprueba formularios, enlaces, imágenes y metadatos con el dominio definitivo.\n`},
+    {name:'orbit/production-readiness.json',data:createOrbitProductionReadinessReport(productionAudit)},
     {name:'orbit/project.orbit.json',data:JSON.stringify({version:currentOrbitDocumentVersion(),projectName:state.projectName,pages:state.pages,tokens:state.tokens,globalClasses:state.globalClasses,components:state.components,assets:state.assets,breakpoints:state.breakpoints,breakpointEnabled:state.breakpointEnabled,canvasWidths:state.canvasWidths},null,2)}
   ];
   if(state.exportSettings.robots)files.push({name:'public/robots.txt',data:createOrbitRobotsTxt(state.exportSettings,state.projectName)});
@@ -5250,9 +5269,12 @@ function projectFiles(){
     files.push({name:'lighthouserc.json',data:createOrbitLighthouseConfig(productionAudit.routes)});
     files.push({name:'.github/workflows/lighthouse.yml',data:`name: Production Lighthouse\n\non:\n  push:\n    branches: [main]\n  pull_request:\n    branches: [main]\n\njobs:\n  production-quality:\n    runs-on: ubuntu-latest\n    timeout-minutes: 15\n    steps:\n      - uses: actions/checkout@v7\n      - uses: actions/setup-node@v7\n        with:\n          node-version-file: .nvmrc\n      - run: npm install\n      - run: npm run build\n      - run: npm run lighthouse\n      - uses: actions/upload-artifact@v7\n        if: always()\n        with:\n          name: lighthouse-reports\n          path: lighthouse-reports\n`});
   }
-  state.pages.forEach(page=>files.push({name:pageFilePath(page),data:generatedPageAstro(page,componentNames)}));
+  state.pages.forEach((page,index)=>{
+    files.push({name:pageFilePath(page),data:generatedPageAstro(page,componentNames)});
+    files.push({name:staticPageFilePath(page,index),data:generatedStaticPageHtml(page,index)});
+  });
   state.components.forEach(component=>{const data=generatedComponentAstro(component,componentNames);if(data)files.push({name:`src/components/${componentNames.get(component.id)}.astro`,data});});
-  state.assets.filter(asset=>String(asset.src).startsWith('data:')).forEach(asset=>{const info=assetExportInfo(asset.src);files.push({name:`${state.exportSettings.astroImage?'src':'public'}/assets/${info.file}`,data:dataUrlBytes(asset.src)});});
+  state.assets.filter(asset=>String(asset.src).startsWith('data:')).forEach(asset=>{const info=assetExportInfo(asset.src),data=dataUrlBytes(asset.src);files.push({name:`${state.exportSettings.astroImage?'src':'public'}/assets/${info.file}`,data});files.push({name:`assets/${info.file}`,data});});
   return files;
 }
 
@@ -5284,7 +5306,8 @@ function productionExportAudit(){
 }
 function productionExportIssuesMarkup(report){
   if(!report.issues.length)return '<div class="production-export-empty"><span>✓</span><strong>Listo para producción</strong><p>No se detectaron bloqueos ni advertencias.</p></div>';
-  return report.issues.map(issue=>`<article class="production-export-issue is-${issue.severity}"><span>${issue.severity==='error'?'×':'!'}</span><div><strong>${escapeHtml(issue.title)}</strong><p>${escapeHtml(issue.detail)}</p><code>${escapeHtml(issue.path)}</code></div></article>`).join('');
+  const areas={seo:'SEO',accessibility:'ACCESIBILIDAD',performance:'RENDIMIENTO',structure:'ESTRUCTURA'};
+  return report.issues.map(issue=>`<article class="production-export-issue is-${issue.severity}"><span>${issue.severity==='error'?'×':'!'}</span><div><small>${areas[issue.area]||'CALIDAD'}</small><strong>${escapeHtml(issue.title)}</strong><p>${escapeHtml(issue.detail)}</p><code>${escapeHtml(issue.path)}</code></div></article>`).join('');
 }
 function showProductionExport(){
   const report=productionExportAudit(),settings=report.settings;
@@ -5300,9 +5323,9 @@ function showProductionExport(){
     <section class="production-export-options">
       ${[['astroImage','Picture AVIF + WebP','Imágenes responsive y prioridad LCP'],['sitemap','Sitemap Astro','Mapa XML al compilar'],['robots','robots.txt','Reglas para buscadores'],['webManifest','Web manifest','Identidad instalable'],['lighthouse','Lighthouse CI','Performance ≥90 y SEO ≥95']].map(([key,title,copy])=>`<label><input type="checkbox" data-production-setting="${key}" ${settings[key]?'checked':''}><span><strong>${title}</strong><small>${copy}</small></span></label>`).join('')}
     </section>
-    <section class="production-export-summary"><article><span>ASTRO</span><strong>7.2.6</strong><small>Static build</small></article><article><span>IMÁGENES</span><strong>${report.images.optimized}/${report.images.total}</strong><small>optimizables</small></article><article><span>LIGHTHOUSE</span><strong>${settings.lighthouse?'4 gates':'Off'}</strong><small>quality budgets</small></article></section>
+    <section class="production-export-summary"><article><span>HTML + ASTRO</span><strong>2 salidas</strong><small>listas para publicar</small></article><article><span>ACCESIBILIDAD</span><strong>${report.quality.accessibility}</strong><small>pre-flight</small></article><article><span>RENDIMIENTO</span><strong>${report.quality.performance}</strong><small>pre-flight</small></article><article><span>LIGHTHOUSE</span><strong>${settings.lighthouse?'4 gates':'Off'}</strong><small>quality budgets</small></article></section>
     <section class="production-export-issues"><header><div><span>PRE-FLIGHT</span><strong>Informe de salida</strong></div><b>${report.issues.length}</b></header><div>${productionExportIssuesMarkup(report)}</div></section>
-    <footer class="production-export-actions"><button type="button" class="secondary-action" data-close-modal>Cancelar</button><button type="button" class="primary-action" data-production-export ${report.ready?'':'disabled'}>${report.ready?'Compilar y descargar Astro':'Corrige los errores para exportar'}</button></footer>
+    <footer class="production-export-actions"><button type="button" class="secondary-action" data-close-modal>Cancelar</button><button type="button" class="primary-action" data-production-export ${report.ready?'':'disabled'}>${report.ready?'Descargar ZIP profesional':'Corrige los errores para exportar'}</button></footer>
   </div>`,'production-export-modal');
 }
 function readProductionExportSettings(){
@@ -5316,7 +5339,7 @@ function exportProject(force=false){
   if(!force&&report.errors.length){
     openModal('Responsive QA antes de exportar','ORBIT EXPORT QA',`<div class="export-responsive-qa"><div class="export-qa-status"><span>!</span><div><strong>${report.errors.length} errores responsive</strong><p>Orbit encontró problemas que pueden afectar Mobile o Tablet. Puedes corregirlos o continuar bajo tu responsabilidad.</p></div></div><div class="export-qa-breakpoints"><span>Desktop <b>✓</b></span><span>Tablet <b>${report.issues.some(item=>item.id.includes('tablet'))?'!':'✓'}</b></span><span>Mobile <b>${report.errors.length?'×':'✓'}</b></span></div><div class="export-qa-actions"><button type="button" class="secondary-action" data-open-responsive-audit>Revisar responsive</button><button type="button" class="primary-action" data-export-anyway>Exportar de todas formas</button></div></div>`,'export-qa-modal');return;
   }
-  downloadBlob(`${slug(state.projectName)}-astro.zip`,makeZip(projectFiles()));toast(`${state.pages.length} páginas exportadas a Astro`);
+  downloadBlob(`${slug(state.projectName)}-production.zip`,makeZip(projectFiles()));toast(`${state.pages.length} páginas exportadas en HTML + Astro`);
 }
 function responsiveSiteHtml(){
   const previewCss=[generatedTokensCss(),generatedStyles().replace(/^@import[^;]+;\s*/gm,''),generatedGlobalClassesCss(),generatedElementsCss()].join('\n');

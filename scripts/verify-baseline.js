@@ -45,6 +45,8 @@ check('biblioteca de secciones retirada de la navegación', !indexHtml.includes(
 check('AI Design Workflow está modularizado', JS_MODULES.includes('ai/ai-design-workflow.js') && navigationSource.includes('createOrbitAiContext') && navigationSource.includes('auditOrbitVisualDesign') && navigationSource.includes('showAiDesignWorkflow'));
 check('Production Export está modularizado', JS_MODULES.includes('export/production-export.js') && navigationSource.includes('auditOrbitProductionExport') && navigationSource.includes('createOrbitLighthouseConfig'));
 check('Astro exporta imágenes modernas y Lighthouse', navigationSource.includes("import { Picture } from 'astro:assets'") && navigationSource.includes('lighthouserc.json') && navigationSource.includes('public/robots.txt'));
+check('ZIP profesional incluye HTML, Astro, Netlify e informe', navigationSource.includes('generatedStaticPageHtml') && navigationSource.includes('netlify.toml') && navigationSource.includes('orbit/production-readiness.json'));
+check('pruebas con proyectos reales están integradas', packageJson.scripts?.['test:projects'] === 'node scripts/test-real-projects.mjs' && fs.existsSync(path.join(root, 'scripts/test-real-projects.mjs')));
 check('Build conserva rutas JSON con signo dólar', buildSource.includes('() => `<!-- Orbit bundled standalone script -->') && indexHtml.includes("'$.nodes'"));
 
 let previousIndex = -1;

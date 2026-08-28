@@ -6089,6 +6089,12 @@ swiper-container[data-pagination-style="hidden"]::part(pagination) { display: no
 .ai-workflow{min-height:0}.ai-workflow-tabs{position:sticky;top:0;z-index:4;box-shadow:0 1px 0 var(--border-subtle)}
 @media(max-width:900px){.modal-card.ai-workflow-modal{height:calc(100dvh - 16px);max-height:calc(100dvh - 16px)}.ai-workflow-actions{flex-wrap:wrap}.ai-workflow-actions button{min-width:0;flex:1 1 180px}}
 
+/* v0.31 · Professional export quality areas */
+.production-export-summary{grid-template-columns:repeat(4,minmax(0,1fr))}
+.production-export-issue>div>small{display:block;margin-bottom:2px;color:var(--orbit-orange);font:700 6px var(--font-family-mono);letter-spacing:.1em}
+@media(max-width:900px){.production-export-summary{grid-template-columns:1fr 1fr}}
+@media(max-width:560px){.production-export-summary{grid-template-columns:1fr}}
+
 </style>
   </head>
   <body>
@@ -9348,15 +9354,15 @@ function auditOrbitProductionExport(project = {}, settings = {}) {
     ? project.pages
     : [{ id: 'page-home', name: project.projectName || 'Home', slug: '/', nodes: project.nodes || [], meta: project.pageMeta || {} }];
   const issues = [];
-  const add = (severity, code, path, title, detail) => issues.push({ severity, code, path, title, detail });
+  const add = (severity, area, code, path, title, detail) => issues.push({ severity, area, code, path, title, detail });
   const routes = new Set();
   let imageCount = 0;
   let optimizedImageCount = 0;
   let remoteImageCount = 0;
 
-  if (!pages.length) add('error', 'pages.empty', '$.pages', 'El proyecto no tiene páginas', 'Añade al menos una página antes de exportar.');
+  if (!pages.length) add('error', 'structure', 'pages.empty', '$.pages', 'El proyecto no tiene páginas', 'Añade al menos una página antes de exportar.');
   if ((normalized.sitemap || normalized.robots) && !normalized.siteUrl) {
-    add('warning', 'site.url.missing', '$.exportSettings.siteUrl', 'Falta la URL pública', 'El proyecto compilará, pero sitemap y canonical automáticos necesitan el dominio final.');
+    add('warning', 'seo', 'site.url.missing', '$.exportSettings.siteUrl', 'Falta la URL pública', 'El proyecto compilará, pero sitemap y canonical automáticos necesitan el dominio final.');
   }
 
   pages.forEach((page, pageIndex) => {
@@ -9365,30 +9371,63 @@ function auditOrbitProductionExport(project = {}, settings = {}) {
     const meta = page?.meta || {};
     const nodes = orbitExportFlattenNodes(page?.nodes || []);
     const headings = nodes.filter(node => node.type === 'heading' && String(node.tag || node.level || 'h2').toLowerCase() === 'h1');
+    const nodeIds = new Set();
+    let previousHeadingLevel = 0;
 
-    if (routes.has(route)) add('error', 'route.duplicate', `${path}.slug`, `Ruta duplicada: ${route}`, 'Cada página debe tener una ruta única para que Astro pueda compilarla.');
+    if (routes.has(route)) add('error', 'structure', 'route.duplicate', `${path}.slug`, `Ruta duplicada: ${route}`, 'Cada página debe tener una ruta única para que Astro pueda compilarla.');
     routes.add(route);
-    if (!String(meta.title || '').trim()) add('error', 'seo.title.missing', `${path}.meta.title`, `Título SEO pendiente en ${page?.name || route}`, 'Define un título único y descriptivo.');
-    else if (String(meta.title).length > 70) add('warning', 'seo.title.long', `${path}.meta.title`, `Título extenso en ${page?.name || route}`, 'Reduce el título a 70 caracteres o menos.');
-    if (!String(meta.description || '').trim()) add('warning', 'seo.description.missing', `${path}.meta.description`, `Descripción SEO pendiente en ${page?.name || route}`, 'Añade una descripción para buscadores y redes sociales.');
-    else if (String(meta.description).length > 180) add('warning', 'seo.description.long', `${path}.meta.description`, `Descripción extensa en ${page?.name || route}`, 'Reduce la descripción a 180 caracteres o menos.');
-    if (!headings.length) add('warning', 'seo.h1.missing', `${path}.nodes`, `Falta un H1 en ${page?.name || route}`, 'Incluye un encabezado principal por página.');
-    if (headings.length > 1) add('warning', 'seo.h1.multiple', `${path}.nodes`, `Hay ${headings.length} encabezados H1 en ${page?.name || route}`, 'Mantén un único encabezado principal por página.');
+    if (!String(meta.language || '').trim()) add('warning', 'accessibility', 'page.language.missing', `${path}.meta.language`, `Idioma pendiente en ${page?.name || route}`, 'Define el idioma para lectores de pantalla y buscadores.');
+    if (!String(meta.title || '').trim()) add('error', 'seo', 'seo.title.missing', `${path}.meta.title`, `Título SEO pendiente en ${page?.name || route}`, 'Define un título único y descriptivo.');
+    else if (String(meta.title).length > 70) add('warning', 'seo', 'seo.title.long', `${path}.meta.title`, `Título extenso en ${page?.name || route}`, 'Reduce el título a 70 caracteres o menos.');
+    if (!String(meta.description || '').trim()) add('warning', 'seo', 'seo.description.missing', `${path}.meta.description`, `Descripción SEO pendiente en ${page?.name || route}`, 'Añade una descripción para buscadores y redes sociales.');
+    else if (String(meta.description).length > 180) add('warning', 'seo', 'seo.description.long', `${path}.meta.description`, `Descripción extensa en ${page?.name || route}`, 'Reduce la descripción a 180 caracteres o menos.');
+    if (!headings.length) add('warning', 'seo', 'seo.h1.missing', `${path}.nodes`, `Falta un H1 en ${page?.name || route}`, 'Incluye un encabezado principal por página.');
+    if (headings.length > 1) add('warning', 'seo', 'seo.h1.multiple', `${path}.nodes`, `Hay ${headings.length} encabezados H1 en ${page?.name || route}`, 'Mantén un único encabezado principal por página.');
+
+    nodes.forEach((node, nodeIndex) => {
+      const nodePath = `${path}.nodes#${node.id || nodeIndex + 1}`;
+      if (node.id && nodeIds.has(node.id)) add('error', 'structure', 'node.id.duplicate', `${nodePath}.id`, `Identificador repetido: ${node.id}`, 'Cada elemento debe tener un identificador único.');
+      if (node.id) nodeIds.add(node.id);
+      if (node.type === 'heading') {
+        const level = Number(String(node.tag || node.level || 'h2').replace(/\D/g, '')) || 2;
+        if (previousHeadingLevel && level > previousHeadingLevel + 1) add('warning', 'accessibility', 'heading.level.jump', nodePath, 'Salto en la jerarquía de títulos', `El encabezado cambia de H${previousHeadingLevel} a H${level}.`);
+        previousHeadingLevel = level;
+      }
+      if (['button', 'link'].includes(node.type) && !String(node.content || node.ariaLabel || '').trim()) {
+        add('error', 'accessibility', 'interactive.name.missing', nodePath, 'Control sin nombre accesible', 'Añade texto visible o una etiqueta ARIA.');
+      }
+      if (node.type === 'link' && (!String(node.href || '').trim() || node.href === '#')) {
+        add('warning', 'accessibility', 'link.href.placeholder', `${nodePath}.href`, 'Enlace sin destino real', 'Reemplaza # por una URL o ruta válida.');
+      }
+      if (node.type === 'input' && !String(node.ariaLabel || '').trim()) {
+        add('warning', 'accessibility', 'form.label.missing', nodePath, 'Campo sin etiqueta accesible', 'Añade una etiqueta ARIA que explique qué dato debe ingresar el usuario.');
+      }
+      if (node.type === 'video' && !String(node.title || node.ariaLabel || '').trim()) {
+        add('warning', 'accessibility', 'video.title.missing', nodePath, 'Video sin título', 'Describe el contenido del video para tecnologías de asistencia.');
+      }
+    });
 
     nodes.filter(node => node.type === 'image').forEach(node => {
       imageCount += 1;
       const nodePath = `${path}.nodes#${node.id || imageCount}`;
       const src = String(node.src || '').trim();
-      if (!src) add('error', 'image.src.missing', `${nodePath}.src`, 'Imagen sin archivo', 'Asigna una imagen o elimina el elemento vacío.');
-      if (!String(node.alt ?? '').trim()) add('warning', 'image.alt.missing', `${nodePath}.alt`, 'Imagen sin texto alternativo', 'Describe la imagen o usa alt vacío únicamente si es decorativa.');
+      if (!src) add('error', 'performance', 'image.src.missing', `${nodePath}.src`, 'Imagen sin archivo', 'Asigna una imagen o elimina el elemento vacío.');
+      if (!String(node.alt ?? '').trim()) add('warning', 'accessibility', 'image.alt.missing', `${nodePath}.alt`, 'Imagen sin texto alternativo', 'Describe la imagen o marca explícitamente la imagen como decorativa.');
       if (/^https?:\/\//i.test(src)) remoteImageCount += 1;
       else if (/^data:image\//i.test(src)) optimizedImageCount += 1;
     });
+    if (nodes.length > 1500) add('warning', 'performance', 'page.nodes.large', `${path}.nodes`, `Página grande: ${nodes.length} elementos`, 'Divide contenido no esencial o reutiliza componentes para reducir el trabajo inicial del navegador.');
   });
+
+  if (remoteImageCount) add('warning', 'performance', 'image.remote.unoptimized', '$.pages', `${remoteImageCount} imágenes externas`, 'Orbit no puede comprimir recursos alojados en otros dominios; conviene importarlos antes de exportar.');
 
   const errors = issues.filter(issue => issue.severity === 'error');
   const warnings = issues.filter(issue => issue.severity === 'warning');
   const score = Math.max(0, 100 - errors.length * 18 - warnings.length * 5);
+  const quality = Object.fromEntries(['seo', 'accessibility', 'performance', 'structure'].map(area => {
+    const areaIssues = issues.filter(issue => issue.area === area);
+    return [area, Math.max(0, 100 - areaIssues.filter(issue => issue.severity === 'error').length * 25 - areaIssues.filter(issue => issue.severity === 'warning').length * 8)];
+  }));
   return {
     ready: errors.length === 0,
     score,
@@ -9398,8 +9437,34 @@ function auditOrbitProductionExport(project = {}, settings = {}) {
     pages: pages.length,
     routes: [...routes],
     images: { total: imageCount, optimized: normalized.astroImage ? optimizedImageCount : 0, remote: remoteImageCount },
+    quality,
     settings: normalized,
   };
+}
+
+function createOrbitProductionReadinessReport(report = {}) {
+  return JSON.stringify({
+    format: 'orbit-production-readiness',
+    version: 1,
+    ready: !!report.ready,
+    score: Number(report.score) || 0,
+    quality: report.quality || { seo: 0, accessibility: 0, performance: 0, structure: 0 },
+    pages: Number(report.pages) || 0,
+    routes: report.routes || [],
+    images: report.images || { total: 0, optimized: 0, remote: 0 },
+    issues: (report.issues || []).map(({ severity, area, code, path, title, detail }) => ({ severity, area, code, path, title, detail })),
+    checklist: {
+      html: 'HTML estático incluido en la raíz del ZIP',
+      astro: 'Código fuente Astro incluido en src/',
+      seo: 'Metadatos, sitemap y robots revisados en el pre-flight',
+      accessibility: 'Nombres accesibles, alternativas y jerarquía revisados',
+      performance: 'Imágenes y límites Lighthouse configurados',
+    },
+  }, null, 2);
+}
+
+function createOrbitNetlifyConfig() {
+  return `[build]\n  command = "npm run build"\n  publish = "dist"\n\n[build.environment]\n  NODE_VERSION = "26"\n\n[[headers]]\n  for = "/*"\n  [headers.values]\n    X-Content-Type-Options = "nosniff"\n    Referrer-Policy = "strict-origin-when-cross-origin"\n    Permissions-Policy = "camera=(), microphone=(), geolocation=()"\n\n[[headers]]\n  for = "/assets/*"\n  [headers.values]\n    Cache-Control = "public, max-age=31536000, immutable"\n`;
 }
 
 function createOrbitAstroConfig(settings = {}, projectName = '') {
@@ -15238,11 +15303,28 @@ function generatedAstro(options={}){
   const swiperScript=standaloneSwiperMarkup(state.nodes);
   return `<!doctype html>\n<html lang="${escapeHtml(meta.language||'es')}">\n  <head>\n    <meta charset="UTF-8" />\n    <meta name="viewport" content="width=device-width" />\n    <meta name="description" content="${escapeHtml(meta.description||'Sitio creado con Orbit')}" />${googleFontsHeadMarkup()}\n    <title>${escapeHtml(meta.title||state.projectName)}</title>\n  </head>\n  <body>\n${body}${customScript}${swiperScript}\n  </body>\n</html>\n`;
 }
+function staticPageFilePath(page,index=0){
+  const route=normalizeOrbitExportRoute(page?.slug,index);
+  if(route==='/')return 'index.html';
+  const clean=route.replace(/^\/+|\/+$/g,'');
+  return clean==='404'?'404.html':`${clean}/index.html`;
+}
+function generatedStaticPageHtml(page,index=0){
+  const meta=page?.meta||{};
+  const route=normalizeOrbitExportRoute(page?.slug,index);
+  const canonical=meta.canonicalUrl||((state.exportSettings?.siteUrl||'')+(`${route==='/'?'':route}`));
+  const css=[generatedTokensCss(),generatedStyles().replace(/^@import[^;]+;\s*/gm,''),generatedGlobalClassesCss(),generatedElementsCss()].join('\n');
+  const body=(page?.nodes||[]).map(node=>exportNode(node,2,{optimizedImages:false,previewAssets:false})).join('\n');
+  const customScript=inlineScriptMarkup(page?.customJs||'');
+  const swiperScript=standaloneSwiperMarkup(page?.nodes||[]);
+  return `<!doctype html>\n<html lang="${escapeHtml(meta.language||'es')}">\n  <head>\n    <meta charset="UTF-8" />\n    <meta name="viewport" content="width=device-width, initial-scale=1" />\n    <meta name="description" content="${escapeHtml(meta.description||'')}" />\n    <meta name="robots" content="${meta.noIndex?'noindex,nofollow':'index,follow'}" />\n    <meta name="generator" content="Orbit Design Studio ${ORBIT_APP.versionLabel}" />${canonical?`\n    <link rel="canonical" href="${escapeHtml(canonical)}" />`:''}${googleFontsHeadMarkup()}\n    <link rel="icon" href="/favicon.svg" type="image/svg+xml" />\n    <meta property="og:title" content="${escapeHtml(meta.title||page?.name||state.projectName)}" />\n    <meta property="og:description" content="${escapeHtml(meta.description||'')}" />\n    <meta name="twitter:card" content="summary_large_image" />\n    <title>${escapeHtml(meta.title||page?.name||state.projectName)}</title>\n    <style>\n${css}\n    </style>\n  </head>\n  <body>\n${body}${customScript}${swiperScript}\n  </body>\n</html>\n`;
+}
 function dataUrlBytes(dataUrl){ const [header,data]=dataUrl.split(','); if(header.includes(';base64')){ const raw=atob(data); return Uint8Array.from(raw,c=>c.charCodeAt(0)); } return new TextEncoder().encode(decodeURIComponent(data)); }
 function projectFiles(){
   syncCurrentPageRecord();state.exportSettings=normalizeOrbitProductionExportSettings(state.exportSettings,state.projectName);const componentNames=componentNameMap();const allNodes=state.pages.flatMap(page=>page.nodes||[]);const usesSwiper=nodesUseSwiper(allNodes);const productionAudit=auditOrbitProductionExport({projectName:state.projectName,pages:state.pages,nodes:state.nodes,pageMeta:state.pageMeta},state.exportSettings);const packageData=createOrbitProductionPackage({name:slug(state.projectName),usesSwiper,settings:state.exportSettings});const files=[
     {name:'package.json',data:JSON.stringify(packageData,null,2)},
     {name:'astro.config.mjs',data:createOrbitAstroConfig(state.exportSettings,state.projectName)},
+    {name:'netlify.toml',data:createOrbitNetlifyConfig()},
     {name:'.nvmrc',data:'26\n'},
     {name:'.gitignore',data:'node_modules/\ndist/\n.astro/\n.lighthouseci/\nlighthouse-reports/\n'},
     {name:'src/layouts/BaseLayout.astro',data:generatedLayout()},
@@ -15250,7 +15332,9 @@ function projectFiles(){
     {name:'src/styles/classes.css',data:generatedGlobalClassesCss()},
     {name:'src/styles/elements.css',data:generatedElementsCss()},
     {name:'src/styles/global.css',data:generatedStyles()},
-    {name:'README.md',data:`# ${state.projectName}\n\nProyecto Astro de producción generado con Orbit Design Studio ${ORBIT_APP.versionLabel}.\n\n## Desarrollo\n\n\`\`\`bash\nnpm install\nnpm run dev\n\`\`\`\n\n## Compilar y verificar\n\n\`\`\`bash\nnpm run build\n${state.exportSettings.lighthouse?'npm run lighthouse\n':''}\`\`\`\n\nLas imágenes locales se transforman a AVIF/WebP durante la compilación. Los reportes Lighthouse quedan en \`lighthouse-reports/\`.\n`},
+    {name:'README.md',data:`# ${state.projectName}\n\nExportación profesional generada con Orbit Design Studio ${ORBIT_APP.versionLabel}. El ZIP incluye HTML estático listo para publicar y el proyecto Astro editable.\n\n## Publicación rápida\n\nDescomprime el ZIP y publica su contenido: \`index.html\` y las carpetas de cada ruta ya funcionan como sitio estático.\n\n## Desarrollo con Astro\n\n\`\`\`bash\nnpm install\nnpm run dev\n\`\`\`\n\n## Compilar y verificar\n\n\`\`\`bash\nnpm run build\n${state.exportSettings.lighthouse?'npm run lighthouse\n':''}\`\`\`\n\nNetlify puede conectar este proyecto desde GitHub usando \`netlify.toml\`. Las imágenes locales se transforman a AVIF/WebP durante la compilación y los reportes Lighthouse quedan en \`lighthouse-reports/\`. Revisa \`orbit/production-readiness.json\` antes de publicar.\n`},
+    {name:'DEPLOY.md',data:`# Publicar\n\n## Sin herramientas técnicas\n\n1. Descomprime este ZIP.\n2. Sube la carpeta completa a tu servicio de hosting.\n3. Verifica las rutas indicadas en \`orbit/production-readiness.json\`.\n\n## Netlify desde GitHub\n\nEl repositorio ya incluye la configuración: comando \`npm run build\`, carpeta pública \`dist\` y Node 26. No es necesario cambiarla.\n\n## Antes de entregar\n\nEjecuta Lighthouse y comprueba formularios, enlaces, imágenes y metadatos con el dominio definitivo.\n`},
+    {name:'orbit/production-readiness.json',data:createOrbitProductionReadinessReport(productionAudit)},
     {name:'orbit/project.orbit.json',data:JSON.stringify({version:currentOrbitDocumentVersion(),projectName:state.projectName,pages:state.pages,tokens:state.tokens,globalClasses:state.globalClasses,components:state.components,assets:state.assets,breakpoints:state.breakpoints,breakpointEnabled:state.breakpointEnabled,canvasWidths:state.canvasWidths},null,2)}
   ];
   if(state.exportSettings.robots)files.push({name:'public/robots.txt',data:createOrbitRobotsTxt(state.exportSettings,state.projectName)});
@@ -15260,9 +15344,12 @@ function projectFiles(){
     files.push({name:'lighthouserc.json',data:createOrbitLighthouseConfig(productionAudit.routes)});
     files.push({name:'.github/workflows/lighthouse.yml',data:`name: Production Lighthouse\n\non:\n  push:\n    branches: [main]\n  pull_request:\n    branches: [main]\n\njobs:\n  production-quality:\n    runs-on: ubuntu-latest\n    timeout-minutes: 15\n    steps:\n      - uses: actions/checkout@v7\n      - uses: actions/setup-node@v7\n        with:\n          node-version-file: .nvmrc\n      - run: npm install\n      - run: npm run build\n      - run: npm run lighthouse\n      - uses: actions/upload-artifact@v7\n        if: always()\n        with:\n          name: lighthouse-reports\n          path: lighthouse-reports\n`});
   }
-  state.pages.forEach(page=>files.push({name:pageFilePath(page),data:generatedPageAstro(page,componentNames)}));
+  state.pages.forEach((page,index)=>{
+    files.push({name:pageFilePath(page),data:generatedPageAstro(page,componentNames)});
+    files.push({name:staticPageFilePath(page,index),data:generatedStaticPageHtml(page,index)});
+  });
   state.components.forEach(component=>{const data=generatedComponentAstro(component,componentNames);if(data)files.push({name:`src/components/${componentNames.get(component.id)}.astro`,data});});
-  state.assets.filter(asset=>String(asset.src).startsWith('data:')).forEach(asset=>{const info=assetExportInfo(asset.src);files.push({name:`${state.exportSettings.astroImage?'src':'public'}/assets/${info.file}`,data:dataUrlBytes(asset.src)});});
+  state.assets.filter(asset=>String(asset.src).startsWith('data:')).forEach(asset=>{const info=assetExportInfo(asset.src),data=dataUrlBytes(asset.src);files.push({name:`${state.exportSettings.astroImage?'src':'public'}/assets/${info.file}`,data});files.push({name:`assets/${info.file}`,data});});
   return files;
 }
 
@@ -15294,7 +15381,8 @@ function productionExportAudit(){
 }
 function productionExportIssuesMarkup(report){
   if(!report.issues.length)return '<div class="production-export-empty"><span>✓</span><strong>Listo para producción</strong><p>No se detectaron bloqueos ni advertencias.</p></div>';
-  return report.issues.map(issue=>`<article class="production-export-issue is-${issue.severity}"><span>${issue.severity==='error'?'×':'!'}</span><div><strong>${escapeHtml(issue.title)}</strong><p>${escapeHtml(issue.detail)}</p><code>${escapeHtml(issue.path)}</code></div></article>`).join('');
+  const areas={seo:'SEO',accessibility:'ACCESIBILIDAD',performance:'RENDIMIENTO',structure:'ESTRUCTURA'};
+  return report.issues.map(issue=>`<article class="production-export-issue is-${issue.severity}"><span>${issue.severity==='error'?'×':'!'}</span><div><small>${areas[issue.area]||'CALIDAD'}</small><strong>${escapeHtml(issue.title)}</strong><p>${escapeHtml(issue.detail)}</p><code>${escapeHtml(issue.path)}</code></div></article>`).join('');
 }
 function showProductionExport(){
   const report=productionExportAudit(),settings=report.settings;
@@ -15310,9 +15398,9 @@ function showProductionExport(){
     <section class="production-export-options">
       ${[['astroImage','Picture AVIF + WebP','Imágenes responsive y prioridad LCP'],['sitemap','Sitemap Astro','Mapa XML al compilar'],['robots','robots.txt','Reglas para buscadores'],['webManifest','Web manifest','Identidad instalable'],['lighthouse','Lighthouse CI','Performance ≥90 y SEO ≥95']].map(([key,title,copy])=>`<label><input type="checkbox" data-production-setting="${key}" ${settings[key]?'checked':''}><span><strong>${title}</strong><small>${copy}</small></span></label>`).join('')}
     </section>
-    <section class="production-export-summary"><article><span>ASTRO</span><strong>7.2.6</strong><small>Static build</small></article><article><span>IMÁGENES</span><strong>${report.images.optimized}/${report.images.total}</strong><small>optimizables</small></article><article><span>LIGHTHOUSE</span><strong>${settings.lighthouse?'4 gates':'Off'}</strong><small>quality budgets</small></article></section>
+    <section class="production-export-summary"><article><span>HTML + ASTRO</span><strong>2 salidas</strong><small>listas para publicar</small></article><article><span>ACCESIBILIDAD</span><strong>${report.quality.accessibility}</strong><small>pre-flight</small></article><article><span>RENDIMIENTO</span><strong>${report.quality.performance}</strong><small>pre-flight</small></article><article><span>LIGHTHOUSE</span><strong>${settings.lighthouse?'4 gates':'Off'}</strong><small>quality budgets</small></article></section>
     <section class="production-export-issues"><header><div><span>PRE-FLIGHT</span><strong>Informe de salida</strong></div><b>${report.issues.length}</b></header><div>${productionExportIssuesMarkup(report)}</div></section>
-    <footer class="production-export-actions"><button type="button" class="secondary-action" data-close-modal>Cancelar</button><button type="button" class="primary-action" data-production-export ${report.ready?'':'disabled'}>${report.ready?'Compilar y descargar Astro':'Corrige los errores para exportar'}</button></footer>
+    <footer class="production-export-actions"><button type="button" class="secondary-action" data-close-modal>Cancelar</button><button type="button" class="primary-action" data-production-export ${report.ready?'':'disabled'}>${report.ready?'Descargar ZIP profesional':'Corrige los errores para exportar'}</button></footer>
   </div>`,'production-export-modal');
 }
 function readProductionExportSettings(){
@@ -15326,7 +15414,7 @@ function exportProject(force=false){
   if(!force&&report.errors.length){
     openModal('Responsive QA antes de exportar','ORBIT EXPORT QA',`<div class="export-responsive-qa"><div class="export-qa-status"><span>!</span><div><strong>${report.errors.length} errores responsive</strong><p>Orbit encontró problemas que pueden afectar Mobile o Tablet. Puedes corregirlos o continuar bajo tu responsabilidad.</p></div></div><div class="export-qa-breakpoints"><span>Desktop <b>✓</b></span><span>Tablet <b>${report.issues.some(item=>item.id.includes('tablet'))?'!':'✓'}</b></span><span>Mobile <b>${report.errors.length?'×':'✓'}</b></span></div><div class="export-qa-actions"><button type="button" class="secondary-action" data-open-responsive-audit>Revisar responsive</button><button type="button" class="primary-action" data-export-anyway>Exportar de todas formas</button></div></div>`,'export-qa-modal');return;
   }
-  downloadBlob(`${slug(state.projectName)}-astro.zip`,makeZip(projectFiles()));toast(`${state.pages.length} páginas exportadas a Astro`);
+  downloadBlob(`${slug(state.projectName)}-production.zip`,makeZip(projectFiles()));toast(`${state.pages.length} páginas exportadas en HTML + Astro`);
 }
 function responsiveSiteHtml(){
   const previewCss=[generatedTokensCss(),generatedStyles().replace(/^@import[^;]+;\s*/gm,''),generatedGlobalClassesCss(),generatedElementsCss()].join('\n');

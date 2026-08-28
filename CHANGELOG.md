@@ -34,11 +34,20 @@
 
 ### QA
 
+- Banco reproducible de cinco proyectos representativos: agencia, restaurante, catálogo, portafolio y servicios profesionales.
+- Métricas de importación y corrección con mediana, percentil 95, errores frecuentes y recursos faltantes en `reports/real-project-benchmark.json`.
+- Validación automática de que cada proyecto reparado termina como Orbit JSON v13 válido y dentro del presupuesto de tiempo.
 - Pruebas unitarias para contratos ChatGPT/Claude, plantilla, estilos y preparación.
 - QA funcional que verifica bloqueo sin mutación, reparación, preview y puntuación.
 - Biblioteca de secciones retirada temporalmente de la navegación sin eliminar sus plantillas internas.
 - Core Design System Bridge para importar archivos `.core`, revisar categorías y aplicar únicamente tokens seleccionados sin modificar el canvas.
 - Artefacto CI actualizado a `Orbit-Netlify-v0.31`.
+
+### Exportación profesional
+
+- Un mismo ZIP entrega HTML estático publicable y el proyecto Astro editable, con rutas limpias e imágenes locales empaquetadas.
+- Pre-flight ampliado a estructura, SEO, accesibilidad y rendimiento, con puntuaciones por área y reporte JSON incluido.
+- Configuración `netlify.toml`, guía de publicación, cabeceras de seguridad, caché de recursos y controles Lighthouse.
 
 ## v0.30.0-alpha — AI Design Workflow
 

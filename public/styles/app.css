@@ -6068,3 +6068,9 @@ swiper-container[data-pagination-style="hidden"]::part(pagination) { display: no
 .ai-workflow-modal .modal-content{min-height:0;max-height:none;height:100%;overflow-x:hidden;overflow-y:auto;overscroll-behavior:contain;scrollbar-gutter:stable;-webkit-overflow-scrolling:touch}
 .ai-workflow{min-height:0}.ai-workflow-tabs{position:sticky;top:0;z-index:4;box-shadow:0 1px 0 var(--border-subtle)}
 @media(max-width:900px){.modal-card.ai-workflow-modal{height:calc(100dvh - 16px);max-height:calc(100dvh - 16px)}.ai-workflow-actions{flex-wrap:wrap}.ai-workflow-actions button{min-width:0;flex:1 1 180px}}
+
+/* v0.31 · Professional export quality areas */
+.production-export-summary{grid-template-columns:repeat(4,minmax(0,1fr))}
+.production-export-issue>div>small{display:block;margin-bottom:2px;color:var(--orbit-orange);font:700 6px var(--font-family-mono);letter-spacing:.1em}
+@media(max-width:900px){.production-export-summary{grid-template-columns:1fr 1fr}}
+@media(max-width:560px){.production-export-summary{grid-template-columns:1fr}}

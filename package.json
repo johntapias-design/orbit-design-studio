@@ -6,10 +6,12 @@
   "scripts": {
     "dev": "node scripts/dev-server.js",
     "build": "node scripts/build-standalone.js && zip -X -9 -FS Orbit-Netlify.zip index.html THIRD_PARTY_NOTICES.md",
-    "test": "npm run test:baseline && npm run test:unit && npm run test:qa",
+    "test": "npm run test:baseline && npm run test:unit && npm run test:projects && npm run test:qa",
     "test:baseline": "node scripts/verify-baseline.js",
     "test:unit": "node --test test/*.test.mjs",
     "test:qa": "node qa-contextual-toolbar.mjs",
+    "test:projects": "node scripts/test-real-projects.mjs",
+    "report:projects": "node scripts/test-real-projects.mjs --report",
     "test:evidence": "node qa-contextual-toolbar.mjs --update-evidence",
     "verify": "npm run build && npm test"
   },

@@ -90,6 +90,27 @@ test('Production Export genera Astro, robots y Lighthouse reproducibles', () => 
   assert.match(packageJson.scripts.lighthouse, /@lhci\/cli@0\.15\.1/);
 });
 
+test('Production Export audita accesibilidad y genera entrega profesional', () => {
+  const production = loadScript('public/js/export/production-export.js', '({ auditOrbitProductionExport, createOrbitProductionReadinessReport, createOrbitNetlifyConfig })');
+  const report = production.auditOrbitProductionExport({ projectName: 'Quality', pages: [{
+    name: 'Home', slug: '/', meta: { language: 'es', title: 'Quality', description: 'Professional output' },
+    nodes: [{ id: 'main', type: 'section', children: [
+      { id: 'title', type: 'heading', level: 1, content: 'Quality' },
+      { id: 'action', type: 'button', content: '' },
+      { id: 'field', type: 'input', placeholder: 'Email' },
+      { id: 'remote', type: 'image', src: 'https://example.com/image.jpg', alt: '' },
+    ] }],
+  }] }, { siteUrl: 'https://orbit.example' });
+  assert.equal(report.ready, false);
+  assert.ok(report.errors.some(issue => issue.code === 'interactive.name.missing' && issue.area === 'accessibility'));
+  assert.ok(report.warnings.some(issue => issue.code === 'image.remote.unoptimized' && issue.area === 'performance'));
+  assert.ok(Number.isFinite(report.quality.seo));
+  const readiness = JSON.parse(production.createOrbitProductionReadinessReport(report));
+  assert.equal(readiness.format, 'orbit-production-readiness');
+  assert.equal(readiness.checklist.html, 'HTML estático incluido en la raíz del ZIP');
+  assert.match(production.createOrbitNetlifyConfig(), /publish = "dist"/);
+});
+
 test('Orbit JSON Studio migra v12 a v13 con defaults explícitos', () => {
   const studio = loadScript('public/js/json/orbit-json-studio.js', '({ migrateOrbitJsonToV13, validateOrbitJsonV13 })');
   const migrated = studio.migrateOrbitJsonToV13({ version: 12, projectName: 'Legacy', nodes: [{ id: 'hero', type: 'section' }] });

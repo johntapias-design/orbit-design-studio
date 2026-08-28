@@ -1,0 +1,361 @@
+{
+  "format": "orbit-real-project-benchmark",
+  "version": 1,
+  "methodology": {
+    "dataset": "Escenarios representativos sin datos de clientes",
+    "iterationsPerProject": 30,
+    "thresholdsMs": {
+      "importP95": 750,
+      "correctionP95": 750
+    }
+  },
+  "environment": {
+    "node": "v26.0.0",
+    "platform": "darwin",
+    "architecture": "arm64"
+  },
+  "summary": {
+    "projects": 5,
+    "nodes": 1239,
+    "allRepairedValid": true,
+    "totalInitialErrors": 6,
+    "totalRepairs": 48
+  },
+  "commonIssues": [
+    {
+      "code": "image.alt",
+      "occurrences": 40
+    },
+    {
+      "code": "image.alt.added",
+      "occurrences": 40
+    },
+    {
+      "code": "image.src",
+      "occurrences": 31
+    },
+    {
+      "code": "node.id.repaired",
+      "occurrences": 2
+    },
+    {
+      "code": "node.content.added",
+      "occurrences": 1
+    },
+    {
+      "code": "node.content.empty",
+      "occurrences": 1
+    },
+    {
+      "code": "node.id.duplicate",
+      "occurrences": 1
+    },
+    {
+      "code": "node.id.required",
+      "occurrences": 1
+    },
+    {
+      "code": "node.styles.base.added",
+      "occurrences": 1
+    },
+    {
+      "code": "node.type.repaired",
+      "occurrences": 1
+    },
+    {
+      "code": "node.type.unsupported",
+      "occurrences": 1
+    },
+    {
+      "code": "root.additional",
+      "occurrences": 1
+    },
+    {
+      "code": "root.property.removed",
+      "occurrences": 1
+    },
+    {
+      "code": "style.collection.reset",
+      "occurrences": 1
+    },
+    {
+      "code": "style.collection.type",
+      "occurrences": 1
+    },
+    {
+      "code": "style.property.removed",
+      "occurrences": 1
+    },
+    {
+      "code": "style.property.unsupported",
+      "occurrences": 1
+    }
+  ],
+  "projects": [
+    {
+      "id": "agency-landing",
+      "type": "Landing de agencia",
+      "sourceBytes": 5177,
+      "nodes": 39,
+      "timingMs": {
+        "importMedian": 0.098,
+        "importP95": 0.222,
+        "correctionMedian": 0.302,
+        "correctionP95": 0.641
+      },
+      "initial": {
+        "errors": 0,
+        "warnings": 0,
+        "issueCodes": []
+      },
+      "correction": {
+        "repairs": 0,
+        "repairCodes": [],
+        "missingResources": 0
+      },
+      "final": {
+        "valid": true,
+        "errors": 0
+      }
+    },
+    {
+      "id": "restaurant",
+      "type": "Restaurante",
+      "sourceBytes": 12377,
+      "nodes": 98,
+      "timingMs": {
+        "importMedian": 0.221,
+        "importP95": 0.332,
+        "correctionMedian": 0.691,
+        "correctionP95": 0.836
+      },
+      "initial": {
+        "errors": 0,
+        "warnings": 7,
+        "issueCodes": [
+          "image.src",
+          "image.alt",
+          "image.alt",
+          "image.src",
+          "image.alt",
+          "image.src",
+          "image.alt"
+        ]
+      },
+      "correction": {
+        "repairs": 4,
+        "repairCodes": [
+          "image.alt.added",
+          "image.alt.added",
+          "image.alt.added",
+          "image.alt.added"
+        ],
+        "missingResources": 3
+      },
+      "final": {
+        "valid": true,
+        "errors": 0
+      }
+    },
+    {
+      "id": "commerce-catalog",
+      "type": "Catálogo comercial",
+      "sourceBytes": 95257,
+      "nodes": 722,
+      "timingMs": {
+        "importMedian": 1.541,
+        "importP95": 1.981,
+        "correctionMedian": 5.02,
+        "correctionP95": 5.699
+      },
+      "initial": {
+        "errors": 2,
+        "warnings": 46,
+        "issueCodes": [
+          "node.id.duplicate",
+          "style.property.unsupported",
+          "image.src",
+          "image.alt",
+          "image.alt",
+          "image.src",
+          "image.alt",
+          "image.src",
+          "image.alt",
+          "image.src",
+          "image.alt",
+          "image.alt",
+          "image.src",
+          "image.alt",
+          "image.src",
+          "image.alt",
+          "image.src",
+          "image.alt",
+          "image.src",
+          "image.alt",
+          "image.alt",
+          "image.src",
+          "image.alt",
+          "image.src",
+          "image.alt",
+          "image.src",
+          "image.alt",
+          "image.alt",
+          "image.src",
+          "image.alt",
+          "image.src",
+          "image.alt",
+          "image.src",
+          "image.alt",
+          "image.src",
+          "image.alt",
+          "image.alt",
+          "image.src",
+          "image.alt",
+          "image.src",
+          "image.alt",
+          "image.src",
+          "image.alt",
+          "image.alt",
+          "image.src",
+          "image.alt",
+          "image.src",
+          "image.alt"
+        ]
+      },
+      "correction": {
+        "repairs": 28,
+        "repairCodes": [
+          "image.alt.added",
+          "node.id.repaired",
+          "image.alt.added",
+          "style.property.removed",
+          "image.alt.added",
+          "image.alt.added",
+          "image.alt.added",
+          "image.alt.added",
+          "image.alt.added",
+          "image.alt.added",
+          "image.alt.added",
+          "image.alt.added",
+          "image.alt.added",
+          "image.alt.added",
+          "image.alt.added",
+          "image.alt.added",
+          "image.alt.added",
+          "image.alt.added",
+          "image.alt.added",
+          "image.alt.added",
+          "image.alt.added",
+          "image.alt.added",
+          "image.alt.added",
+          "image.alt.added",
+          "image.alt.added",
+          "image.alt.added",
+          "image.alt.added",
+          "image.alt.added"
+        ],
+        "missingResources": 20
+      },
+      "final": {
+        "valid": true,
+        "errors": 0
+      }
+    },
+    {
+      "id": "visual-portfolio",
+      "type": "Portafolio visual",
+      "sourceBytes": 37041,
+      "nodes": 282,
+      "timingMs": {
+        "importMedian": 0.581,
+        "importP95": 0.702,
+        "correctionMedian": 1.88,
+        "correctionP95": 2.046
+      },
+      "initial": {
+        "errors": 0,
+        "warnings": 18,
+        "issueCodes": [
+          "image.src",
+          "image.alt",
+          "image.alt",
+          "image.src",
+          "image.alt",
+          "image.src",
+          "image.alt",
+          "image.src",
+          "image.alt",
+          "image.alt",
+          "image.src",
+          "image.alt",
+          "image.src",
+          "image.alt",
+          "image.src",
+          "image.alt",
+          "image.src",
+          "image.alt"
+        ]
+      },
+      "correction": {
+        "repairs": 10,
+        "repairCodes": [
+          "image.alt.added",
+          "image.alt.added",
+          "image.alt.added",
+          "image.alt.added",
+          "image.alt.added",
+          "image.alt.added",
+          "image.alt.added",
+          "image.alt.added",
+          "image.alt.added",
+          "image.alt.added"
+        ],
+        "missingResources": 8
+      },
+      "final": {
+        "valid": true,
+        "errors": 0
+      }
+    },
+    {
+      "id": "professional-services",
+      "type": "Servicios profesionales",
+      "sourceBytes": 11934,
+      "nodes": 98,
+      "timingMs": {
+        "importMedian": 0.212,
+        "importP95": 0.287,
+        "correctionMedian": 0.636,
+        "correctionP95": 0.748
+      },
+      "initial": {
+        "errors": 4,
+        "warnings": 1,
+        "issueCodes": [
+          "root.additional",
+          "node.id.required",
+          "node.type.unsupported",
+          "style.collection.type",
+          "node.content.empty"
+        ]
+      },
+      "correction": {
+        "repairs": 6,
+        "repairCodes": [
+          "root.property.removed",
+          "node.id.repaired",
+          "node.content.added",
+          "node.type.repaired",
+          "style.collection.reset",
+          "node.styles.base.added"
+        ],
+        "missingResources": 0
+      },
+      "final": {
+        "valid": true,
+        "errors": 0
+      }
+    }
+  ],
+  "generatedAt": "2026-08-28T00:14:36.238Z"
+}
